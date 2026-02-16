@@ -1,0 +1,78 @@
+# --- Générique (tous les services) ---
+*.pyc
+__pycache__/
+*.swp
+*.swo
+.DS_Store
+.env
+.env.local
+.env.*.local
+.env*.local
+*.log
+*.sqlite3
+*.db
+
+# --- Environnements virtuels ---
+venv/
+.env/
+.venv/
+ENV/
+env.bak/
+virtualenv/
+
+# --- Dépendances et builds ---
+dist/
+build/
+*.egg-info/
+*.egg
+*.whl
+node_modules/
+
+# --- Docker ---
+*.tar.gz
+*.docker.tar.gz
+docker-compose.override.yml
+
+# --- IDE/Editors ---
+.idea/
+.vscode/
+*.iml
+*.ipynb_checkpoints
+
+# --- Secrets et configurations locales ---
+config.ini
+config.yml
+*.pem
+*.key
+*.secret
+secrets/
+credentials/
+
+# --- Fichiers de cache ---
+.cache/
+*.cache
+*.pid
+*.seed
+*.log
+*.tmp
+
+# --- Microservices : Exclusions spécifiques ---
+services/*/venv/
+services/*/.env
+services/*/instance/
+services/*/__pycache__/
+services/*/*.pyc
+services/*/node_modules/
+services/*/dist/
+services/*/build/
+
+# --- Documentation ---
+docs/_build/
+docs/*.aux
+docs/*.log
+docs/*.out
+
+# --- Tests ---
+.coverage
+htmlcov/
+.pytest_cache/
