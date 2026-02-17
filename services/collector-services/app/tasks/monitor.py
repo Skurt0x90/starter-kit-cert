@@ -1,6 +1,7 @@
 import requests
 import socket
 import ssl
+from bs4 import BeautifulSoup
 from datetime import datetime
 
 def check_site_health(url):
@@ -29,7 +30,15 @@ def check_site_ssl_expiration(url):
         print(f"Erreur lors de la récupération du certificat SSL : {e}")
         return None
 
-def check_site_title_changed(url, title):
-    return False
+def check_site_title_changed(url, expected_title):
+    try:
+        response = requests.get(f"https://{url}", timeout=10)
+        if response.status_code == 200:
+            page_title = BeautifulSoup(response.text, 'html.parser').title.string
+            return page_title != expected_title
+        else:
+            return True
+    except requests.exceptions.RequestException:
+        return False
 
 
