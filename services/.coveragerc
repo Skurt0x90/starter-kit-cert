@@ -1,6 +1,6 @@
 [run]
 # Chemin relatif depuis la racine (services/)
-source = web-watcher
+source = web_watcher
 
 # Ignorer les tests et l'environnement virtuel
 omit =

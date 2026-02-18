@@ -1,7 +1,8 @@
 import unittest
 from unittest.mock import patch, MagicMock
 import requests
-from watcher import is_site_up 
+from web_watcher.watcher import is_site_up 
+from web_watcher.config import REQUEST_TIMEOUT
 
 class TestIsSiteUp(unittest.TestCase):
 
