@@ -1,78 +1,82 @@
-# --- Générique (tous les services) ---
-*.pyc
+# Python
 __pycache__/
-*.swp
-*.swo
-.DS_Store
-.env
-.env.local
-.env.*.local
-.env*.local
-*.log
-*.sqlite3
-*.db
-
-# --- Environnements virtuels ---
-venv/
-.env/
-.venv/
-ENV/
-env.bak/
-virtualenv/
-
-# --- Dépendances et builds ---
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg
+*.egg-info/
 dist/
 build/
-*.egg-info/
-*.egg
-*.whl
-node_modules/
+eggs/
+.eggs/
+lib/
+lib64/
+wheels/
 
-# --- Docker ---
-*.tar.gz
-*.docker.tar.gz
-docker-compose.override.yml
+# Environnements virtuels
+.env
+.venv
+venv/
+env/
+ENV/
 
-# --- IDE/Editors ---
-.idea/
-.vscode/
-*.iml
-*.ipynb_checkpoints
+# Variables d'environnement (sensible)
+.env.local
+.env.*.local
+secrets/
+*.secret
 
-# --- Secrets et configurations locales ---
-config.ini
-config.yml
+# Credentials et clés API (critique)
+credentials.json
+api_keys.json
 *.pem
 *.key
-*.secret
-secrets/
-credentials/
+*.p12
+*.pfx
+signal-cli/data/
 
-# --- Fichiers de cache ---
-.cache/
-*.cache
-*.pid
-*.seed
-*.log
-*.tmp
+# Données d'entrée et de sortie (ne pas commiter les vraies cibles)
+data/inputs/targets.txt
+data/inputs/members.json
+data/inputs/keywords.json
+data/outputs/
 
-# --- Microservices : Exclusions spécifiques ---
-services/*/venv/
-services/*/.env
-services/*/instance/
-services/*/__pycache__/
-services/*/*.pyc
-services/*/node_modules/
-services/*/dist/
-services/*/build/
+# Telethon sessions
+*.session
+*.session-journal
 
-# --- Documentation ---
-docs/_build/
-docs/*.aux
-docs/*.log
-docs/*.out
-
-# --- Tests ---
+# Pytest
+.pytest_cache/
 .coverage
 htmlcov/
-.pytest_cache/
+coverage.xml
+*.cover
+
+# Logs
+*.log
+logs/
+
+# Docker
+.docker/
+
+# macOS
+.DS_Store
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+
+# Tor
+tor/data/
+*.onion_data/
+
+# Fichiers temporaires wget dark web
+spider_output/
+*.onion_dump/
+
+# MISP (si réactivé plus tard)
+misp/config/
