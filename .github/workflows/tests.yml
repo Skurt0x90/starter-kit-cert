@@ -1,4 +1,4 @@
-name: Tests collector services
+name: Tests web-watcher
 
 on: [push, pull_request]
 
@@ -20,7 +20,9 @@ jobs:
           pip install pytest pytest-mock pytest-cov
 
       - name: Run unit tests
-        run: pytest services/web-watcher/tests --cov=app --cov-report=xml
+        working-directory: services/web-watcher 
+        run: |
+          pytest tests --cov=web_watcher --cov-report=xml
 
       - name: Upload coverage
         uses: codecov/codecov-action@v3
