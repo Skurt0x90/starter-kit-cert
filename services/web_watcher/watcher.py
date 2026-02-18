@@ -4,7 +4,7 @@ import logging
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
-import config
+from . import config  # Import relatif
 
 logger = logging.getLogger(__name__)
 HEADERS = {
@@ -34,7 +34,7 @@ def is_site_up(domain):
         return True
     except requests.exceptions.RequestException as e:
         logger.error(f"[{domain}] Erreur requête : {e}")
-        return True, None
+        return True
   
 
 def run_watcher_cycle():
