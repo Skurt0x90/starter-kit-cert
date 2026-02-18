@@ -4,7 +4,7 @@ import logging
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
-from . import config  # Import relatif
+from web_watcher import config  # Import relatif
 
 logger = logging.getLogger(__name__)
 HEADERS = {
