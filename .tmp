@@ -1,5 +1,5 @@
 python3 -m venv venv
 source venv/bin/activate
 pip install flask apscheduler requests beautifulsoup4
-pytest services/web-watcher/tests/test-watcher.py --cov=app
+pytest services/web_watcher/tests/test-watcher.py --cov=app
 python3 services/collector-services/main.py

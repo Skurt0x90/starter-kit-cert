@@ -16,7 +16,7 @@ services:
   # WEB WATCHER
   # ─────────────────────────────────────────
   web-watcher:
-    build: ./services/web-watcher
+    build: ./services/web_watcher
     container_name: web-watcher
     restart: unless-stopped
     volumes:
