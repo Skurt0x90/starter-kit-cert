@@ -1,0 +1,17 @@
+[run]
+# Chemin relatif depuis la racine (services/)
+source = web-watcher
+
+# Ignorer les tests et l'environnement virtuel
+omit =
+    */tests/*
+    */venv/*
+    config.py
+
+[report]
+# Exclure les lignes non pertinentes
+exclude_lines =
+    pragma: no cover
+    def __repr__
+    raise NotImplementedError
+    if __name__ == .__main__.:

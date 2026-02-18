@@ -1,0 +1,168 @@
+version: "3.9"
+
+networks:
+  cert_net:
+    driver: bridge
+  tor_net:
+    driver: bridge
+    internal: true  # isolé, pas d'accès internet direct sauf via tor
+
+volumes:
+  cert_data:
+
+services:
+
+  # ─────────────────────────────────────────
+  # WEB WATCHER
+  # ─────────────────────────────────────────
+  web-watcher:
+    build: ./services/web-watcher
+    container_name: web-watcher
+    restart: unless-stopped
+    volumes:
+      - cert_data:/data
+    environment:
+      - SCHEDULE_INTERVAL_MINUTES=${WEB_WATCHER_INTERVAL:-15}
+      - ALERT_EMAIL=${ALERT_EMAIL}
+    networks:
+      - cert_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5001/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # VULN SCANNER
+  # ─────────────────────────────────────────
+  vuln-scanner:
+    build: ./services/vuln-scanner
+    container_name: vuln-scanner
+    restart: unless-stopped
+    volumes:
+      - cert_data:/data
+    environment:
+      - SCHEDULE_INTERVAL_HOURS=${VULN_SCANNER_INTERVAL:-24}
+      - SHODAN_API_KEY=${SHODAN_API_KEY}
+      - ONYPHE_API_KEY=${ONYPHE_API_KEY}
+    networks:
+      - cert_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5002/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # RANSOMWARE MONITOR
+  # ─────────────────────────────────────────
+  ransomware-monitor:
+    build: ./services/ransomware-monitor
+    container_name: ransomware-monitor
+    restart: unless-stopped
+    volumes:
+      - cert_data:/data
+    environment:
+      - SCHEDULE_INTERVAL_HOURS=${RANSOMWARE_INTERVAL:-24}
+    networks:
+      - cert_net
+      - tor_net
+    depends_on:
+      - tor-proxy
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5003/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # TOR PROXY (réseau isolé)
+  # ─────────────────────────────────────────
+  tor-proxy:
+    build: ./services/tor-proxy
+    container_name: tor-proxy
+    restart: unless-stopped
+    volumes:
+      - cert_data:/data
+    networks:
+      - tor_net
+    healthcheck:
+      test: ["CMD", "curl", "--socks5", "localhost:9050", "-f", "https://check.torproject.org"]
+      interval: 60s
+      timeout: 20s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # SOCIAL MONITOR
+  # ─────────────────────────────────────────
+  social-monitor:
+    build: ./services/social-monitor
+    container_name: social-monitor
+    restart: unless-stopped
+    volumes:
+      - cert_data:/data
+    environment:
+      - TELEGRAM_API_ID=${TELEGRAM_API_ID}
+      - TELEGRAM_API_HASH=${TELEGRAM_API_HASH}
+      - TELEGRAM_PHONE=${TELEGRAM_PHONE}
+      - TWITTER_BEARER_TOKEN=${TWITTER_BEARER_TOKEN}
+    networks:
+      - cert_net
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5004/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # ALERT SERVICE
+  # ─────────────────────────────────────────
+  alert-service:
+    build: ./services/alert-service
+    container_name: alert-service
+    restart: unless-stopped
+    volumes:
+      - cert_data:/data
+    environment:
+      - SCHEDULE_INTERVAL_MINUTES=${ALERT_INTERVAL:-5}
+      - SMTP_HOST=${SMTP_HOST}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASSWORD=${SMTP_PASSWORD}
+      - ALERT_EMAIL_FROM=${ALERT_EMAIL_FROM}
+      - ALERT_EMAIL_TO=${ALERT_EMAIL_TO}
+      - SIGNAL_CLI_NUMBER=${SIGNAL_CLI_NUMBER}
+      - SIGNAL_CLI_RECIPIENT=${SIGNAL_CLI_RECIPIENT}
+    networks:
+      - cert_net
+    depends_on:
+      - web-watcher
+      - vuln-scanner
+      - ransomware-monitor
+      - social-monitor
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5005/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # ─────────────────────────────────────────
+  # DASHBOARD
+  # ─────────────────────────────────────────
+  dashboard:
+    build: ./services/dashboard
+    container_name: dashboard
+    restart: unless-stopped
+    volumes:
+      - cert_data:/data
+    ports:
+      - "${DASHBOARD_PORT:-8501}:8501"
+    networks:
+      - cert_net
+    depends_on:
+      - web-watcher
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8501/_stcore/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
