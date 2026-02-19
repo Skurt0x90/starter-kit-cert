@@ -4,7 +4,7 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 
 ---
 
-## Ce que couvre l'article
+## Fonctionnalités
 
 - **Web Watcher** — surveillance de la disponibilité des sites exposés
 - **Defacement detection** — détection de modifications non autorisées sur les pages web
