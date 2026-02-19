@@ -85,14 +85,6 @@ def check_response_time(domain):
         return "KO"
 
 
-#def generate_site_status(site_up, ssl_ok, response_time):
-#    if not site_up:
-#        return "KO"
-#    if response_time == "KO" or not ssl_ok:
-#        return "DEF"
-#    if response_time == "DEF":
-#        return "DEF"
-#    return "OK"
 
 def run_watcher_cycle():
     logger.info(f"---------------------------NEW CYCLE----------------------------")
@@ -118,3 +110,44 @@ def run_watcher_cycle():
     logger.info(f"---------------------------END CYCLE----------------------------")
 
     
+
+
+""" def get_site_status(site_up, ssl_ok, response_time, defacement_detected):
+    if not site_up:
+        return "KO"                      # inaccessible, on sait rien de plus
+
+    if defacement_detected and not ssl_ok:
+        return "KO_DEFACED_SSL"          # compromis + SSL expirant = critique
+
+    if defacement_detected and response_time == "KO":
+        return "KO_DEFACED_SLOW"         # compromis + très lent
+
+    if defacement_detected:
+        return "KO_DEFACED"              # compromis seul
+
+    if not ssl_ok and response_time == "KO":
+        return "DEF_SSL_SLOW"            # SSL + très lent
+
+    if not ssl_ok and response_time == "DEF":
+        return "DEF_SSL_SLOW"            # SSL + lent
+
+    if not ssl_ok:
+        return "DEF_SSL"                 # SSL expirant seul
+
+    if response_time == "KO":
+        return "DEF_SLOW"                # très lent seul
+
+    if response_time == "DEF":
+        return "DEF_SLOW"                # lent seul
+
+    return "OK"
+
+Ce qui donne comme tableau de priorité :
+KO                → inaccessible
+KO_DEFACED        → compromis
+KO_DEFACED_SSL    → compromis + SSL
+KO_DEFACED_SLOW   → compromis + lent
+DEF_SSL_SLOW      → SSL + lent
+DEF_SSL           → SSL seul
+DEF_SLOW          → lent seul
+OK                → tout bon """
