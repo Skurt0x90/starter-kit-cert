@@ -6,7 +6,7 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 
 ## Fonctionnalités
 
-- **Web Watcher** — surveillance de la disponibilité des sites exposés
+- **Web Watcher** — surveillance de la disponibilité des sites exposés :white_check_mark:
 - **Defacement detection** — détection de modifications non autorisées sur les pages web
 - **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware
 - **Social Monitor** — surveillance des réseaux sociaux et sources OSINT
