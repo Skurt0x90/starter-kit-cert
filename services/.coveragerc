@@ -7,6 +7,7 @@ omit =
     */tests/*
     */venv/*
     config.py
+    app.py
 
 [report]
 # Exclure les lignes non pertinentes
