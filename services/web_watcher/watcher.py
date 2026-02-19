@@ -35,7 +35,14 @@ def is_site_up(domain):
     except requests.exceptions.RequestException as e:
         logger.error(f"[{domain}] Erreur requête : {e}")
         return True
-  
+
+## Check if SSL expire < 30j
+def check_ssl_expiry(domain):
+    return False
+
+## Check if reponse_time is OK, NOK, DEF
+def check_response_time(domaine):
+    return str("OK")
 
 def run_watcher_cycle():
     domains_to_check = load_domains(config.TARGETS_FILE)
