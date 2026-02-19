@@ -75,9 +75,6 @@ def run_watcher_cycle():
             "checked_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat()
         })
 
-
-        
-    logger.info(f"last_run{datetime.now(ZoneInfo("Europe/Paris")).isoformat()}, sites: {results}")
                 
     Path(config.OUTPUT_FILE).parent.mkdir(parents=True, exist_ok=True)
     with open(config.OUTPUT_FILE, "w") as f:
