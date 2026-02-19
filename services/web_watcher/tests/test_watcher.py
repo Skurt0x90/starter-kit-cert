@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import patch, MagicMock, mock_open, call
 import requests
-from web_watcher.watcher import is_site_up, load_domains, run_watcher_cycle
+from web_watcher.watcher import is_site_up, load_domains, run_watcher_cycle, check_ssl_expiry
 from web_watcher import config
+from datetime import date, timedelta
 
 class TestWatcher(unittest.TestCase):
 
@@ -213,6 +214,64 @@ class TestWatcher(unittest.TestCase):
         written_data = mock_json.call_args[0][0]
         self.assertTrue(written_data["sites"][0]["site_up"])
         self.assertFalse(written_data["sites"][1]["site_up"])
+    
+    def _make_mock_conn(self, expiry_date):
+        """Helper : crée un faux certificat avec la date donnée"""
+        mock_conn = MagicMock()
+        mock_conn.getpeercert.return_value = {
+            "notAfter": expiry_date.strftime('%b %d %H:%M:%S %Y GMT')
+        }
+        return mock_conn
+
+    @patch("web_watcher.watcher.socket.socket")
+    @patch("web_watcher.watcher.ssl.create_default_context")
+    def test_ssl_valid(self, mock_ctx, mock_sock):
+        """Certificat valide : expire dans plus de 30 jours"""
+        expiry = date.today() + timedelta(days=60)
+        mock_ctx.return_value.wrap_socket.return_value.__enter__ = MagicMock(return_value=self._make_mock_conn(expiry))
+        mock_ctx.return_value.wrap_socket.return_value = self._make_mock_conn(expiry)
+
+        result = check_ssl_expiry("example.com")
+        self.assertTrue(result)
+
+    @patch("web_watcher.watcher.socket.socket")
+    @patch("web_watcher.watcher.ssl.create_default_context")
+    def test_ssl_expiring_soon(self, mock_ctx, mock_sock):
+        """Certificat expirant dans moins de 30 jours"""
+        expiry = date.today() + timedelta(days=10)
+        mock_ctx.return_value.wrap_socket.return_value = self._make_mock_conn(expiry)
+
+        result = check_ssl_expiry("example.com")
+        self.assertFalse(result)
+
+    @patch("web_watcher.watcher.socket.socket")
+    @patch("web_watcher.watcher.ssl.create_default_context")
+    def test_ssl_expires_exactly_30_days(self, mock_ctx, mock_sock):
+        """Certificat expirant exactement dans 30 jours : valide"""
+        expiry = date.today() + timedelta(days=30)
+        mock_ctx.return_value.wrap_socket.return_value = self._make_mock_conn(expiry)
+
+        result = check_ssl_expiry("example.com")
+        self.assertTrue(result)
+
+    @patch("web_watcher.watcher.socket.socket")
+    @patch("web_watcher.watcher.ssl.create_default_context")
+    def test_ssl_already_expired(self, mock_ctx, mock_sock):
+        """Certificat déjà expiré"""
+        expiry = date.today() - timedelta(days=5)
+        mock_ctx.return_value.wrap_socket.return_value = self._make_mock_conn(expiry)
+
+        result = check_ssl_expiry("example.com")
+        self.assertFalse(result)
+
+    @patch("web_watcher.watcher.socket.socket")
+    @patch("web_watcher.watcher.ssl.create_default_context")
+    def test_connection_error(self, mock_ctx, mock_sock):
+        """Erreur de connexion : lève une exception"""
+        mock_ctx.return_value.wrap_socket.side_effect = Exception("Connection refused")
+
+        with self.assertRaises(Exception):
+            check_ssl_expiry("example.com")
 
 if __name__ == '__main__':
     unittest.main()
