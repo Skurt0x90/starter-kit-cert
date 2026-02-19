@@ -1,7 +1,17 @@
 from flask import Flask, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
-from watcher import run_watcher_cycle
-import config
+from web_watcher.watcher import run_watcher_cycle
+from web_watcher import config
+import logging
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),             # console
+        logging.FileHandler("watcher.log")  # fichier
+    ]
+)
 
 app = Flask(__name__)
 scheduler = BackgroundScheduler()
