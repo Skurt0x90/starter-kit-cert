@@ -1,10 +1,10 @@
 import json
 import requests
 import logging
+from web_watcher import config
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 from pathlib import Path
-from web_watcher import config  # Import relatif
 
 logger = logging.getLogger(__name__)
 HEADERS = {
@@ -38,7 +38,6 @@ def is_site_up(domain):
   
 
 def run_watcher_cycle():
-    logger.info("TEST LOG")
     domains_to_check = load_domains(config.TARGETS_FILE)
     results = []
     for d in domains_to_check:
