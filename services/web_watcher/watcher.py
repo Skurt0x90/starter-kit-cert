@@ -1,8 +1,11 @@
 import json
 import requests
 import logging
+import contextlib
+import socket
+import ssl
 from web_watcher import config
-from datetime import datetime, timezone
+from datetime import datetime, timezone, date
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
@@ -38,10 +41,25 @@ def is_site_up(domain):
 
 ## Check if SSL expire < 30j
 def check_ssl_expiry(domain):
+    ctx = ssl.create_default_context()
+
+    with contextlib.closing(socket.socket(socket.AF_INET)) as sock:
+
+        conn = ctx.wrap_socket(sock, server_hostname=domain)
+
+        conn.settimeout(5.0)
+        conn.connect((domain, 443))
+        ssl_info = conn.getpeercert()
+
+        expiry_date = datetime.strptime(ssl_info["notAfter"], '%b %d %H:%M:%S %Y %Z').date()
+
+        if (expiry_date-date.today()).days >= 30:
+            return True             
+
     return False
 
 ## Check if reponse_time is OK, NOK, DEF
-def check_response_time(domaine):
+def check_response_time(domain):
     return str("OK")
 
 def run_watcher_cycle():
@@ -49,14 +67,18 @@ def run_watcher_cycle():
     results = []
     for d in domains_to_check:
         http_code = is_site_up(d["domain"])
+        certif_ssl_ok = check_ssl_expiry(d['domain'])
         results.append({
             "domain": d["domain"],
             "site_up": http_code,
+            "ssl_ok" : certif_ssl_ok,
             "checked_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat()
         })
-        logger.info(f"{d['domain']} → {http_code}")
 
+
+        
+    logger.info(f"last_run{datetime.now(ZoneInfo("Europe/Paris")).isoformat()}, sites: {results}")
+                
     Path(config.OUTPUT_FILE).parent.mkdir(parents=True, exist_ok=True)
     with open(config.OUTPUT_FILE, "w") as f:
         json.dump({"last_run": datetime.now(ZoneInfo("Europe/Paris")).isoformat(), "sites": results}, f, indent=2)
-    
