@@ -20,6 +20,10 @@ scheduler = BackgroundScheduler()
 def health():
     return jsonify({"status": "ok"}), 200
 
+@app.route("/api/data", methods=["GET"])
+def get_data():
+    return jsonify({"message": "Données de surveillance à venir"}), 200
+
 if __name__ == "__main__":
     scheduler.add_job(run_watcher_cycle, "interval", minutes=utils.SCHEDULE_INTERVAL_MINUTES)
     scheduler.start()
