@@ -1,8 +1,9 @@
+import logging
+import os
 from flask import Flask, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 from web_watcher.watcher import run_watcher_cycle
 from web_watcher import utils
-import logging
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,4 +29,4 @@ if __name__ == "__main__":
     scheduler.add_job(run_watcher_cycle, "interval", minutes=utils.SCHEDULE_INTERVAL_MINUTES)
     scheduler.start()
     run_watcher_cycle()  # premier cycle immédiat
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host=os.getenv("FLASK_HOST", "127.0.0.1"), port=int(os.getenv("FLASK_PORT", 5001)))
