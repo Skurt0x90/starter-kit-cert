@@ -1,0 +1,55 @@
+name: Tests web_watcher
+on: [push, pull_request]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r services/web_watcher/requirements.txt
+          pip install pytest pytest-mock pytest-cov bandit pip-audit
+
+      - name: Run unit tests
+        working-directory: services
+        run: |
+          pytest web_watcher/tests --cov=web_watcher --cov-report=xml --cov-report=term-missing
+
+      - name: Upload coverage
+        uses: codecov/codecov-action@v4
+        with:
+          token: ${{ secrets.CODECOV_TOKEN }}
+          files: services/coverage.xml
+          fail_ci_if_error: true
+
+  security:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r services/web_watcher/requirements.txt
+          pip install bandit pip-audit
+
+      - name: Bandit - analyse sécurité statique
+        run: |
+          bandit -r services/web_watcher/ -ll --exclude services/web_watcher/tests
+
+      - name: pip-audit - vulnérabilités dépendances
+        run: |
+          pip-audit -r services/web_watcher/requirements.txt
