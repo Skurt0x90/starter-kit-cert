@@ -1,7 +1,7 @@
 from flask import Flask, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 from web_watcher.watcher import run_watcher_cycle
-from web_watcher import config
+from web_watcher import utils
 import logging
 
 logging.basicConfig(
@@ -21,7 +21,7 @@ def health():
     return jsonify({"status": "ok"}), 200
 
 if __name__ == "__main__":
-    scheduler.add_job(run_watcher_cycle, "interval", minutes=config.SCHEDULE_INTERVAL_MINUTES)
+    scheduler.add_job(run_watcher_cycle, "interval", minutes=utils.SCHEDULE_INTERVAL_MINUTES)
     scheduler.start()
     run_watcher_cycle()  # premier cycle immédiat
     app.run(host="0.0.0.0", port=5001)
