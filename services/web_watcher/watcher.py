@@ -8,7 +8,7 @@ from web_watcher import utils
 from datetime import datetime, timezone, date
 from zoneinfo import ZoneInfo
 from pathlib import Path
-from web_watcher.defacement import is_title_ok
+from web_watcher.defacement import probability_site_defaced
 
 logger = logging.getLogger(__name__)
 
@@ -72,13 +72,13 @@ def run_watcher_cycle():
         http_code = is_site_up(d["domain"])
         certif_ssl_ok = is_ssl_expire_soon(d['domain'])
         response_time = check_response_time(d["domain"])
-        title = is_title_ok(d["domain"], d["label"])
+        probability_defaced = probability_site_defaced(d["domain"], d["label"])
         results.append({
             "domain": d["domain"],
             "site_up": http_code,
             "ssl_ok" : not certif_ssl_ok,
             "response_time": response_time,
-            "title_ok": title,
+            "defacement": probability_defaced,
             "checked_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat()
         })
 

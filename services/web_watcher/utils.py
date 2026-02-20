@@ -36,3 +36,68 @@ def load_domains(filepath):
             domains_to_check.append({"domain": domain.strip(), "longitude": float(lon), "latitude": float(lat), "label": label.strip()})
     return domains_to_check
 
+
+HIGH_CONFIDENCE = [
+    "wikipédia",
+    "hacked by",
+    "h4cked by",
+    "h@cked by",
+    "pwned by",
+    "defaced by",
+    "d3faced by",
+    "owned by",
+    "compromised by",
+    "breached by",
+    "attacked by",
+    "rooted by",
+    "hijacked by",
+    "taken over by",
+    "this site has been hacked",
+    "this site has been defaced",
+    "website hacked",
+    "website defaced",
+    "you got hacked",
+    "you have been hacked",
+    "your security is low",
+    "security breached",
+    "index hacked",
+    "index owned",
+    "index replaced",
+    "hacked homepage",
+    "mirror by",
+]
+
+MEDIUM_CONFIDENCE = [
+    "hacked",
+    "h4cked",
+    "hacked!!!",
+    "defaced",
+    "d3faced",
+    "d3f4ced",
+    "defaced!!!",
+    "pwned",
+    "pwnd",
+    "p0wned",
+    "pwned!!!",
+    "owned",
+    "0wned",
+    "0wn3d",
+    "owned!!!",
+    "h4x0r",
+    "hax0r",
+    "h4xor",
+    "was here",
+    "we are here",
+]
+
+TECHNICAL_INDICATORS = [
+    "c99 shell",
+    "r57 shell",
+    "webshell",
+    "shell uploaded",
+    "uid=0",
+    "gid=0",
+    "root@",
+]
+
+
