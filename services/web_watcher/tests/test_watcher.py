@@ -2,8 +2,8 @@ import unittest
 from unittest.mock import patch, MagicMock, mock_open
 from datetime import date, timedelta
 import requests
-from web_watcher.watcher import load_domains, is_site_up, check_ssl_expiry, check_response_time, run_watcher_cycle
-
+from web_watcher.watcher import is_site_up, is_ssl_expire_soon, check_response_time, run_watcher_cycle
+from web_watcher.utils import load_domains
 
 class TestLoadDomains(unittest.TestCase):
 
@@ -87,7 +87,7 @@ class TestIsSiteUp(unittest.TestCase):
     @patch("requests.get")
     def test_request_exception(self, mock_get):
         mock_get.side_effect = requests.exceptions.RequestException("Timeout")
-        self.assertTrue(is_site_up("example.com"))
+        self.assertFalse(is_site_up("example.com"))
 
 
 class TestCheckSslExpiry(unittest.TestCase):
@@ -103,37 +103,37 @@ class TestCheckSslExpiry(unittest.TestCase):
     @patch("web_watcher.watcher.ssl.create_default_context")
     def test_ssl_valid(self, mock_ctx, mock_sock):
         self._mock_ssl(mock_ctx, date.today() + timedelta(days=60))
-        self.assertTrue(check_ssl_expiry("example.com"))
+        self.assertFalse(is_ssl_expire_soon("example.com"))
 
     @patch("web_watcher.watcher.socket.socket")
     @patch("web_watcher.watcher.ssl.create_default_context")
     def test_ssl_expiring_soon(self, mock_ctx, mock_sock):
         self._mock_ssl(mock_ctx, date.today() + timedelta(days=10))
-        self.assertFalse(check_ssl_expiry("example.com"))
+        self.assertTrue(is_ssl_expire_soon("example.com"))
 
     @patch("web_watcher.watcher.socket.socket")
     @patch("web_watcher.watcher.ssl.create_default_context")
     def test_ssl_exactly_30_days(self, mock_ctx, mock_sock):
         self._mock_ssl(mock_ctx, date.today() + timedelta(days=30))
-        self.assertTrue(check_ssl_expiry("example.com"))
+        self.assertFalse(is_ssl_expire_soon("example.com"))
 
     @patch("web_watcher.watcher.socket.socket")
     @patch("web_watcher.watcher.ssl.create_default_context")
     def test_ssl_expired(self, mock_ctx, mock_sock):
         self._mock_ssl(mock_ctx, date.today() - timedelta(days=5))
-        self.assertFalse(check_ssl_expiry("example.com"))
+        self.assertTrue(is_ssl_expire_soon("example.com"))
 
     @patch("web_watcher.watcher.socket.socket")
     @patch("web_watcher.watcher.ssl.create_default_context")
     def test_timeout(self, mock_ctx, mock_sock):
         mock_ctx.return_value.wrap_socket.side_effect = TimeoutError()
-        self.assertTrue(check_ssl_expiry("example.com"))
+        self.assertTrue(is_ssl_expire_soon("example.com"))
 
     @patch("web_watcher.watcher.socket.socket")
     @patch("web_watcher.watcher.ssl.create_default_context")
     def test_connection_error(self, mock_ctx, mock_sock):
         mock_ctx.return_value.wrap_socket.side_effect = Exception("Connection refused")
-        self.assertTrue(check_ssl_expiry("example.com"))
+        self.assertTrue(is_ssl_expire_soon("example.com"))
 
 
 class TestCheckResponseTime(unittest.TestCase):
@@ -174,12 +174,12 @@ class TestRunWatcherCycle(unittest.TestCase):
         ]
 
     @patch("web_watcher.watcher.check_response_time", return_value="OK")
-    @patch("web_watcher.watcher.check_ssl_expiry", return_value=True)
+    @patch("web_watcher.watcher.is_ssl_expire_soon", return_value=True)
     @patch("web_watcher.watcher.json.dump")
     @patch("web_watcher.watcher.Path")
     @patch("builtins.open", new_callable=mock_open)
     @patch("web_watcher.watcher.is_site_up", return_value=True)
-    @patch("web_watcher.watcher.load_domains")
+    @patch("web_watcher.utils.load_domains")
     def test_nominal(self, mock_load, mock_is_up, mock_file, mock_path, mock_json, mock_ssl, mock_rt):
         mock_load.return_value = self.fake_domains
         run_watcher_cycle()
@@ -188,12 +188,12 @@ class TestRunWatcherCycle(unittest.TestCase):
         mock_json.assert_called_once()
 
     @patch("web_watcher.watcher.check_response_time", return_value="OK")
-    @patch("web_watcher.watcher.check_ssl_expiry", return_value=True)
+    @patch("web_watcher.watcher.is_ssl_expire_soon", return_value=True)
     @patch("web_watcher.watcher.json.dump")
     @patch("web_watcher.watcher.Path")
     @patch("builtins.open", new_callable=mock_open)
     @patch("web_watcher.watcher.is_site_up", return_value=True)
-    @patch("web_watcher.watcher.load_domains", return_value=[])
+    @patch("web_watcher.utils.load_domains", return_value=[])
     def test_empty_domains(self, mock_load, mock_is_up, mock_file, mock_path, mock_json, mock_ssl, mock_rt):
         run_watcher_cycle()
         mock_is_up.assert_not_called()
@@ -201,12 +201,12 @@ class TestRunWatcherCycle(unittest.TestCase):
         self.assertEqual(written_data["sites"], [])
 
     @patch("web_watcher.watcher.check_response_time", return_value="OK")
-    @patch("web_watcher.watcher.check_ssl_expiry", return_value=True)
+    @patch("web_watcher.watcher.is_ssl_expire_soon", return_value=True)
     @patch("web_watcher.watcher.json.dump")
     @patch("web_watcher.watcher.Path")
     @patch("builtins.open", new_callable=mock_open)
     @patch("web_watcher.watcher.is_site_up", return_value=False)
-    @patch("web_watcher.watcher.load_domains")
+    @patch("web_watcher.utils.load_domains")
     def test_site_down(self, mock_load, mock_is_up, mock_file, mock_path, mock_json, mock_ssl, mock_rt):
         mock_load.return_value = [self.fake_domains[0]]
         run_watcher_cycle()
@@ -214,12 +214,12 @@ class TestRunWatcherCycle(unittest.TestCase):
         self.assertFalse(written_data["sites"][0]["site_up"])
 
     @patch("web_watcher.watcher.check_response_time", return_value="OK")
-    @patch("web_watcher.watcher.check_ssl_expiry", return_value=True)
+    @patch("web_watcher.watcher.is_ssl_expire_soon", return_value=True)
     @patch("web_watcher.watcher.json.dump")
     @patch("web_watcher.watcher.Path")
     @patch("builtins.open", new_callable=mock_open)
     @patch("web_watcher.watcher.is_site_up", return_value=True)
-    @patch("web_watcher.watcher.load_domains")
+    @patch("web_watcher.utils.load_domains")
     def test_output_structure(self, mock_load, mock_is_up, mock_file, mock_path, mock_json, mock_ssl, mock_rt):
         mock_load.return_value = [self.fake_domains[0]]
         run_watcher_cycle()
@@ -233,12 +233,12 @@ class TestRunWatcherCycle(unittest.TestCase):
         self.assertIn("checked_at",    written_data["sites"][0])
 
     @patch("web_watcher.watcher.check_response_time", side_effect=["OK", "KO"])
-    @patch("web_watcher.watcher.check_ssl_expiry", return_value=True)
+    @patch("web_watcher.watcher.is_ssl_expire_soon", return_value=True)
     @patch("web_watcher.watcher.json.dump")
     @patch("web_watcher.watcher.Path")
     @patch("builtins.open", new_callable=mock_open)
     @patch("web_watcher.watcher.is_site_up", side_effect=[True, False])
-    @patch("web_watcher.watcher.load_domains")
+    @patch("web_watcher.utils.load_domains")
     def test_mixed_up_down(self, mock_load, mock_is_up, mock_file, mock_path, mock_json, mock_ssl, mock_rt):
         mock_load.return_value = self.fake_domains
         run_watcher_cycle()
