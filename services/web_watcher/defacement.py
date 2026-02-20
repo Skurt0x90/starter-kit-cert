@@ -33,6 +33,7 @@ def is_title_ok(domain, title):
         soup = BeautifulSoup(response.text, 'html.parser')
         soup_head = soup.head
         soup_title = soup_head.title.string if soup_head and soup_head.title else None
+        soup_title = soup_title or ""
         if title == soup_title:
             return True
         return False
