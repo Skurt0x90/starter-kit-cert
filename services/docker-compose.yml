@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  web_watcher:
+    build: ./services/web_watcher
+    container_name: web_watcher
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5001
+      - SCHEDULE_INTERVAL_MINUTES=1
+    volumes:
+      - ./data:/data        # pointe vers le data/ racine du projet
+    ports:
+      - "5001:5001"
+    restart: unless-stopped
+    networks:
+      - cert-net
+
+networks:
+  cert-net:
+    driver: bridge
