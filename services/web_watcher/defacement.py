@@ -27,6 +27,7 @@ def is_title_changed(content, title):
     soup = BeautifulSoup(content, 'html.parser')
     soup_title = soup.head.title.string if soup.head and soup.head.title else None
     soup_title = soup_title or ""
+
     return title != soup_title
 
 
@@ -85,7 +86,7 @@ def process_defacement_scoring(content):
     return score
 
 def interprete_scoring(score):
-    if 0 < score <= 4:
+    if 0 <= score <= 4:
         return "DEFACEMENT PEU PROBABLE"
     elif 4 < score < 10:
         return "DEFACEMENT PROBABLE"
