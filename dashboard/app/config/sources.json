@@ -1,0 +1,11 @@
+{
+  "sources": [
+    {
+      "id": "aeroports",
+      "label": "Surveillance Aéroports",
+      "url": "http://watcher-aeroports:5000/status",
+      "color_scheme": "blue"
+    }
+  ],
+  "refresh_interval_seconds": 60
+}
