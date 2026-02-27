@@ -79,7 +79,8 @@ def run_watcher_cycle():
             "ssl_ok" : not certif_ssl_ok,
             "response_time": response_time,
             "defacement": probability_defaced,
-            "checked_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat()
+            "checked_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat(),
+            "localisation": f"{d["latitude"], d["longitude"]}"
         })
 
                 
