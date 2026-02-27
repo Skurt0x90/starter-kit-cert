@@ -1,5 +1,5 @@
-dash==2.18.1
+dash==2.18.2
 dash-leaflet==1.0.15
+dash-mantine-components==2.5.1
 requests==2.32.3
-flask==3.1.0
 gunicorn==23.0.0
