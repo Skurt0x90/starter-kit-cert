@@ -3,21 +3,15 @@ version: '3.8'
 services:
   dashboard:
     build: .
+    container_name: dashboard
     ports:
       - "8050:8050"
-    volumes:
-      - ./config:/app/config    # pour modifier sources.json sans rebuild
-    networks:
-      - cert-net
-
-  watcher-aeroports:
-    image: watcher-aeroports:latest
-    ports:
-      - "5001:5000"
+    environment:
+      - WATCHER_URL=http://web_watcher:5001/api/data
+    restart: unless-stopped
     networks:
       - cert-net
 
 networks:
   cert-net:
-    driver: bridge
-```
+    external: true  # réseau créé par le compose racine

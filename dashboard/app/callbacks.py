@@ -1,11 +1,11 @@
 import ast
+import os
 import requests
 from dash import Input, Output, callback, html
 import dash_leaflet as dl
 
 # URL watcher en local ou via docker
-WATCHER_URL = "http://localhost:5001/api/data"
-
+WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
 
 def get_marker_color(site):
     if not site.get("site_up"):
