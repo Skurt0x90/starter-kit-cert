@@ -1,0 +1,11 @@
+# Club de foot
+girondins.com,-0.5792,44.8378,FC Girondins de Bordeaux - site officiel | Girondins.com
+toulousefc.com,1.4442,43.6047,Le site officiel du TéFéCé - Toulouse FC
+gf38.fr,5.7245,45.1885,Grenoble Foot 38 | Site Officiel du Grenoble Foot 38
+
+# Tourisme régional
+bretagne.bzh,-1.6778,48.1173,Tourisme Bretagne
+auvergnerhonealpes-tourisme.com,4.8357,45.7640,Tourisme Auvergne-Rhône-Alpes
+tourisme-occitanie.com,3.8767,43.6119,Tourisme Occitanie
+normandie-tourisme.fr,0.3714,49.1829,Tourisme Normandie
+provence-alpes-cotedazur.com,5.3698,43.2965,Tourisme Provence-Alpes-Côte d'Azur
