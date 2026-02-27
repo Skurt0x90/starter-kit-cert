@@ -180,9 +180,9 @@ class TestComputeCategoryBonus(unittest.TestCase):
 
 class TestInterpreteScoring(unittest.TestCase):
 
-    def test_score_zero_retourne_fortement_probable(self):
-        # score == 0 → ni 0<s<=4, ni 4<s<10 → else
-        self.assertEqual(interprete_scoring(0), "DEFACEMENT FORTEMENT PROBABLE")
+    def test_score_zero_retourne_peu_probable(self):
+        # score == 0 → ni 0<=s<=4, ni 4<s<10 → else
+        self.assertEqual(interprete_scoring(0), "DEFACEMENT PEU PROBABLE")
 
     def test_score_1_peu_probable(self):
         self.assertEqual(interprete_scoring(1), "DEFACEMENT PEU PROBABLE")
@@ -215,7 +215,7 @@ class TestProbabilitySiteDefaced(unittest.TestCase):
     @patch("web_watcher.defacement.get_html_content", return_value=NORMAL_HTML)
     def test_site_normal_peu_probable(self, mock_content):
         result = probability_site_defaced("aeroport-paris.fr", "Aéroport de Paris")
-        self.assertEqual(result, "DEFACEMENT FORTEMENT PROBABLE")  # score 0 → else
+        self.assertEqual(result, "DEFACEMENT PEU PROBABLE")  
 
     @patch("web_watcher.defacement.get_html_content", return_value=DEFACED_HTML)
     def test_site_defaced_fortement_probable(self, mock_content):
