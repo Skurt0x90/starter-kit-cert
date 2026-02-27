@@ -14,6 +14,7 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 ```bash sudo docker compose up --build``` 
 
 
+---
 ## Fonctionnalités
 
 - **Web Watcher** — surveillance de la disponibilité des sites exposés :white_check_mark:
@@ -23,6 +24,10 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 - **Vuln Scanner** — scan de vulnérabilités sur les assets exposés
 - **Alerting** — notifications en cas d'incident détecté
 - **Dashboard** — centralisation et visualisation des résultats :white_check_mark:
+
+---
+## Screenshot
+![Map](screenshot/V1.png)
 
 ---
 
