@@ -11,6 +11,8 @@ def get_marker_color(site):
     if not site.get("site_up"):
         return "#ff4444"  # rouge
     defacement = site.get("defacement") or ""
+    if "SITE OK (non défacé)" in defacement:
+        return "#44ff88"  # vert
     if "PEU PROBABLE" in defacement:
         return "#44ff88"  # vert
     if "PROBABLE" in defacement:
@@ -64,24 +66,37 @@ def build_marker(site):
         fillOpacity=0.8,
         children=[tooltip, popup],
     )
-
 @callback(
     Output("markers", "children"),
     Output("last-update", "children"),
+    Output("map", "bounds"),       # ← nouveau
     Input("interval", "n_intervals"),
 )
 def update_map(n):
+    markers = []
+    lats, lons = [], []
+
     try:
         resp = requests.get(WATCHER_URL, timeout=5)
         data = resp.json()
     except Exception:
-        return [], "Erreur de connexion"
+        return [], "Erreur de connexion", None
 
-    markers = []
     for site in data.get("sites", []):
         m = build_marker(site)
         if m:
             markers.append(m)
+            lat, lon = parse_localisation(site.get("localisation", ""))
+            if lat:
+                lats.append(lat)
+                lons.append(lon)
 
     last_run = data.get("last_run", "")[:19].replace("T", " ")
-    return markers, f"Mis à jour : {last_run}"
+
+    # calcul des bounds
+    if lats and lons:
+        bounds = [[min(lats) - 1, min(lons) - 1], [max(lats) + 1, max(lons) + 1]]
+    else:
+        bounds = None
+
+    return markers, f"Mis à jour : {last_run}", bounds

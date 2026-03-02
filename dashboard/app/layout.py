@@ -43,7 +43,7 @@ def create_layout():
                     ),
                     # Carte
                     dmc.Box(
-                        style={"padding": "20px"},
+                        style={"padding": "20px", "width": "75%"},
                         children=[
                             dl.Map(
                                 id="map",
