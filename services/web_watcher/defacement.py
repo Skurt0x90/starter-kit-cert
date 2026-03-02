@@ -86,7 +86,9 @@ def process_defacement_scoring(content):
     return score
 
 def interprete_scoring(score):
-    if 0 <= score <= 4:
+    if score == 0:
+        return "SITE OK (non défacé)"
+    if 0 < score <= 4:
         return "DEFACEMENT PEU PROBABLE"
     elif 4 < score < 10:
         return "DEFACEMENT PROBABLE"
