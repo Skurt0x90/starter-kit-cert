@@ -62,11 +62,25 @@ def check_response_time(domain):
         return "KO"
 
 
+def create_alerts(states):
+    alerts = {}
+    for site in states:
+        domain = site["domain"]
+        if site["site_up"] == False:
+            alerts.setdefault(domain, []).append({"level": "CRITICAL", "message": f"{domain} est DOWN"})
+        if site["ssl_ok"] == False:
+            alerts.setdefault(domain, []).append({"level": "WARNING", "message": f"{domain} SSL expire < 30 jours"})
+        if site["response_time"] == "DEF":
+            alerts.setdefault(domain, []).append({"level": "WARNING", "message": f"{domain} temps de réponse long"})
+        if site["defacement"] in ["DEFACEMENT FORTEMENT PROBABLE", "DEFACEMENT PROBABLE"]:
+            alerts.setdefault(domain, []).append({"level": "CRITICAL", "message": f"{domain} défacement probable"})
+    return alerts
 
 def run_watcher_cycle():
     logger.info(f"---------------------------NEW CYCLE----------------------------")
     domains_to_check = utils.load_domains(utils.TARGETS_FILE)
     results = []
+    alerts = []
     for d in domains_to_check:
         logger.info(f"Site: {d["domain"]} - Label: {d["label"]}")
         http_code = is_site_up(d["domain"])
@@ -82,52 +96,21 @@ def run_watcher_cycle():
             "checked_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat(),
             "localisation": f"{d["latitude"], d["longitude"]}"
         })
+    alerts = create_alerts(results)
+    logger.info(alerts)
 
-                
+    if alerts:
+        try:
+            requests.post(
+                f"{utils.ALERT_SERVICE_URL}/api/alert",
+                json={"service": "web_watcher", "alerts": alerts},
+                timeout=5
+            )
+        except requests.exceptions.RequestException as e:
+            logger.warning(f"Alert service injoignable : {e}")
+            
     Path(utils.OUTPUT_FILE).parent.mkdir(parents=True, exist_ok=True)
     with open(utils.OUTPUT_FILE, "w") as f:
         json.dump({"last_run": datetime.now(ZoneInfo("Europe/Paris")).isoformat(), "sites": results}, f, indent=2)
+
     logger.info(f"---------------------------END CYCLE----------------------------")
-
-    
-
-
-""" def get_site_status(site_up, ssl_ok, response_time, defacement_detected):
-    if not site_up:
-        return "KO"                      # inaccessible, on sait rien de plus
-
-    if defacement_detected and not ssl_ok:
-        return "KO_DEFACED_SSL"          # compromis + SSL expirant = critique
-
-    if defacement_detected and response_time == "KO":
-        return "KO_DEFACED_SLOW"         # compromis + très lent
-
-    if defacement_detected:
-        return "KO_DEFACED"              # compromis seul
-
-    if not ssl_ok and response_time == "KO":
-        return "DEF_SSL_SLOW"            # SSL + très lent
-
-    if not ssl_ok and response_time == "DEF":
-        return "DEF_SSL_SLOW"            # SSL + lent
-
-    if not ssl_ok:
-        return "DEF_SSL"                 # SSL expirant seul
-
-    if response_time == "KO":
-        return "DEF_SLOW"                # très lent seul
-
-    if response_time == "DEF":
-        return "DEF_SLOW"                # lent seul
-
-    return "OK"
-
-Ce qui donne comme tableau de priorité :
-KO                → inaccessible
-KO_DEFACED        → compromis
-KO_DEFACED_SSL    → compromis + SSL
-KO_DEFACED_SLOW   → compromis + lent
-DEF_SSL_SLOW      → SSL + lent
-DEF_SSL           → SSL seul
-DEF_SLOW          → lent seul
-OK                → tout bon """

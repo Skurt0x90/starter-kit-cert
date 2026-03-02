@@ -26,7 +26,6 @@ def health():
 
 @app.route("/api/data", methods=["GET"])
 def get_datas():
-    logger.info(f"Output pat: {utils.OUTPUT_FILE}")
     try:
         with open(utils.OUTPUT_FILE, "r") as f:
             return jsonify(json.load(f)), 200

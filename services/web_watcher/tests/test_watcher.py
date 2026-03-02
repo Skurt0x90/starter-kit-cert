@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch, MagicMock, mock_open
 from datetime import date, timedelta
 import requests
-from web_watcher.watcher import is_site_up, is_ssl_expire_soon, check_response_time, run_watcher_cycle
+from web_watcher.watcher import is_site_up, is_ssl_expire_soon, check_response_time, run_watcher_cycle, create_alerts
 from web_watcher.utils import load_domains
 
 class TestLoadDomains(unittest.TestCase):
@@ -248,6 +248,49 @@ class TestRunWatcherCycle(unittest.TestCase):
         self.assertEqual(written_data["sites"][0]["response_time"], "OK")
         self.assertEqual(written_data["sites"][1]["response_time"], "KO")
 
+class TestCreateAlerts(unittest.TestCase):
+
+    def test_no_alerts(self):
+        states = [{"domain": "example.com", "site_up": True, "ssl_ok": True, 
+                   "response_time": "OK", "defacement": "DEFACEMENT PEU PROBABLE"}]
+        self.assertEqual(create_alerts(states), {})
+
+    def test_site_down(self):
+        states = [{"domain": "example.com", "site_up": False, "ssl_ok": True,
+                   "response_time": "OK", "defacement": "DEFACEMENT PEU PROBABLE"}]
+        result = create_alerts(states)
+        self.assertIn("example.com", result)
+        self.assertEqual(result["example.com"][0]["level"], "CRITICAL")
+
+    def test_ssl_expiring(self):
+        states = [{"domain": "example.com", "site_up": True, "ssl_ok": False,
+                   "response_time": "OK", "defacement": "DEFACEMENT PEU PROBABLE"}]
+        result = create_alerts(states)
+        self.assertEqual(result["example.com"][0]["level"], "WARNING")
+
+    def test_multiple_alerts_same_domain(self):
+        states = [{"domain": "example.com", "site_up": False, "ssl_ok": False,
+                   "response_time": "DEF", "defacement": "DEFACEMENT PROBABLE"}]
+        result = create_alerts(states)
+        self.assertEqual(len(result["example.com"]), 4)
+
+    def test_alerts_grouped_by_domain(self):
+        states = [
+            {"domain": "a.com", "site_up": False, "ssl_ok": True,
+             "response_time": "OK", "defacement": "DEFACEMENT PEU PROBABLE"},
+            {"domain": "b.com", "site_up": True, "ssl_ok": False,
+             "response_time": "OK", "defacement": "DEFACEMENT PEU PROBABLE"},
+        ]
+        result = create_alerts(states)
+        self.assertIn("a.com", result)
+        self.assertIn("b.com", result)
+        self.assertEqual(len(result), 2)
+
+    def test_defacement_fortement_probable(self):
+        states = [{"domain": "example.com", "site_up": True, "ssl_ok": True,
+                   "response_time": "OK", "defacement": "DEFACEMENT FORTEMENT PROBABLE"}]
+        result = create_alerts(states)
+        self.assertEqual(result["example.com"][0]["level"], "CRITICAL")
 
 if __name__ == "__main__":
     unittest.main()
