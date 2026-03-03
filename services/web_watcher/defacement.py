@@ -58,10 +58,7 @@ def compute_category_bonus(categories_triggered):
     return 0
 
 
-def process_defacement_scoring(content):
-    logger.info("Calcul du score de défacement")
-
- 
+def process_defacement_scoring(content): 
     text = content.lower()
     score = 0
     categories_triggered = 0
@@ -82,7 +79,6 @@ def process_defacement_scoring(content):
     score += compute_category_bonus(categories_triggered)
     score += compute_density_bonus(high_hits + medium_hits + tech_hits, len(text))
 
-    logger.info(f"Score défacement : {score} (catégories déclenchées : {categories_triggered})")
     return score
 
 def interprete_scoring(score):

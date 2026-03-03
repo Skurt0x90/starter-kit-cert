@@ -5,7 +5,9 @@ SCHEDULE_INTERVAL_MINUTES = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", 1))
 BASE = "/data" if os.path.exists("/data") else "../data"
 TARGETS_FILE = f"{BASE}/inputs/targets.txt"
 OUTPUT_FILE  = f"{BASE}/outputs/web_status.json"
-ALERT_SERVICE_URL = os.getenv("ALERT_SERVICE_URL", "http://alert_service:5005")
+
+IN_DOCKER = os.path.exists("/.dockerenv")
+ALERT_SERVICE_URL = os.getenv("ALERT_SERVICE_URL", "http://alert_service:5005" if IN_DOCKER else "http://localhost:5005")
 
 RESPONSE_TIME_THRESHOLD = 10    
 SSL_EXPIRY_WARNING_DAYS  = 30 
