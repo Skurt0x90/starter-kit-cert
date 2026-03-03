@@ -12,6 +12,9 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 ---
 ## Lancement
 ```bash sudo docker compose up --build``` 
+web_watcher up ? http://localhost:5001/health
+dashboard up ? http://localhost:8050/
+alert_service up ? http://localhost:5005/health 
 
 
 ---
@@ -22,7 +25,7 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 - **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware
 - **Social Monitor** — surveillance des réseaux sociaux et sources OSINT
 - **Vuln Scanner** — scan de vulnérabilités sur les assets exposés
-- **Alerting** — notifications en cas d'incident détecté
+- **Alerting** — notifications en cas d'incident détecté (email: :white_check_mark: signal: :negative_squared_cross_mark:)
 - **Dashboard** — centralisation et visualisation des résultats :white_check_mark:
 
 ---
