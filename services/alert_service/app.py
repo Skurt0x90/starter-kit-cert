@@ -2,7 +2,8 @@ import logging
 import os
 import json
 from flask import Flask, jsonify, request
-from alert_service import utils, alert_services
+from alert_service import utils
+from alert_service.alert_services import process_alert
 
 logging.basicConfig(
     level=logging.INFO,

@@ -98,6 +98,7 @@ def run_watcher_cycle():
     alerts = create_alerts(results)
 
     if alerts:
+        logger.info(f"Envoi de {len(alerts)} alertes vers l'alert_service")
         try:
             requests.post(
                 f"{utils.ALERT_SERVICE_URL}/api/alert",
