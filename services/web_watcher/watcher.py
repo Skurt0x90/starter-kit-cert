@@ -82,7 +82,6 @@ def run_watcher_cycle():
     results = []
     alerts = []
     for d in domains_to_check:
-        logger.info(f"Site: {d["domain"]} - Label: {d["label"]}")
         http_code = is_site_up(d["domain"])
         certif_ssl_ok = is_ssl_expire_soon(d['domain'])
         response_time = check_response_time(d["domain"])
@@ -97,7 +96,6 @@ def run_watcher_cycle():
             "localisation": f"{d["latitude"], d["longitude"]}"
         })
     alerts = create_alerts(results)
-    logger.info(alerts)
 
     if alerts:
         try:
