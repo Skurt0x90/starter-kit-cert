@@ -6,6 +6,7 @@ from email.mime.multipart import MIMEMultipart
 from pathlib import Path
 from alert_service import utils
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 logger = logging.getLogger(__name__)
 
@@ -27,12 +28,13 @@ def is_duplicate(alert):
     dedup = read_json(utils.DEDUP_FILE, {})
     if key in dedup:
         last = datetime.fromisoformat(dedup[key])
-        diff = datetime.now() - last
+        diff = datetime.now(ZoneInfo("Europe/Paris")) - last
         if diff.total_seconds() < utils.DEDUP_WINDOW_MINUTES * 60:
             return True
     return False
 
 def send_email(alerts_to_send):
+    logger.info(f"send_email appelé avec {len(alerts_to_send)} alerte(s)")
     if not utils.SMTP_USER:
         logger.warning("SMTP non configuré, email ignoré")
         return
@@ -59,7 +61,7 @@ def send_signal(tmp):
 def mark_sent(alert):
     key = f"{alert['service']}|{alert['domain']}|{alert['level']}|{alert['message']}"
     dedup = read_json(utils.DEDUP_FILE, {})
-    dedup[key] = datetime.now().isoformat()
+    dedup[key] = datetime.now(ZoneInfo("Europe/Paris")).isoformat()
     write_json(utils.DEDUP_FILE, dedup)
 
 
@@ -91,16 +93,17 @@ def process_alert(payload):
                 "domain": alert_flat["domain"],
                 "level": alert_flat["level"],
                 "message": alert_flat["message"],
-                "sent_at": datetime.now().isoformat()
+                "sent_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat()
             })
             sent += 1
-
+    logger.info(f"Fin de boucle, alerts_to_send = {alerts_to_send}")
     if alerts_to_send:
+        logger.info(f"alerts_to_send non vide : {len(alerts_to_send)} alertes")
         send_email(alerts_to_send)
         send_signal(alerts_to_send)
 
     history["alerts"] = history["alerts"][:200]
-    history["last_run"] = datetime.now().isoformat()
+    history["last_run"] = datetime.now(ZoneInfo("Europe/Paris")).isoformat()
     write_json(utils.OUTPUT_FILE, history)
 
     return {"sent": sent, "deduplicated": deduplicated}
@@ -121,7 +124,7 @@ def format_email(alerts_to_send):
         """
     body = f"""
     <h2>[CERT Aviation] Rapport d'alertes</h2>
-    <p><b>Heure :</b> {datetime.now().isoformat()}</p>
+    <p><b>Heure :</b> {datetime.now(ZoneInfo("Europe/Paris")).isoformat()}</p>
     <table border="1" cellpadding="5">
         <tr><th>Niveau</th><th>Domaine</th><th>Message</th></tr>
         {rows}
