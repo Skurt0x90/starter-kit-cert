@@ -1,6 +1,23 @@
 version: '3.8'
 
 services:
+  alert_service:
+    build: ./services/alert_service
+    container_name: alert_service
+    env_file:
+      - .env
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5005
+      - DEDUP_WINDOW_MINUTES=30
+      - SIGNAL_API_URL=http://signal_cli:8080
+    volumes:
+      - ./data:/data
+    ports:
+      - "5005:5005"
+    restart: unless-stopped
+    networks:
+      - cert-net
 
   web_watcher:
     build: ./services/web_watcher
@@ -14,6 +31,8 @@ services:
     ports:
       - "5001:5001"
     restart: unless-stopped
+    depends_on:
+      - alert_service
     networks:
       - cert-net
 
