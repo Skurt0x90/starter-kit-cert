@@ -7,6 +7,7 @@ from pathlib import Path
 from alert_service import utils
 from datetime import datetime
 from zoneinfo import ZoneInfo
+from flask import requests
 
 logger = logging.getLogger(__name__)
 
@@ -55,8 +56,33 @@ def send_email(alerts_to_send):
     except Exception as e:
         logger.error(f"Erreur email : {e}")
 
-def send_signal(tmp):
-    return True
+def send_signal(alerts_to_send):
+    if not utils.SIGNAL_CLI_NUMBER or not utils.SIGNAL_CLI_GROUP_ID:
+        logger.warning("Signal non configuré, message ignoré")
+        return
+
+    lignes = []
+    for a in alerts_to_send:
+        lignes.append(f"[{a['level']}] {a['domain']} — {a['message']}")
+
+    texte = f"🚨 Skurt0x90 CERT — {len(alerts_to_send)} alerte(s)\n\n"
+    texte += "\n".join(lignes)
+    texte += f"\n\n🕐 {datetime.now(ZoneInfo('Europe/Paris')).strftime('%d/%m/%Y %H:%M')}"
+
+    try:
+        r = requests.post(
+            f"{utils.SIGNAL_API_URL}/v2/send",
+            json={
+                "message": texte,
+                "number": utils.SIGNAL_CLI_NUMBER,
+                "recipients": [utils.SIGNAL_CLI_GROUP_ID]
+            },
+            timeout=10
+        )
+        r.raise_for_status()
+        logger.info(f"Signal envoyé : {len(alerts_to_send)} alerte(s)")
+    except Exception as e:
+        logger.error(f"Erreur Signal : {e}")
 
 def mark_sent(alert):
     key = f"{alert['service']}|{alert['domain']}|{alert['level']}|{alert['message']}"
