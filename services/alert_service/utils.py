@@ -15,3 +15,6 @@ SMTP_USER        = os.getenv("SMTP_USER", "")
 SMTP_PASSWORD    = os.getenv("SMTP_PASSWORD", "")
 ALERT_EMAIL_FROM = os.getenv("ALERT_EMAIL_FROM", "")
 ALERT_EMAIL_TO   = os.getenv("ALERT_EMAIL_TO", "")
+
+SIGNAL_CLI_NUMBER   = os.getenv("SIGNAL_CLI_NUMBER", "")
+SIGNAL_CLI_GROUP_ID = os.getenv("SIGNAL_CLI_GROUP_ID", "")

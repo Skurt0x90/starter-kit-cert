@@ -1,6 +1,19 @@
 version: '3.8'
 
 services:
+
+
+  signal_cli:
+      build: ./services/signal_cli
+      container_name: signal_cli
+      volumes:
+        - ./data/signal-cli:/home/.local/share/signal-cli
+      ports:
+        - "8080:8080"
+      restart: unless-stopped
+      networks:
+        - cert-net
+        
   alert_service:
     build: ./services/alert_service
     container_name: alert_service
@@ -18,7 +31,9 @@ services:
     restart: unless-stopped
     networks:
       - cert-net
-
+  depends_on:
+        - signal_cli
+        
   web_watcher:
     build: ./services/web_watcher
     container_name: web_watcher
