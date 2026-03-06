@@ -10,6 +10,7 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 [![Status](https://img.shields.io/badge/Status-Active%20Development-yellow)]()
 [![MISC](https://img.shields.io/badge/Inspired%20by-MISC%20N°142-red)]()
 [![Author](https://img.shields.io/badge/Author-Skurt0x90-black?logo=github)](https://github.com/Skurt0x90)
+```
 
 ---
 
