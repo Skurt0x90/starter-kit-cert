@@ -7,7 +7,7 @@ from pathlib import Path
 from alert_service import utils
 from datetime import datetime
 from zoneinfo import ZoneInfo
-from flask import requests
+import requests
 
 logger = logging.getLogger(__name__)
 
