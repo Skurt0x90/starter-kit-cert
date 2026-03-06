@@ -2,6 +2,15 @@
 
 Ce projet est une implémentation personnelle inspirée de l'article **"Déploiement opérationnel d'un starter kit du CERT"** publié dans [MISC n°142](https://connect.ed-diamond.com/misc/misc-142/deploiement-operationnel-d-un-starter-kit-du-cert-retour-d-experience-et-outils-open-source-pour-la-surveillance-proactive).
 
+```
+
+[![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)](https://python.org)
+[![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docker.com)
+[![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-yellow)]()
+[![MISC](https://img.shields.io/badge/Inspired%20by-MISC%20N°142-red)]()
+[![Author](https://img.shields.io/badge/Author-Skurt0x90-black?logo=github)](https://github.com/Skurt0x90)
+
 ---
 
 ## Pré-requis

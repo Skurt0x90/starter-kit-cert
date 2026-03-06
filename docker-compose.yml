@@ -51,6 +51,17 @@ services:
     networks:
       - cert-net
 
+  target_test:
+    image: vulnerables/web-dvwa
+    container_name: target_test
+    ports:
+      - "8888:80"
+    restart: unless-stopped
+    profiles:
+      - test
+    networks:
+      - cert-net
+      
   dashboard:
     build: ./dashboard
     container_name: dashboard
@@ -63,6 +74,8 @@ services:
       - web_watcher
     networks:
       - cert-net
+  
+  
 
 networks:
   cert-net:
