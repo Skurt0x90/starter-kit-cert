@@ -1,47 +1,92 @@
 # 🛡️ Starter Kit CERT Aviation — POC
 
-Ce projet est une implémentation personnelle inspirée de l'article **"Déploiement opérationnel d'un starter kit du CERT"** publié dans [MISC n°142](https://connect.ed-diamond.com/misc/misc-142/deploiement-operationnel-d-un-starter-kit-du-cert-retour-d-experience-et-outils-open-source-pour-la-surveillance-proactive). 
+Ce projet est une implémentation personnelle inspirée de l'article **"Déploiement opérationnel d'un starter kit du CERT"** publié dans [MISC n°142](https://connect.ed-diamond.com/misc/misc-142/deploiement-operationnel-d-un-starter-kit-du-cert-retour-d-experience-et-outils-open-source-pour-la-surveillance-proactive).
 
+---
 
-
---- 
 ## Pré-requis
+
 - [Docker](https://docs.docker.com/get-docker/) installé sur votre machine.
 - [Docker Compose](https://docs.docker.com/compose/install/) installé (généralement inclus avec Docker Desktop).
 
 ---
-## Lancement
-```bash sudo docker compose up --build``` 
-web_watcher up ? http://localhost:5001/health
-dashboard up ? http://localhost:8050/
-alert_service up ? http://localhost:5005/health 
 
+## Lancement
+
+```bash
+sudo docker compose up --build
+```
+
+| Service | Health check |
+|---|---|
+| web_watcher | http://localhost:5001/health |
+| alert_service | http://localhost:5005/health |
+| vuln_scanner | http://localhost:5002/health |
+| dashboard | http://localhost:8050/ |
 
 ---
+
+## Configuration
+
+Copiez `.env.example` en `.env` et renseignez vos valeurs (SMTP, Signal...).
+
+La liste des cibles à surveiller se définit dans `data/inputs/targets.txt` :
+
+```
+# domaine,longitude,latitude,label,scan_mode
+exemple.fr,2.3522,48.8566,Paris,passive
+monmembre.fr,2.3522,48.8566,Lyon,active
+```
+
+- `passive` (défaut) — surveillance non intrusive, aucune autorisation requise
+- `active` — modules de scan supplémentaires, nécessite une convention avec le membre
+
+---
+
 ## Fonctionnalités
 
-- **Web Watcher** — surveillance de la disponibilité des sites exposés :white_check_mark:
-- **Defacement detection** — détection de modifications non autorisées sur les pages web :white_check_mark:
-- **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware
-- **Social Monitor** — surveillance des réseaux sociaux et sources OSINT
-- **Vuln Scanner** — scan de vulnérabilités sur les assets exposés
-- **Alerting** — notifications en cas d'incident détecté (email: :white_check_mark: signal: :negative_squared_cross_mark:)
-- **Dashboard** — centralisation et visualisation des résultats :white_check_mark:
+- **Web Watcher** — surveillance de la disponibilité des sites exposés ✅
+- **Defacement detection** — détection de modifications non autorisées sur les pages web ✅
+- **Alerting** — notifications en cas d'incident détecté (email ✅ / signal ❌ enregistrement en attente)
+- **Dashboard** — centralisation et visualisation des résultats ✅
+- **Vuln Scanner** — surveillance passive de la surface d'attaque des membres 🔧
+  - Détection de stack technique exposée dans les headers HTTP (croisement NVD/CVE)
+  - Enumération de sous-domaines via crt.sh
+  - Vérification SPF/DMARC
+  - Détection de typosquatting via dnstwist
+  - Mode `active` prévu pour les membres avec convention (Nuclei, WPScan...)
+- **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware ❌
+- **Social Monitor** — surveillance des réseaux sociaux et sources OSINT ❌
 
 ---
+
+## Tests
+
+Un service DVWA (Damn Vulnerable Web Application) est disponible pour tester le vuln_scanner sur une cible volontairement vulnérable, sans toucher aux vrais membres :
+
+```bash
+sudo docker compose --profile test up --build
+```
+
+DVWA sera accessible sur http://localhost:8888 et ajouté automatiquement dans les cibles du vuln_scanner en mode `passive` et `active`.
+
+---
+
 ## Screenshot
+
 ![Map](screenshot/V1.png)
 
 ---
 
 ## Stack
 
-- Python 3.12
+- Python 3.12 / Flask / APScheduler
 - Docker / Docker Compose
+- Dash / dash-leaflet / dash-mantine-components
 - GitHub Actions + Codecov
 
 ---
 
 ## Licence
 
-- MIT
+MIT
