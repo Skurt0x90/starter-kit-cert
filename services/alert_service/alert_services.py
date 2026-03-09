@@ -137,8 +137,18 @@ def process_alert(payload):
 
 
 def format_email(alerts_to_send):
+    if not alerts_to_send:
+        subject = "[CERT] 0 alerte détectée"
+        body = f"""
+        <h2>[CERT] Rapport d'alertes</h2>
+        <p><b>Heure :</b> {datetime.now(ZoneInfo("Europe/Paris")).isoformat()}</p>
+        <p>Aucune alerte détectée.</p>
+        """
+        return subject, body
+
     service_label = alerts_to_send[0]["service"].replace("_", " ").upper()
     subject = f"[CERT - {service_label}] {len(alerts_to_send)} alerte(s) détectée(s)"
+
     rows = ""
     for a in alerts_to_send:
         color = "red" if a["level"] == "CRITICAL" else "orange"
@@ -149,6 +159,7 @@ def format_email(alerts_to_send):
             <td>{a["message"]}</td>
         </tr>
         """
+
     body = f"""
     <h2>[CERT] Rapport d'alertes</h2>
     <p><b>Heure :</b> {datetime.now(ZoneInfo("Europe/Paris")).isoformat()}</p>
@@ -157,4 +168,5 @@ def format_email(alerts_to_send):
         {rows}
     </table>
     """
+
     return subject, body
