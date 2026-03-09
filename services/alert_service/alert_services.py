@@ -137,7 +137,8 @@ def process_alert(payload):
 
 
 def format_email(alerts_to_send):
-    subject = f"[CERT] {len(alerts_to_send)} alerte(s) détectée(s)"
+    service_label = alerts_to_send[0]["service"].replace("_", " ").upper()
+    subject = f"[CERT - {service_label}] {len(alerts_to_send)} alerte(s) détectée(s)"
     rows = ""
     for a in alerts_to_send:
         color = "red" if a["level"] == "CRITICAL" else "orange"
