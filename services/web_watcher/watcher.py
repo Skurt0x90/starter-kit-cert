@@ -77,7 +77,7 @@ def create_alerts(states):
     return alerts
 
 def run_watcher_cycle():
-    logger.info(f"---------------------------NEW CYCLE----------------------------")
+    logger.info(f"---------------------------NEW CYCLE WEB WATCHER----------------------------")
     domains_to_check = utils.load_domains(utils.TARGETS_FILE)
     results = []
     alerts = []
@@ -112,4 +112,4 @@ def run_watcher_cycle():
     with open(utils.OUTPUT_FILE, "w") as f:
         json.dump({"last_run": datetime.now(ZoneInfo("Europe/Paris")).isoformat(), "sites": results}, f, indent=2)
 
-    logger.info(f"---------------------------END CYCLE----------------------------")
+    logger.info(f"---------------------------END CYCLE WEB WATCHER----------------------------")
