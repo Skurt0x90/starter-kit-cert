@@ -1,5 +1,7 @@
 import os
 
+FLASK_HOST = os.getenv("FLASK_HOST", "127.0.0.1")
+NVD_API_KEY = os.getenv("NVD_API_KEY", "")
 SCHEDULE_INTERVAL_HOURS = int(os.getenv("SCHEDULE_INTERVAL_HOURS", 24))
 
 BASE = "/data" if os.path.exists("/data") else "../data"
