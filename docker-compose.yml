@@ -1,19 +1,17 @@
 version: '3.8'
 
 services:
-
-
   signal_cli:
-      build: ./services/signal_cli
-      container_name: signal_cli
-      volumes:
-        - ./data/signal-cli:/home/.local/share/signal-cli
-      ports:
-        - "8080:8080"
-      restart: unless-stopped
-      networks:
-        - cert-net
-        
+    build: ./services/signal_cli
+    container_name: signal_cli
+    volumes:
+      - ./data/signal-cli:/home/.local/share/signal-cli
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - cert-net
+
   alert_service:
     build: ./services/alert_service
     container_name: alert_service
@@ -29,11 +27,11 @@ services:
     ports:
       - "5005:5005"
     restart: unless-stopped
+    depends_on:
+      - signal_cli
     networks:
       - cert-net
-    depends_on:
-          - signal_cli
-        
+
   web_watcher:
     build: ./services/web_watcher
     container_name: web_watcher
@@ -61,7 +59,26 @@ services:
       - test
     networks:
       - cert-net
-      
+
+  vuln_scanner:
+    build: ./services/vuln_scanner
+    container_name: vuln_scanner
+    env_file:
+      - .env
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5002
+      - SCHEDULE_INTERVAL_HOURS=${VULN_SCANNER_INTERVAL:-24}
+    volumes:
+      - ./data:/data
+    ports:
+      - "5002:5002"
+    restart: unless-stopped
+    depends_on:
+      - alert_service
+    networks:
+      - cert-net
+
   dashboard:
     build: ./dashboard
     container_name: dashboard
@@ -74,8 +91,6 @@ services:
       - web_watcher
     networks:
       - cert-net
-  
-  
 
 networks:
   cert-net:
