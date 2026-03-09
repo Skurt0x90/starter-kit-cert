@@ -22,16 +22,19 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 ## Lancement
 
 ```bash
-sudo docker compose up --build
+sudo docker compose --profile test up --build
 ```
 
-| Service | Health check |
-|---|---|
-| web_watcher | http://localhost:5001/health |
-| alert_service | http://localhost:5005/health |
-| vuln_scanner | http://localhost:5002/health |
-| dashboard | http://localhost:8050/ |
-
+| Service             | URL                              | Attendu          |
+|:--------------------|:---------------------------------|:-----------------|
+| signal_cli          | http://localhost:8080/v1/about   | JSON version     |
+| alert_service       | http://localhost:5005/health     | {"status":"ok"}  |
+| web_watcher         | http://localhost:5001/health     | {"status":"ok"}  |
+| web_watcher data    | http://localhost:5001/api/data   | JSON des sites   |
+| vuln_scanner        | http://localhost:5002/health     | {"status":"ok"}  |
+| vuln_scanner data   | http://localhost:5002/api/data   | JSON des CVE     |
+| dashboard           | http://localhost:8050            | Interface Dash   |
+| DVWA                | http://localhost:8888            | Interface DVWA   |
 ---
 
 ## Configuration
@@ -58,7 +61,7 @@ monmembre.fr,2.3522,48.8566,Lyon,active
 - **Alerting** — notifications en cas d'incident détecté (email ✅ / signal ❌ enregistrement en attente)
 - **Dashboard** — centralisation et visualisation des résultats ✅
 - **Vuln Scanner** — surveillance passive de la surface d'attaque des membres 🔧
-  - Détection de stack technique exposée dans les headers HTTP (croisement NVD/CVE)
+  - Détection de stack technique exposée dans les headers HTTP (croisement NVD/CVE) ✅
   - Enumération de sous-domaines via crt.sh
   - Vérification SPF/DMARC
   - Détection de typosquatting via dnstwist
