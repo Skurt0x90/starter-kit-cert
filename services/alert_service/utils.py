@@ -18,3 +18,4 @@ ALERT_EMAIL_TO   = os.getenv("ALERT_EMAIL_TO", "")
 
 SIGNAL_CLI_NUMBER   = os.getenv("SIGNAL_CLI_NUMBER", "")
 SIGNAL_CLI_GROUP_ID = os.getenv("SIGNAL_CLI_GROUP_ID", "")
+SIGNAL_API_URL = os.getenv("SIGNAL_API_URL", "http://signal_cli:8080")
