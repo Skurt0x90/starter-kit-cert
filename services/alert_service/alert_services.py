@@ -149,7 +149,7 @@ def format_email(alerts_to_send):
         </tr>
         """
     body = f"""
-    <h2>[CERT Aviation] Rapport d'alertes</h2>
+    <h2>[CERT] Rapport d'alertes</h2>
     <p><b>Heure :</b> {datetime.now(ZoneInfo("Europe/Paris")).isoformat()}</p>
     <table border="1" cellpadding="5">
         <tr><th>Niveau</th><th>Domaine</th><th>Message</th></tr>

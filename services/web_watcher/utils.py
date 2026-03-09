@@ -34,9 +34,11 @@ def load_domains(filepath):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            domain, lon, lat, label = line.split(",")
-            domains_to_check.append({"domain": domain.strip(), "longitude": float(lon), "latitude": float(lat), "label": label.strip()})
+            domain, lon, lat, label, *rest = line.split(",")
+            scan_mode = rest[0].strip() if rest else "passive"
+            domains_to_check.append({"domain": domain.strip(), "longitude": float(lon), "latitude": float(lat), "label": label.strip(), "scan_mode": scan_mode.strip()})
     return domains_to_check
+
 
 
 HIGH_CONFIDENCE = [
