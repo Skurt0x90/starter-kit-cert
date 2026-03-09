@@ -1,7 +1,9 @@
 import ast
 import os
 import requests
-from dash import Input, Output, callback, html
+from datetime import datetime
+from zoneinfo import ZoneInfo
+from dash import Input, Output, callback, html, State
 import dash_leaflet as dl
 
 WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
@@ -43,102 +45,174 @@ def build_marker(site):
     tooltip = dl.Tooltip(f"{domain} — {site_up}")
     popup = dl.Popup(
         html.Div([
-            html.B(domain),
-            html.Br(),
-            html.Span(f"Statut : {site_up}"),
-            html.Br(),
-            html.Span(f"SSL : {ssl}"),
-            html.Br(),
-            html.Span(f"Temps réponse : {response}"),
-            html.Br(),
-            html.Span(f"Défacement : {defacement}"),
-            html.Br(),
+            html.B(domain), html.Br(),
+            html.Span(f"Statut : {site_up}"), html.Br(),
+            html.Span(f"SSL : {ssl}"), html.Br(),
+            html.Span(f"Temps réponse : {response}"), html.Br(),
+            html.Span(f"Défacement : {defacement}"), html.Br(),
             html.Span(f"Vérifié à : {checked_at}", style={"color": "#888", "fontSize": "0.8em"}),
         ])
     )
     return dl.CircleMarker(
-        center=[lat, lon],
-        radius=10,
-        color=color,
-        fillColor=color,
-        fillOpacity=0.8,
+        center=[lat, lon], radius=10,
+        color=color, fillColor=color, fillOpacity=0.8,
         children=[tooltip, popup],
     )
 
 
 # ─── Helpers CVE ──────────────────────────────────────────────────────────────
 
+def cvss_color(cvss):
+    if cvss is None:
+        return "#555"
+    if cvss >= 9:
+        return "#c0392b"
+    if cvss > 7:
+        return "#e67e22"
+    return "#f1c40f"
+
+
 def build_cve_panel(sites):
-    """Panel droite — une ligne par domaine avec CVE critiques."""
+    """Panel droite — nombre d'alertes par domaine."""
     items = []
+    total = 0
     for site in sites:
         domain = site.get("domain", "?")
-        cves = site.get("headers", {}).get("cves", [])
-        critical = [c for c in cves if c.get("cvss") and c["cvss"] > 7]
-        if not critical:
+        cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
+        count = len(cves)
+        if count == 0:
             continue
+        total += count
+        critical = sum(1 for c in cves if c.get("cvss") and c["cvss"] > 7)
+        warning = count - critical
         items.append(
             html.Div(
                 style={
-                    "borderLeft": "3px solid #c0392b",
+                    "display": "flex",
+                    "justifyContent": "space-between",
+                    "alignItems": "center",
+                    "padding": "4px 6px",
+                    "marginBottom": "4px",
+                    "borderLeft": "3px solid #c0392b" if critical else "3px solid #e67e22",
                     "paddingLeft": "8px",
-                    "marginBottom": "8px",
                 },
                 children=[
-                    html.Span(domain, style={"color": "#fff", "fontFamily": "monospace", "fontSize": "0.85em", "fontWeight": "bold"}),
-                    html.Span(f" — {len(critical)} CVE critique(s)", style={"color": "#c0392b", "fontSize": "0.8em"}),
+                    html.Span(domain, style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.82em"}),
+                    html.Div([
+                        html.Span(f"{critical}C", style={"color": "#c0392b", "fontFamily": "monospace", "fontSize": "0.78em", "marginRight": "4px"}) if critical else None,
+                        html.Span(f"{warning}W", style={"color": "#e67e22", "fontFamily": "monospace", "fontSize": "0.78em"}) if warning else None,
+                    ]),
                 ]
             )
         )
     if not items:
-        return html.Span("Aucune CVE critique détectée", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
-    return items
+        return html.Span("Aucune alerte détectée", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
+    return items, total
 
 
 def build_cve_detail_panel(sites):
-    """Panel bas — détail complet des CVE critiques."""
+    """Panel bas — détail complet avec couleur par CVSS."""
     rows = []
     for site in sites:
         domain = site.get("domain", "?")
-        cves = site.get("headers", {}).get("cves", [])
-        critical = [c for c in cves if c.get("cvss") and c["cvss"] > 7]
-        for cve in critical:
+        cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
+        checked_at = site.get("checked_at", "")[:19].replace("T", " ")
+        for cve in cves:
+            cvss = cve.get("cvss")
+            color = cvss_color(cvss)
+            cvss_label = f"CVSS {cvss}" if cvss else "version masquée"
             rows.append(
                 html.Div(
                     style={
                         "display": "flex",
                         "gap": "12px",
-                        "padding": "6px 0",
+                        "padding": "5px 0",
                         "borderBottom": "1px solid #2a2d35",
                         "alignItems": "flex-start",
+                        "backgroundColor": f"{color}11",
                     },
                     children=[
-                        html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "160px"}),
-                        html.Span(cve.get("id", "?"), style={"color": "#c0392b", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "140px"}),
-                        html.Span(f"CVSS {cve.get('cvss', '?')}", style={"color": "#ff9944", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "70px"}),
+                        html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "150px"}),
+                        html.Span(cve.get("id") or "—", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "140px"}),
+                        html.Span(cvss_label, style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}),
                         html.Span(cve.get("description", ""), style={"color": "#aaa", "fontSize": "0.78em", "flex": "1"}),
+                        html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "120px"}),
                     ]
                 )
             )
     if not rows:
-        return html.Span("Aucune CVE critique", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
+        return html.Span("Aucune alerte CVE", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
     return rows
 
 
-def build_placeholder_panel(message):
-    return html.Span(message, style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
+def build_service_indicator(name, url):
+    """Point vert/rouge selon si le service répond."""
+    try:
+        r = requests.get(url.replace("/api/data", "/health"), timeout=2)
+        ok = r.status_code == 200
+    except Exception:
+        ok = False
+    color = "#44ff88" if ok else "#ff4444"
+    return html.Div([
+        html.Span("⬤ ", style={"color": color, "fontSize": "0.7em"}),
+        html.Span(name, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.75em"}),
+    ], style={"display": "flex", "alignItems": "center", "gap": "4px"})
 
 
-# ─── Callback principal ───────────────────────────────────────────────────────
+def build_global_counters(watcher_sites, vuln_sites):
+    sites_ok = sum(1 for s in watcher_sites if s.get("site_up"))
+    sites_down = len(watcher_sites) - sites_ok
+    cve_critical = sum(
+        1 for s in vuln_sites
+        for c in s.get("headers", {}).get("cves", [])
+        if c.get("cvss") and c["cvss"] > 7
+    )
+
+    def counter(label, value, color):
+        return html.Div([
+            html.Span(str(value), style={"color": color, "fontFamily": "monospace", "fontWeight": "bold", "fontSize": "0.9em"}),
+            html.Span(f" {label}", style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em"}),
+        ], style={
+            "border": "1px solid #2a2d35",
+            "padding": "2px 10px",
+            "borderRadius": "4px",
+            "backgroundColor": "#141517",
+        })
+
+    return [
+        counter("OK", sites_ok, "#44ff88"),
+        counter("DOWN", sites_down, "#ff4444"),
+        counter("CVE critiques", cve_critical, "#c0392b"),
+    ]
+
+
+# ─── Callbacks ────────────────────────────────────────────────────────────────
+
+@callback(
+    Output("legend-box", "style"),
+    Input("legend-btn", "n_clicks"),
+    State("legend-box", "style"),
+    prevent_initial_call=True,
+)
+def toggle_legend(n_clicks, current_style):
+    if current_style.get("display") == "none":
+        return {**current_style, "display": "block"}
+    return {**current_style, "display": "none"}
+
 
 @callback(
     Output("markers", "children"),
     Output("last-update", "children"),
     Output("map", "bounds"),
     Output("cve-panel", "children"),
+    Output("cve-badge", "children"),
     Output("cve-detail-panel", "children"),
     Output("ransomware-panel", "children"),
+    Output("ransomware-badge", "children"),
     Output("social-panel", "children"),
+    Output("social-badge", "children"),
+    Output("global-counters", "children"),
+    Output("service-indicators", "children"),
     Input("interval", "n_intervals"),
 )
 def update_dashboard(n):
@@ -169,14 +243,37 @@ def update_dashboard(n):
         resp = requests.get(VULN_URL, timeout=5)
         vuln_data = resp.json()
         vuln_sites = vuln_data.get("sites", [])
+        vuln_last_run = vuln_data.get("last_run", "")[:19].replace("T", " ")
     except Exception:
         vuln_sites = []
+        vuln_last_run = "indisponible"
 
-    cve_panel = build_cve_panel(vuln_sites)
+    cve_panel_content, cve_total = build_cve_panel(vuln_sites)
     cve_detail = build_cve_detail_panel(vuln_sites)
+    cve_badge = f"{cve_total} alerte(s)"
 
-    # ── Placeholders services à venir ──
-    ransomware_panel = build_placeholder_panel("Service non disponible")
-    social_panel = build_placeholder_panel("Service non disponible")
+    # ── Placeholders ──
+    placeholder = html.Span("Service non disponible", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
+    ransomware_panel = placeholder
+    ransomware_badge = "—"
+    social_panel = placeholder
+    social_badge = "—"
 
-    return markers, f"Mis à jour : {last_run}", bounds, cve_panel, cve_detail, ransomware_panel, social_panel
+    # ── Compteurs globaux ──
+    counters = build_global_counters(watcher_data.get("sites", []), vuln_sites)
+
+    # ── Indicateurs services + timestamps ──
+    indicators = [
+        build_service_indicator("web_watcher", WATCHER_URL),
+        build_service_indicator("vuln_scanner", VULN_URL),
+        html.Span(f"vuln: {vuln_last_run}", style={"color": "#444", "fontFamily": "monospace", "fontSize": "0.72em"}),
+    ]
+
+    return (
+        markers, f"Mis à jour : {last_run}", bounds,
+        cve_panel_content, cve_badge,
+        cve_detail,
+        ransomware_panel, ransomware_badge,
+        social_panel, social_badge,
+        counters, indicators,
+    )
