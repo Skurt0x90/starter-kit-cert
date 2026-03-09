@@ -8,6 +8,7 @@ services:
       - "8050:8050"
     environment:
       - WATCHER_URL=http://web_watcher:5001/api/data
+      - VULN_URL=http://vuln_scanner:5002/api/data
     restart: unless-stopped
     networks:
       - cert-net
