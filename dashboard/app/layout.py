@@ -9,14 +9,14 @@ def service_panel(title, list_id, badge_id, color_header="#c0392b"):
             "backgroundColor": "#1a1b1e",
             "border": "1px solid #2a2d35",
             "borderRadius": "8px",
-            "marginBottom": "12px",
+            "marginBottom": "10px",
             "overflow": "hidden",
         },
         children=[
             dmc.Box(
                 style={
                     "backgroundColor": color_header,
-                    "padding": "8px 14px",
+                    "padding": "6px 14px",
                     "display": "flex",
                     "justifyContent": "space-between",
                     "alignItems": "center",
@@ -36,12 +36,30 @@ def service_panel(title, list_id, badge_id, color_header="#c0392b"):
             dmc.Box(
                 style={
                     "padding": "8px",
-                    "maxHeight": "180px",
+                    "maxHeight": "150px",
                     "overflowY": "auto",
                 },
                 children=[html.Div(id=list_id)],
             ),
         ]
+    )
+
+
+def tab_button(label, btn_id, active=False):
+    return html.Button(
+        label,
+        id=btn_id,
+        n_clicks=0,
+        style={
+            "fontFamily": "monospace",
+            "fontSize": "0.78em",
+            "cursor": "pointer",
+            "padding": "4px 12px",
+            "border": "none",
+            "borderRadius": "4px",
+            "backgroundColor": "#2a2d35" if active else "transparent",
+            "color": "#00d4ff" if active else "#555",
+        }
     )
 
 
@@ -62,7 +80,7 @@ def create_layout():
                     dmc.Box(
                         style={
                             "borderBottom": "1px solid #2a2d35",
-                            "padding": "12px 24px",
+                            "padding": "10px 24px",
                             "display": "flex",
                             "justifyContent": "space-between",
                             "alignItems": "center",
@@ -74,7 +92,7 @@ def create_layout():
                                 size="xl", fw=700, c="cyan",
                                 style={"letterSpacing": "0.1em", "fontFamily": "monospace"},
                             ),
-                            html.Div(id="global-counters", style={"display": "flex", "gap": "12px", "alignItems": "center"}),
+                            html.Div(id="global-counters", style={"display": "flex", "gap": "10px", "alignItems": "center"}),
                             html.Div(id="service-indicators", style={"display": "flex", "gap": "16px", "alignItems": "center"}),
                             html.Span(
                                 id="last-update",
@@ -95,13 +113,13 @@ def create_layout():
                         style={
                             "display": "flex",
                             "flexDirection": "row",
-                            "padding": "20px",
+                            "padding": "16px 20px 8px 20px",
                             "gap": "16px",
                             "flex": "1",
                         },
                         children=[
 
-                            # Carte
+                            # ── Carte ──
                             dmc.Box(
                                 style={"width": "75%", "position": "relative"},
                                 children=[
@@ -110,7 +128,7 @@ def create_layout():
                                         center=[48.0, 10.0],
                                         zoom=4,
                                         style={
-                                            "height": "calc(100vh - 250px)",
+                                            "height": "calc(100vh - 280px)",
                                             "width": "100%",
                                             "borderRadius": "8px",
                                             "border": "1px solid #2a2d35",
@@ -124,7 +142,7 @@ def create_layout():
                                         ],
                                     ),
 
-                                    # Bouton légende flottant
+                                    # Bouton légende
                                     html.Div(
                                         id="legend-btn",
                                         n_clicks=0,
@@ -145,7 +163,7 @@ def create_layout():
                                         children="⬤ Légende",
                                     ),
 
-                                    # Légende (toggle)
+                                    # Légende toggle
                                     html.Div(
                                         id="legend-box",
                                         style={
@@ -177,11 +195,71 @@ def create_layout():
                                 ]
                             ),
 
-                            # Panels droite
+                            # ── Panels droite ──
                             dmc.Box(
-                                style={"width": "25%", "display": "flex", "flexDirection": "column"},
+                                style={"width": "25%", "display": "flex", "flexDirection": "column", "overflowY": "auto", "maxHeight": "calc(100vh - 280px)"},
                                 children=[
-                                    service_panel("🔍 Vuln Scanner", "cve-panel", "cve-badge", "#c0392b"),
+                                    # Vuln Scanner — 3 sous-sections
+                                    dmc.Box(
+                                        style={
+                                            "backgroundColor": "#1a1b1e",
+                                            "border": "1px solid #2a2d35",
+                                            "borderRadius": "8px",
+                                            "marginBottom": "10px",
+                                            "overflow": "hidden",
+                                        },
+                                        children=[
+                                            dmc.Box(
+                                                style={"backgroundColor": "#922b21", "padding": "6px 14px"},
+                                                children=[
+                                                    dmc.Text("🔍 Vuln Scanner", size="sm", fw=700, c="white", style={"fontFamily": "monospace"}),
+                                                ]
+                                            ),
+                                            # CVE
+                                            dmc.Box(
+                                                style={"padding": "6px 10px", "borderBottom": "1px solid #2a2d35"},
+                                                children=[
+                                                    html.Div(
+                                                        style={"display": "flex", "justifyContent": "space-between", "marginBottom": "5px"},
+                                                        children=[
+                                                            html.Span("CVE", style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.75em", "textTransform": "uppercase", "letterSpacing": "0.05em"}),
+                                                            html.Span(id="cve-badge", style={"color": "#c0392b", "fontFamily": "monospace", "fontSize": "0.72em"}),
+                                                        ]
+                                                    ),
+                                                    html.Div(id="cve-panel", style={"maxHeight": "120px", "overflowY": "auto"}),
+                                                ]
+                                            ),
+                                            # Sous-domaines
+                                            dmc.Box(
+                                                style={"padding": "6px 10px", "borderBottom": "1px solid #2a2d35"},
+                                                children=[
+                                                    html.Div(
+                                                        style={"display": "flex", "justifyContent": "space-between", "marginBottom": "5px"},
+                                                        children=[
+                                                            html.Span("Sous-domaines actifs", style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.75em", "textTransform": "uppercase", "letterSpacing": "0.05em"}),
+                                                            html.Span(id="subdomain-badge", style={"color": "#2980b9", "fontFamily": "monospace", "fontSize": "0.72em"}),
+                                                        ]
+                                                    ),
+                                                    html.Div(id="subdomain-panel", style={"maxHeight": "120px", "overflowY": "auto"}),
+                                                ]
+                                            ),
+                                            # Typosquatting
+                                            dmc.Box(
+                                                style={"padding": "6px 10px"},
+                                                children=[
+                                                    html.Div(
+                                                        style={"display": "flex", "justifyContent": "space-between", "marginBottom": "5px"},
+                                                        children=[
+                                                            html.Span("Typosquatting", style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.75em", "textTransform": "uppercase", "letterSpacing": "0.05em"}),
+                                                            html.Span(id="typosquat-badge", style={"color": "#e74c3c", "fontFamily": "monospace", "fontSize": "0.72em"}),
+                                                        ]
+                                                    ),
+                                                    html.Div(id="typosquat-panel", style={"maxHeight": "120px", "overflowY": "auto"}),
+                                                ]
+                                            ),
+                                        ]
+                                    ),
+
                                     service_panel("🦠 Ransomware Monitor", "ransomware-panel", "ransomware-badge", "#6c3483"),
                                     service_panel("📡 Social Monitor", "social-panel", "social-badge", "#1a5276"),
                                 ],
@@ -189,7 +267,7 @@ def create_layout():
                         ]
                     ),
 
-                    # ── Panel bas — détail CVE ───────────────────────────────
+                    # ── Panel bas avec onglets ───────────────────────────────
                     dmc.Box(
                         style={
                             "margin": "0 20px 20px 20px",
@@ -198,20 +276,35 @@ def create_layout():
                             "overflow": "hidden",
                         },
                         children=[
+                            # Header avec onglets
                             dmc.Box(
-                                style={"backgroundColor": "#141517", "padding": "8px 14px"},
+                                style={
+                                    "backgroundColor": "#141517",
+                                    "padding": "6px 14px",
+                                    "display": "flex",
+                                    "alignItems": "center",
+                                    "gap": "4px",
+                                    "borderBottom": "1px solid #2a2d35",
+                                },
                                 children=[
-                                    dmc.Text("Détail des alertes CVE", size="sm", fw=700, c="cyan", style={"fontFamily": "monospace"}),
+                                    dmc.Text("Détail", size="sm", fw=700, c="cyan", style={"fontFamily": "monospace", "marginRight": "12px"}),
+                                    tab_button("CVE", "tab-btn-cve", active=True),
+                                    tab_button("DNS / SPF / DMARC", "tab-btn-dns"),
+                                    tab_button("Sous-domaines & Typosquatting", "tab-btn-subdomains"),
                                 ]
                             ),
                             dmc.Box(
                                 style={
-                                    "padding": "12px",
                                     "maxHeight": "200px",
                                     "overflowY": "auto",
                                     "backgroundColor": "#1a1b1e",
+                                    "padding": "10px 12px",
                                 },
-                                children=[html.Div(id="cve-detail-panel")],
+                                children=[
+                                    html.Div(id="tab-cve", style={"display": "block"}, children=[html.Div(id="tab-cve-content")]),
+                                    html.Div(id="tab-dns", style={"display": "none"}, children=[html.Div(id="tab-dns-content")]),
+                                    html.Div(id="tab-subdomains", style={"display": "none"}, children=[html.Div(id="tab-subdomains-content")]),
+                                ]
                             ),
                         ]
                     ),

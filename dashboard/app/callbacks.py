@@ -1,8 +1,6 @@
 import ast
 import os
 import requests
-from datetime import datetime
-from zoneinfo import ZoneInfo
 from dash import Input, Output, callback, html, State
 import dash_leaflet as dl
 
@@ -73,28 +71,26 @@ def cvss_color(cvss):
 
 
 def build_cve_panel(sites):
-    """Panel droite — nombre d'alertes par domaine."""
+    """Panel droite — résumé CVE par domaine."""
     items = []
     total = 0
     for site in sites:
         domain = site.get("domain", "?")
         cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
-        count = len(cves)
-        if count == 0:
+        if not cves:
             continue
-        total += count
+        total += len(cves)
         critical = sum(1 for c in cves if c.get("cvss") and c["cvss"] > 7)
-        warning = count - critical
+        warning = len(cves) - critical
         items.append(
             html.Div(
                 style={
                     "display": "flex",
                     "justifyContent": "space-between",
                     "alignItems": "center",
-                    "padding": "4px 6px",
+                    "padding": "4px 8px",
                     "marginBottom": "4px",
-                    "borderLeft": "3px solid #c0392b" if critical else "3px solid #e67e22",
-                    "paddingLeft": "8px",
+                    "borderLeft": f"3px solid {'#c0392b' if critical else '#e67e22'}",
                 },
                 children=[
                     html.Span(domain, style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.82em"}),
@@ -106,12 +102,74 @@ def build_cve_panel(sites):
             )
         )
     if not items:
-        return html.Span("Aucune alerte détectée", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
+        return html.Span("Aucune CVE détectée", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
     return items, total
 
 
+
+def build_subdomain_panel(sites):
+    items = []
+    total = 0
+    for site in sites:
+        domain = site.get("domain", "?")
+        subdomains = site.get("subdomains", [])
+        if not subdomains:
+            continue
+        total += len(subdomains)
+        items.append(
+            html.Div(
+                style={
+                    "display": "flex",
+                    "justifyContent": "space-between",
+                    "alignItems": "center",
+                    "padding": "4px 8px",
+                    "marginBottom": "4px",
+                    "borderLeft": "3px solid #2980b9",
+                },
+                children=[
+                    html.Span(domain, style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.82em"}),
+                    html.Span(f"{len(subdomains)}", style={"color": "#5dade2", "fontFamily": "monospace", "fontSize": "0.78em"}),
+                ]
+            )
+        )
+    if not items:
+        return html.Span("Aucun sous-domaine détecté", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
+    return items, total
+
+
+def build_typosquat_panel(sites):
+    items = []
+    total = 0
+    for site in sites:
+        domain = site.get("domain", "?")
+        typos = site.get("typosquatting", [])
+        if not typos:
+            continue
+        total += len(typos)
+        items.append(
+            html.Div(
+                style={
+                    "display": "flex",
+                    "justifyContent": "space-between",
+                    "alignItems": "center",
+                    "padding": "4px 8px",
+                    "marginBottom": "4px",
+                    "borderLeft": "3px solid #c0392b",
+                },
+                children=[
+                    html.Span(domain, style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.82em"}),
+                    html.Span(f"{len(typos)}", style={"color": "#e74c3c", "fontFamily": "monospace", "fontSize": "0.78em"}),
+                ]
+            )
+        )
+    if not items:
+        return html.Span("Aucun typosquat détecté", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
+    return items, total
+
+# ─── Helpers panel bas ────────────────────────────────────────────────────────
+
 def build_cve_detail_panel(sites):
-    """Panel bas — détail complet avec couleur par CVSS."""
+    """Panel bas onglet CVE — détail complet."""
     rows = []
     for site in sites:
         domain = site.get("domain", "?")
@@ -145,8 +203,138 @@ def build_cve_detail_panel(sites):
     return rows
 
 
+def build_dns_detail_panel(sites):
+    """Panel bas onglet DNS — SPF/DMARC par domaine."""
+    rows = []
+    for site in sites:
+        domain = site.get("domain", "?")
+        dns = site.get("dns", {})
+        if not dns:
+            continue
+        checked_at = site.get("checked_at", "")[:19].replace("T", " ")
+
+        spf = dns.get("spf")
+        dmarc = dns.get("dmarc")
+        dmarc_policy = dns.get("dmarc_policy") or "—"
+
+        spf_color = "#44ff88" if spf else "#ff4444"
+        dmarc_color = "#44ff88" if dmarc and dmarc_policy != "none" else "#ff4444" if not dmarc else "#e67e22"
+
+        rows.append(
+            html.Div(
+                style={
+                    "display": "flex",
+                    "gap": "12px",
+                    "padding": "5px 0",
+                    "borderBottom": "1px solid #2a2d35",
+                    "alignItems": "center",
+                },
+                children=[
+                    html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "160px"}),
+                    html.Span(
+                        "SPF ✓" if spf else "SPF ✗",
+                        style={"color": spf_color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "70px"}
+                    ),
+                    html.Span(
+                        "DMARC ✓" if dmarc else "DMARC ✗",
+                        style={"color": dmarc_color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}
+                    ),
+                    html.Span(
+                        f"p={dmarc_policy}" if dmarc else "—",
+                        style={"color": dmarc_color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}
+                    ),
+                    html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em"}),
+                ]
+            )
+        )
+    if not rows:
+        return html.Span("Aucune donnée DNS", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
+    return rows
+
+
+def build_subdomain_detail_panel(sites):
+    rows = []
+    for site in sites:
+        domain = site.get("domain", "?")
+        subdomains = site.get("subdomains", [])
+        typos = site.get("typosquatting", [])
+        checked_at = site.get("checked_at", "")[:19].replace("T", " ")
+
+        if not subdomains and not typos:
+            continue
+
+        children = [
+            html.Div(
+                style={"display": "flex", "justifyContent": "space-between", "marginBottom": "6px"},
+                children=[
+                    html.Span(domain, style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.85em", "fontWeight": "bold"}),
+                    html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em"}),
+                ]
+            )
+        ]
+
+        if subdomains:
+            children.append(
+                html.Div(
+                    style={"marginBottom": "4px"},
+                    children=[
+                        html.Span("Sous-domaines actifs : ", style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.78em"}),
+                        html.Span(f"{len(subdomains)}", style={"color": "#5dade2", "fontFamily": "monospace", "fontSize": "0.78em"}),
+                    ]
+                )
+            )
+            children.append(
+                html.Div(
+                    [
+                        html.Span(sub, style={
+                            "color": "#5dade2", "fontFamily": "monospace", "fontSize": "0.75em",
+                            "backgroundColor": "#1a2a3a", "padding": "1px 5px",
+                            "borderRadius": "3px", "marginRight": "4px", "marginBottom": "3px",
+                            "display": "inline-block",
+                        })
+                        for sub in subdomains
+                    ],
+                    style={"marginBottom": "6px"}
+                )
+            )
+
+        if typos:
+            children.append(
+                html.Div(
+                    style={"marginBottom": "4px"},
+                    children=[
+                        html.Span("Typosquats détectés : ", style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.78em"}),
+                        html.Span(f"{len(typos)}", style={"color": "#e74c3c", "fontFamily": "monospace", "fontSize": "0.78em"}),
+                    ]
+                )
+            )
+            children.append(
+                html.Div([
+                    html.Span(typo, style={
+                        "color": "#e74c3c", "fontFamily": "monospace", "fontSize": "0.75em",
+                        "backgroundColor": "#2a1a1a", "padding": "1px 5px",
+                        "borderRadius": "3px", "marginRight": "4px", "marginBottom": "3px",
+                        "display": "inline-block",
+                    })
+                    for typo in typos
+                ])
+            )
+
+        rows.append(
+            html.Div(
+                style={"padding": "8px 0", "borderBottom": "1px solid #2a2d35"},
+                children=children
+            )
+        )
+
+    if not rows:
+        return html.Span("Aucune donnée sous-domaines / typosquatting", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
+    return rows
+
+
+# ─── Helpers header ───────────────────────────────────────────────────────────
+
 def build_service_indicator(name, url):
-    """Point vert/rouge selon si le service répond."""
     try:
         r = requests.get(url.replace("/api/data", "/health"), timeout=2)
         ok = r.status_code == 200
@@ -167,6 +355,11 @@ def build_global_counters(watcher_sites, vuln_sites):
         for c in s.get("headers", {}).get("cves", [])
         if c.get("cvss") and c["cvss"] > 7
     )
+    typosquat_total = sum(len(s.get("typosquatting", [])) for s in vuln_sites)
+    dns_issues = sum(
+        1 for s in vuln_sites
+        if not s.get("dns", {}).get("spf") or not s.get("dns", {}).get("dmarc")
+    )
 
     def counter(label, value, color):
         return html.Div([
@@ -183,6 +376,8 @@ def build_global_counters(watcher_sites, vuln_sites):
         counter("OK", sites_ok, "#44ff88"),
         counter("DOWN", sites_down, "#ff4444"),
         counter("CVE critiques", cve_critical, "#c0392b"),
+        counter("typosquats", typosquat_total, "#e74c3c"),
+        counter("DNS ⚠", dns_issues, "#e67e22"),
     ]
 
 
@@ -201,12 +396,55 @@ def toggle_legend(n_clicks, current_style):
 
 
 @callback(
+    Output("tab-cve", "style"),
+    Output("tab-dns", "style"),
+    Output("tab-subdomains", "style"),
+    Output("tab-btn-cve", "style"),
+    Output("tab-btn-dns", "style"),
+    Output("tab-btn-subdomains", "style"),
+    Input("tab-btn-cve", "n_clicks"),
+    Input("tab-btn-dns", "n_clicks"),
+    Input("tab-btn-subdomains", "n_clicks"),
+    prevent_initial_call=False,
+)
+def switch_tab(n_cve, n_dns, n_sub):
+    from dash import ctx
+    triggered = ctx.triggered_id or "tab-btn-cve"
+
+    tab_visible = {"display": "block"}
+    tab_hidden = {"display": "none"}
+
+    btn_active = {
+        "fontFamily": "monospace", "fontSize": "0.78em", "cursor": "pointer",
+        "padding": "4px 12px", "border": "none", "borderRadius": "4px",
+        "backgroundColor": "#2a2d35", "color": "#00d4ff",
+    }
+    btn_inactive = {
+        "fontFamily": "monospace", "fontSize": "0.78em", "cursor": "pointer",
+        "padding": "4px 12px", "border": "none", "borderRadius": "4px",
+        "backgroundColor": "transparent", "color": "#555",
+    }
+
+    if triggered == "tab-btn-dns":
+        return tab_hidden, tab_visible, tab_hidden, btn_inactive, btn_active, btn_inactive
+    if triggered == "tab-btn-subdomains":
+        return tab_hidden, tab_hidden, tab_visible, btn_inactive, btn_inactive, btn_active
+    return tab_visible, tab_hidden, tab_hidden, btn_active, btn_inactive, btn_inactive
+
+
+@callback(
     Output("markers", "children"),
     Output("last-update", "children"),
     Output("map", "bounds"),
     Output("cve-panel", "children"),
     Output("cve-badge", "children"),
-    Output("cve-detail-panel", "children"),
+    Output("subdomain-panel", "children"),
+    Output("subdomain-badge", "children"),
+    Output("typosquat-panel", "children"),
+    Output("typosquat-badge", "children"),
+    Output("tab-cve-content", "children"),
+    Output("tab-dns-content", "children"),
+    Output("tab-subdomains-content", "children"),
     Output("ransomware-panel", "children"),
     Output("ransomware-badge", "children"),
     Output("social-panel", "children"),
@@ -249,20 +487,18 @@ def update_dashboard(n):
         vuln_last_run = "indisponible"
 
     cve_panel_content, cve_total = build_cve_panel(vuln_sites)
-    cve_detail = build_cve_detail_panel(vuln_sites)
-    cve_badge = f"{cve_total} alerte(s)"
+    subdomain_panel_content, subdomain_total = build_subdomain_panel(vuln_sites)
+    typosquat_panel_content, typosquat_total = build_typosquat_panel(vuln_sites)
+
+    tab_cve = build_cve_detail_panel(vuln_sites)
+    tab_dns = build_dns_detail_panel(vuln_sites)
+    tab_sub = build_subdomain_detail_panel(vuln_sites)
 
     # ── Placeholders ──
     placeholder = html.Span("Service non disponible", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
-    ransomware_panel = placeholder
-    ransomware_badge = "—"
-    social_panel = placeholder
-    social_badge = "—"
 
-    # ── Compteurs globaux ──
+    # ── Compteurs + indicateurs ──
     counters = build_global_counters(watcher_data.get("sites", []), vuln_sites)
-
-    # ── Indicateurs services + timestamps ──
     indicators = [
         build_service_indicator("web_watcher", WATCHER_URL),
         build_service_indicator("vuln_scanner", VULN_URL),
@@ -271,9 +507,11 @@ def update_dashboard(n):
 
     return (
         markers, f"Mis à jour : {last_run}", bounds,
-        cve_panel_content, cve_badge,
-        cve_detail,
-        ransomware_panel, ransomware_badge,
-        social_panel, social_badge,
+        cve_panel_content, f"{cve_total} CVE",
+        subdomain_panel_content, f"{subdomain_total} sous-domaines",
+        typosquat_panel_content, f"{typosquat_total} typosquats",
+        tab_cve, tab_dns, tab_sub,
+        placeholder, "—",
+        placeholder, "—",
         counters, indicators,
     )

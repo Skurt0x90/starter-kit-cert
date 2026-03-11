@@ -5,11 +5,14 @@ from datetime import datetime
 from zoneinfo import ZoneInfo
 from vuln_scanner import utils
 from vuln_scanner.cve_lookup import check as cve_check
+from vuln_scanner.subdomain_enum import check as subdomain_check
+from vuln_scanner.dns_check import check as dns_check
+from vuln_scanner.dnstwist import check as dnstwist_check
 
 logger = logging.getLogger(__name__)
 
 
-def build_alerts(domain, cve_result):
+def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_result):
     alerts = []
 
     for cve in cve_result["cves"]:
@@ -28,6 +31,15 @@ def build_alerts(domain, cve_result):
                 "level": "WARNING",
                 "message": f"{cve['id']} (CVSS {cve['cvss']}) sur {cve_result['server']} ({domain})"
             })
+    
+    for subdomain in subdomain_result.get("alerts", []):
+        alerts.append(subdomain)
+
+    for dnsalert in dns_result.get("alerts", []):
+        alerts.append(dnsalert)
+
+    for twist in dnstwist_result.get("alerts", []):
+        alerts.append(twist)
 
     return alerts
 
@@ -58,8 +70,10 @@ def run_cycle():
         logger.info(f"Scan de {domain}")
 
         cve_result = cve_check(domain)
-
-        alerts = build_alerts(domain, cve_result)
+        subdomain_result = subdomain_check(domain)
+        dns_result = dns_check(domain)
+        dnstwist_result = dnstwist_check(domain)
+        alerts = build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_result)
         if alerts:
             alerts_by_domain[domain] = alerts
 
@@ -67,9 +81,9 @@ def run_cycle():
             "domain": domain,
             "scan_mode": target["scan_mode"],
             "headers": cve_result,
-            "subdomains": [],       # subdomain_enum — TODO
-            "dns": {},              # dns_check — TODO
-            "typosquatting": [],    # dnstwist — TODO
+            "subdomains": subdomain_result.get("subdomains", []),
+            "dns": dns_result,
+            "typosquatting": dnstwist_result.get("typosquatting", []),
             "checked_at": now
         })
 
