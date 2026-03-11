@@ -62,10 +62,10 @@ monmembre.fr,2.3522,48.8566,Lyon,active
 - **Dashboard** — centralisation et visualisation des résultats ✅
 - **Vuln Scanner** — surveillance passive de la surface d'attaque des membres 🔧
   - Détection de stack technique exposée dans les headers HTTP (croisement NVD/CVE) ✅
-  - Enumération de sous-domaines via crt.sh
-  - Vérification SPF/DMARC
-  - Détection de typosquatting via dnstwist
-  - Mode `active` prévu pour les membres avec convention (Nuclei, WPScan...)
+  - Enumération de sous-domaines via crt.sh ✅
+  - Vérification SPF/DMARC ✅
+  - Détection de typosquatting via dnstwist ✅
+  - Mode `active` prévu pour les membres avec convention (Nuclei, WPScan...) ❌
 - **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware ❌
 - **Social Monitor** — surveillance des réseaux sociaux et sources OSINT ❌
 

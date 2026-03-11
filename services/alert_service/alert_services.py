@@ -122,7 +122,7 @@ def process_alert(payload):
                 "sent_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat()
             })
             sent += 1
-    logger.info(f"Fin de boucle, alerts_to_send = {alerts_to_send}")
+    logger.info(f"Fin de boucle alert_services")
     if alerts_to_send:
         logger.info(f"alerts_to_send non vide : {len(alerts_to_send)} alertes")
         send_email(alerts_to_send)
