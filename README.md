@@ -85,7 +85,9 @@ DVWA sera accessible sur http://localhost:8888 et ajouté automatiquement dans l
 
 ## Screenshot
 
-![Map](screenshot/V1.png)
+![Map](screenshot/dashboard.png)
+![Detail](screenshot/detail.png)
+![Help](screenshot/help.png)
 
 ---
 
