@@ -68,6 +68,29 @@ def filter_btn(label, btn_id, active=False):
     )
 
 
+def help_section(title, color, children):
+    """Bloc de section dans le modal d'aide."""
+    return html.Div(
+        style={"marginBottom": "20px"},
+        children=[
+            html.Div(
+                title,
+                style={
+                    "color": color, "fontFamily": "monospace", "fontSize": "0.78em",
+                    "textTransform": "uppercase", "letterSpacing": "0.08em",
+                    "borderBottom": f"1px solid {color}44", "paddingBottom": "4px",
+                    "marginBottom": "8px",
+                }
+            ),
+            *children,
+        ]
+    )
+
+
+def help_line(text, color="#aaa"):
+    return html.Div(text, style={"color": color, "fontSize": "0.82em", "fontFamily": "monospace", "marginBottom": "4px", "paddingLeft": "8px"})
+
+
 def create_layout():
     return dmc.MantineProvider(
         theme={"colorScheme": "dark"},
@@ -76,7 +99,7 @@ def create_layout():
                 style={"backgroundColor": "#1a1b1e", "minHeight": "100vh", "display": "flex", "flexDirection": "column"},
                 children=[
 
-                    # ── Modal ────────────────────────────────────────────────
+                    # ── Modal domaine ─────────────────────────────────────────
                     html.Div(
                         id="domain-modal",
                         style={"display": "none"},
@@ -116,6 +139,113 @@ def create_layout():
                         ]
                     ),
 
+                    # ── Modal aide (?) ────────────────────────────────────────
+                    html.Div(
+                        id="help-modal",
+                        style={"display": "none"},
+                        children=[
+                            html.Div(
+                                id="help-modal-overlay",
+                                style={
+                                    "position": "fixed", "top": "0", "left": "0",
+                                    "width": "100%", "height": "100%",
+                                    "backgroundColor": "rgba(0,0,0,0.75)", "zIndex": "999",
+                                }
+                            ),
+                            html.Div(
+                                style={
+                                    "position": "fixed", "top": "50%", "left": "50%",
+                                    "transform": "translate(-50%, -50%)",
+                                    "width": "680px", "maxWidth": "90vw", "maxHeight": "85vh",
+                                    "backgroundColor": "#1a1b1e", "border": "1px solid #2a2d35",
+                                    "borderRadius": "10px", "zIndex": "1000",
+                                    "overflow": "hidden", "display": "flex", "flexDirection": "column",
+                                },
+                                children=[
+                                    # Header modal
+                                    html.Div(
+                                        style={
+                                            "backgroundColor": "#141517", "padding": "12px 20px",
+                                            "display": "flex", "justifyContent": "space-between",
+                                            "alignItems": "center", "borderBottom": "1px solid #2a2d35",
+                                        },
+                                        children=[
+                                            html.Span("Documentation & Délais", style={"color": "#00d4ff", "fontFamily": "monospace", "fontWeight": "bold", "fontSize": "1em"}),
+                                            html.Button("✕", id="help-modal-close", n_clicks=0, style={"background": "none", "border": "none", "color": "#888", "fontSize": "1.2em", "cursor": "pointer"}),
+                                        ]
+                                    ),
+                                    # Corps modal
+                                    html.Div(
+                                        style={"overflowY": "auto", "padding": "20px 24px", "flex": "1"},
+                                        children=[
+
+                                            # Section 1 — Sous-domaines
+                                            help_section("⚠ Risques — Sous-domaines actifs", "#2980b9", [
+                                                help_line("Un sous-domaine actif et oublié est une surface d'attaque non surveillée."),
+                                                help_line("Exemples de risques :"),
+                                                help_line("→  Sous-domaine pointant vers un service tiers désactivé (subdomain takeover)", "#e67e22"),
+                                                help_line("→  Environnement de dev/staging exposé publiquement sans authentification", "#e67e22"),
+                                                help_line("→  Ancien service non patché toujours résolvable via DNS", "#e67e22"),
+                                                help_line("→  Absence de certificat SSL sur un sous-domaine actif", "#e67e22"),
+                                                help_line("Action recommandée : vérifier la légitimité de chaque sous-domaine détecté et supprimer les entrées DNS orphelines."),
+                                            ]),
+
+                                            # Section 2 — DNS / SPF / DMARC
+                                            help_section("⚠ Risques — DNS / SPF / DMARC", "#e67e22", [
+                                                help_line("Une mauvaise configuration DNS expose les membres aux attaques par usurpation d'identité."),
+                                                html.Div(style={"marginBottom": "6px", "marginTop": "6px"}, children=[
+                                                    html.Div(style={"display": "flex", "gap": "8px", "marginBottom": "4px", "paddingLeft": "8px"}, children=[
+                                                        html.Span("SPF absent", style={"color": "#ff4444", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "120px"}),
+                                                        html.Span("→ n'importe qui peut envoyer des emails au nom du domaine", style={"color": "#aaa", "fontSize": "0.8em", "fontFamily": "monospace"}),
+                                                    ]),
+                                                    html.Div(style={"display": "flex", "gap": "8px", "marginBottom": "4px", "paddingLeft": "8px"}, children=[
+                                                        html.Span("DMARC absent", style={"color": "#ff4444", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "120px"}),
+                                                        html.Span("→ aucune politique de rejet, phishing facilité", style={"color": "#aaa", "fontSize": "0.8em", "fontFamily": "monospace"}),
+                                                    ]),
+                                                    html.Div(style={"display": "flex", "gap": "8px", "marginBottom": "4px", "paddingLeft": "8px"}, children=[
+                                                        html.Span("DMARC p=none", style={"color": "#e67e22", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "120px"}),
+                                                        html.Span("→ monitoring uniquement, aucun email illégitime bloqué", style={"color": "#aaa", "fontSize": "0.8em", "fontFamily": "monospace"}),
+                                                    ]),
+                                                    html.Div(style={"display": "flex", "gap": "8px", "paddingLeft": "8px"}, children=[
+                                                        html.Span("DKIM absent", style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "120px"}),
+                                                        html.Span("→ non vérifié (sélecteur inconnu en mode passif)", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}),
+                                                    ]),
+                                                ]),
+                                                help_line("Action recommandée : viser SPF strict + DMARC p=quarantine ou p=reject."),
+                                            ]),
+
+                                            # Section 3 — Délais
+                                            help_section("🕐 Délais de rafraîchissement", "#44ff88", [
+                                                html.Div(id="help-delays-content"),
+                                            ]),
+
+                                            # Section 4 — Licence / auteur
+                                            help_section("ℹ️ À propos", "#888", [
+                                                html.Div(
+                                                    style={"paddingLeft": "8px", "fontFamily": "monospace", "fontSize": "0.8em", "color": "#888"},
+                                                    children=[
+                                                        html.Span("Starter Kit CERT Aviation — "),
+                                                        html.Span("MIT License — "),
+                                                        html.Span("Développé par "),
+                                                        html.Span("Skurt0x90", style={"color": "#00d4ff"}),
+                                                        html.Span(" — Inspiré de MISC N°142 (David LE GOFF & Marion BUCHET) — "),
+                                                        html.A(
+                                                            "github.com/Skurt0x90/starter-kit-cert",
+                                                            href="https://github.com/Skurt0x90/starter-kit-cert",
+                                                            target="_blank",
+                                                            style={"color": "#00d4ff", "textDecoration": "none"},
+                                                        ),
+                                                    ]
+                                                ),
+                                            ]),
+
+                                        ]
+                                    ),
+                                ]
+                            ),
+                        ]
+                    ),
+
                     # ── Header ───────────────────────────────────────────────
                     dmc.Box(
                         style={
@@ -127,7 +257,25 @@ def create_layout():
                             dmc.Text("CERT - Skurt0x90", size="xl", fw=700, c="cyan", style={"letterSpacing": "0.1em", "fontFamily": "monospace"}),
                             html.Div(id="global-counters", style={"display": "flex", "gap": "10px", "alignItems": "center"}),
                             html.Div(id="service-indicators", style={"display": "flex", "gap": "16px", "alignItems": "center"}),
-                            html.Span(id="last-update", style={"fontSize": "0.75rem", "color": "#888", "fontFamily": "monospace", "border": "1px solid #2a2d35", "padding": "2px 8px", "borderRadius": "4px"}),
+                            html.Div(
+                                style={"display": "flex", "gap": "8px", "alignItems": "center"},
+                                children=[
+                                    html.Span(id="last-update", style={"fontSize": "0.75rem", "color": "#888", "fontFamily": "monospace", "border": "1px solid #2a2d35", "padding": "2px 8px", "borderRadius": "4px"}),
+                                    html.Button(
+                                        "?",
+                                        id="help-btn",
+                                        n_clicks=0,
+                                        title="Documentation & délais",
+                                        style={
+                                            "fontFamily": "monospace", "fontSize": "0.82em", "fontWeight": "bold",
+                                            "cursor": "pointer", "padding": "2px 9px",
+                                            "border": "1px solid #2a2d35", "borderRadius": "50%",
+                                            "backgroundColor": "transparent", "color": "#00d4ff",
+                                            "lineHeight": "1.4",
+                                        }
+                                    ),
+                                ]
+                            ),
                         ],
                     ),
 

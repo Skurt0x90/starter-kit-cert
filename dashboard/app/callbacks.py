@@ -7,6 +7,12 @@ import dash_leaflet as dl
 WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
 VULN_URL = os.getenv("VULN_URL", "http://localhost:5002/api/data")
 
+# Délais lus depuis les variables d'environnement
+WATCHER_INTERVAL_MIN = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", os.getenv("WEB_WATCHER_INTERVAL", 15)))
+VULN_INTERVAL_H = int(os.getenv("SCHEDULE_INTERVAL_HOURS", os.getenv("VULN_SCANNER_INTERVAL", 24)))
+DASHBOARD_REFRESH_SEC = 60
+DEDUP_WINDOW_MIN = int(os.getenv("DEDUP_WINDOW_MINUTES", 30))
+
 
 # ─── Helpers carte ────────────────────────────────────────────────────────────
 
@@ -254,7 +260,7 @@ def build_subdomain_detail_panel(sites, filtre="all"):
     return rows
 
 
-# ─── Modal ────────────────────────────────────────────────────────────────────
+# ─── Modal domaine ────────────────────────────────────────────────────────────
 
 def build_modal_body(domain, vuln_sites):
     site = next((s for s in vuln_sites if s.get("domain") == domain), None)
@@ -270,7 +276,6 @@ def build_modal_body(domain, vuln_sites):
 
     sections = []
 
-    # Infos générales
     sections.append(html.Div(
         style={"marginBottom": "16px", "padding": "10px", "backgroundColor": "#141517", "borderRadius": "6px"},
         children=[
@@ -279,7 +284,6 @@ def build_modal_body(domain, vuln_sites):
         ]
     ))
 
-    # CVE
     if cves:
         sections.append(html.Div("CVE", style={"color": "#c0392b", "fontFamily": "monospace", "fontSize": "0.78em", "textTransform": "uppercase", "letterSpacing": "0.05em", "marginBottom": "6px"}))
         for cve in cves:
@@ -295,7 +299,6 @@ def build_modal_body(domain, vuln_sites):
             ))
         sections.append(html.Div(style={"marginBottom": "14px"}))
 
-    # DNS
     if dns:
         spf = dns.get("spf")
         dmarc = dns.get("dmarc")
@@ -312,12 +315,10 @@ def build_modal_body(domain, vuln_sites):
             ]
         ))
 
-    # Sous-domaines
     if subdomains:
         sections.append(html.Div(f"Sous-domaines actifs ({len(subdomains)})", style={"color": "#2980b9", "fontFamily": "monospace", "fontSize": "0.78em", "textTransform": "uppercase", "letterSpacing": "0.05em", "marginBottom": "6px"}))
         sections.append(html.Div([html.Span(sub, style=tag_style("#5dade2", "#1a2a3a")) for sub in sorted(subdomains)], style={"marginBottom": "14px"}))
 
-    # Typosquats
     if typos:
         sections.append(html.Div(f"Typosquats détectés ({len(typos)})", style={"color": "#e74c3c", "fontFamily": "monospace", "fontSize": "0.78em", "textTransform": "uppercase", "letterSpacing": "0.05em", "marginBottom": "6px"}))
         sections.append(html.Div([html.Span(typo, style=tag_style("#e74c3c", "#2a1a1a")) for typo in sorted(typos)], style={"marginBottom": "14px"}))
@@ -362,6 +363,30 @@ def build_global_counters(watcher_sites, vuln_sites):
     ]
 
 
+# ─── Helper délais pour le modal aide ────────────────────────────────────────
+
+def build_delays_content():
+    def delay_row(label, value, color="#44ff88", note=None):
+        children = [
+            html.Span(label, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "220px"}),
+            html.Span(value, style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "80px"}),
+        ]
+        if note:
+            children.append(html.Span(note, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em"}))
+        return html.Div(children, style={"display": "flex", "gap": "12px", "paddingLeft": "8px", "marginBottom": "5px", "alignItems": "center"})
+
+    return [
+        delay_row("Dashboard — rafraîchissement", f"{DASHBOARD_REFRESH_SEC}s"),
+        delay_row("Web Watcher — cycle de scan", f"{WATCHER_INTERVAL_MIN} min", note="disponibilité, SSL, défacement"),
+        delay_row("Vuln Scanner — cycle de scan", f"{VULN_INTERVAL_H}h", note="CVE, DNS, sous-domaines, typosquats"),
+        delay_row("Alert service — déduplication", f"{DEDUP_WINDOW_MIN} min", "#e67e22", note="fenêtre glissante anti-doublon"),
+        html.Div(
+            "Les délais sont configurables via les variables d'environnement du .env",
+            style={"color": "#444", "fontFamily": "monospace", "fontSize": "0.75em", "paddingLeft": "8px", "marginTop": "6px"}
+        ),
+    ]
+
+
 # ─── Callbacks ────────────────────────────────────────────────────────────────
 
 @callback(
@@ -374,6 +399,22 @@ def toggle_legend(n_clicks, current_style):
     if current_style.get("display") == "none":
         return {**current_style, "display": "block"}
     return {**current_style, "display": "none"}
+
+
+@callback(
+    Output("help-modal", "style"),
+    Output("help-delays-content", "children"),
+    Input("help-btn", "n_clicks"),
+    Input("help-modal-close", "n_clicks"),
+    Input("help-modal-overlay", "n_clicks"),
+    prevent_initial_call=True,
+)
+def toggle_help_modal(n_open, n_close, n_overlay):
+    visible = {"display": "block"}
+    hidden = {"display": "none"}
+    if ctx.triggered_id == "help-btn":
+        return visible, build_delays_content()
+    return hidden, []
 
 
 @callback(
