@@ -19,6 +19,7 @@ def get_html_content(domain):
     url = f"https://{domain}"
     try:
         response = requests.get(url, headers=utils.HEADERS, timeout=utils.REQUEST_TIMEOUT, allow_redirects=True)
+        response.encoding = response.apparent_encoding
         return response.text
     except requests.exceptions.RequestException as e:
         logger.error(f"[{domain}] Erreur requête : {e}")
@@ -26,13 +27,15 @@ def get_html_content(domain):
 
 def normalize_title(t):
     t = unescape(t or "")
-    t = unicodedata.normalize("NFKC", t)  # normalise les variantes Unicode
+    t = unicodedata.normalize("NFKC", t)
+    t = t.replace("\u2019", "'").replace("\u2018", "'")  # apostrophes typographiques
     return t.strip()
 
 def is_title_changed(content, title):
     soup = BeautifulSoup(content, 'html.parser')
     soup_title = soup.head.title.get_text() if soup.head and soup.head.title else ""
-    logging.info(f"[TITLE] stored={repr(normalize_title(title))} fetched={repr(normalize_title(soup_title))}")
+    if not normalize_title(soup_title):
+        return False
     return normalize_title(title) != normalize_title(soup_title)
 
 
@@ -63,7 +66,7 @@ def compute_category_bonus(categories_triggered):
     return 0
 
 
-def process_defacement_scoring(content): 
+def process_defacement_scoring(content, domain="?"):
     text = content.lower()
     score = 0
     categories_triggered = 0
@@ -72,14 +75,12 @@ def process_defacement_scoring(content):
     medium_hits, medium_score = count_keyword_hits(text, utils.MEDIUM_CONFIDENCE, weight=2)
     tech_hits, tech_score = count_keyword_hits(text, utils.TECHNICAL_INDICATORS, weight=4)
 
-    score += high_score + medium_score + tech_score
-
     if high_hits:
-        categories_triggered += 1
+        matched = [kw for kw in utils.HIGH_CONFIDENCE if kw in text]
     if medium_hits:
-        categories_triggered += 1
+        matched = [kw for kw in utils.MEDIUM_CONFIDENCE if kw in text]
     if tech_hits:
-        categories_triggered += 1
+        matched = [kw for kw in utils.TECHNICAL_INDICATORS if kw in text]
 
     score += compute_category_bonus(categories_triggered)
     score += compute_density_bonus(high_hits + medium_hits + tech_hits, len(text))
@@ -101,7 +102,7 @@ def probability_site_defaced(domain, title):
     content = get_html_content(domain)
     score = 0
     if content:
-        score = process_defacement_scoring(content)
+        score = process_defacement_scoring(content, domain=domain)
         if is_title_changed(content, title):
             score += 5
         return interprete_scoring(score)
