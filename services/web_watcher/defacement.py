@@ -5,11 +5,13 @@ import contextlib
 import socket
 import ssl
 import re
+import unicodedata
 from web_watcher import utils
 from datetime import datetime, timezone, date
 from zoneinfo import ZoneInfo
 from pathlib import Path
 from bs4 import BeautifulSoup
+from html import unescape
 
 logger = logging.getLogger(__name__)
 
@@ -22,13 +24,16 @@ def get_html_content(domain):
         logger.error(f"[{domain}] Erreur requête : {e}")
         return None
 
+def normalize_title(t):
+    t = unescape(t or "")
+    t = unicodedata.normalize("NFKC", t)  # normalise les variantes Unicode
+    return t.strip()
 
 def is_title_changed(content, title):
     soup = BeautifulSoup(content, 'html.parser')
-    soup_title = soup.head.title.string if soup.head and soup.head.title else None
-    soup_title = soup_title or ""
-
-    return title != soup_title
+    soup_title = soup.head.title.get_text() if soup.head and soup.head.title else ""
+    logging.info(f"[TITLE] stored={repr(normalize_title(title))} fetched={repr(normalize_title(soup_title))}")
+    return normalize_title(title) != normalize_title(soup_title)
 
 
 ## score 0-4 normal, 5-9 suspect, 10+ très suspect
