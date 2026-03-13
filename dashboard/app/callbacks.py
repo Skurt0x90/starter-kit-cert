@@ -35,10 +35,22 @@ def parse_localisation(loc_str):
         return None, None
 
 
-def build_marker(site):
+# Positions spiral pour séparer les domaines aux coordonnées identiques
+_SPIRAL_OFFSETS = [
+    (0, 0),
+    (0.012, 0), (-0.012, 0),
+    (0, 0.018), (0, -0.018),
+    (0.009, 0.013), (-0.009, 0.013),
+    (0.009, -0.013), (-0.009, -0.013),
+]
+
+
+def build_marker(site, coord_offset=(0, 0)):
     lat, lon = parse_localisation(site.get("localisation", ""))
     if lat is None:
         return None
+    lat += coord_offset[0]
+    lon += coord_offset[1]
     color = get_marker_color(site)
     domain = site.get("domain", "?")
     site_up = "✅ En ligne" if site.get("site_up") else "❌ Hors ligne"
@@ -574,14 +586,21 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     except Exception:
         watcher_data = {"sites": []}
 
+    # Décalage spiral : sépare les domaines aux coordonnées identiques
+    coord_counts = {}
     for site in watcher_data.get("sites", []):
-        m = build_marker(site)
+        lat, lon = parse_localisation(site.get("localisation", ""))
+        if lat is None:
+            continue
+        key = (round(lat, 4), round(lon, 4))
+        idx = coord_counts.get(key, 0)
+        coord_counts[key] = idx + 1
+        offset = _SPIRAL_OFFSETS[idx] if idx < len(_SPIRAL_OFFSETS) else (idx * 0.008, 0)
+        m = build_marker(site, coord_offset=offset)
         if m:
             markers.append(m)
-        lat, lon = parse_localisation(site.get("localisation", ""))
-        if lat:
-            lats.append(lat)
-            lons.append(lon)
+        lats.append(lat)
+        lons.append(lon)
 
     last_run = watcher_data.get("last_run", "")[:19].replace("T", " ")
     bounds = [[min(lats) - 1, min(lons) - 1], [max(lats) + 1, max(lons) + 1]] if lats else None
