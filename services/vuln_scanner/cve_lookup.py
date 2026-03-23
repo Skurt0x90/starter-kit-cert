@@ -8,18 +8,25 @@ logger = logging.getLogger(__name__)
 
 
 
-def get_stack_nmap(domain):
+def get_stack_nmap(domain: str) -> list[dict]:
     nm = nmap.PortScanner()
     nm.scan(domain, arguments="-sV -T4")
+    
+    # nmap indexe par IP résolue, pas par hostname
+    host = nm.all_hosts()[0] if nm.all_hosts() else None
+    if not host:
+        return []
+    
     ports = []
-    for port, data in nm[domain]["tcp"].items():
+    for port, data in nm[host]["tcp"].items():
         if data["state"] != "open":
             continue
         banner = f"{data['product']} {data['version']}".strip()
         ports.append({
             "port": port,
             "service": data["name"],
-            "version": banner,
+            "product": data["product"],
+            "version": data["version"],
         })
     return ports
 
@@ -122,8 +129,7 @@ def check(domain, scan_mode="passive"):
         try:
             ports = get_stack_nmap(domain)
             for p in ports:
-                name, version = parse_stack(p["version"])
-                p["cves"] = lookup_cves(name, version) if name and version else []
+                p["cves"] = lookup_cves(p["product"], p["version"]) if p["product"] and p["version"] else []
             result["ports"] = ports
         except Exception as e:
             logger.warning("nmap scan failed for %s: %s", domain, e)

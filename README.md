@@ -65,7 +65,7 @@ monmembre.fr,2.3522,48.8566,Lyon,active
   - Enumération de sous-domaines via crt.sh ✅
   - Vérification SPF/DMARC ✅
   - Détection de typosquatting via dnstwist ✅
-  - Mode `active` prévu pour les membres avec convention (Nuclei, WPScan...) ❌
+  - Mode `active` prévu pour les membres avec convention (Scan NMAP actif) ✅
 - **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware ❌
 - **Social Monitor** — surveillance des réseaux sociaux et sources OSINT ❌
 
