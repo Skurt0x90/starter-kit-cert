@@ -1,4 +1,5 @@
 import os
+import csv
 
 SCHEDULE_INTERVAL_MINUTES = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", 1))
 
@@ -29,16 +30,23 @@ HEADERS = {
 
 def load_domains(filepath):
     domains_to_check = []
-    with open(filepath) as f:
-        for line in f:
-            line = line.strip()
-            if not line or line.startswith("#"):
+    with open(filepath, newline='') as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if not row or row[0].startswith("#"):
                 continue
-            domain, lon, lat, label, *rest = line.split(",")
+            domain, lon, lat, label, *rest = row
             scan_mode = rest[0].strip() if rest else "passive"
-            domains_to_check.append({"domain": domain.strip(), "longitude": float(lon), "latitude": float(lat), "label": label.strip(), "scan_mode": scan_mode.strip()})
+            title = rest[1].strip() if len(rest) > 1 else ""
+            domains_to_check.append({
+                "domain": domain.strip(),
+                "longitude": float(lon),
+                "latitude": float(lat),
+                "label": label.strip(),
+                "scan_mode": scan_mode.strip(),
+                "title": title,
+            })
     return domains_to_check
-
 
 
 HIGH_CONFIDENCE = [
