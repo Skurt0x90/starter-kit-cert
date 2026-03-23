@@ -1,9 +1,28 @@
 import requests
 import logging
 import time
+import nmap
 from vuln_scanner import utils
 
 logger = logging.getLogger(__name__)
+
+
+
+def get_stack_nmap(domain):
+    nm = nmap.PortScanner()
+    nm.scan(domain, arguments="-sV -T4")
+    ports = []
+    for port, data in nm[domain]["tcp"].items():
+        if data["state"] != "open":
+            continue
+        banner = f"{data['product']} {data['version']}".strip()
+        ports.append({
+            "port": port,
+            "service": data["name"],
+            "version": banner,
+        })
+    return ports
+
 
 def get_stack(domain):
     url = f"http://{domain}"
@@ -76,22 +95,37 @@ def extract_cvss(metrics):
             return entries[0]["cvssData"]["baseScore"]
     return None
 
-def check(domain):
+def check(domain, scan_mode="passive"):
+    logger.info(f"SCAN MODE={scan_mode}")
+    result = {"server": None, "x_powered_by": None, "cves": [], "ports": []}
+
+    # passif — headers HTTP
     stack = get_stack(domain)
-    result = {"server": None, "x_powered_by": None, "cves": []}
+    result["server"] = stack["server"]
+    result["x_powered_by"] = stack["x_powered_by"]
 
     name, version = parse_stack(stack["server"])
-    result["server"] = stack["server"]
     if name and not version:
         result["cves"].append({"id": None, "cvss": None, "description": f"Version masquée pour {name}"})
     elif name and version:
         result["cves"].extend(lookup_cves(name, version))
 
     name, version = parse_stack(stack["x_powered_by"])
-    result["x_powered_by"] = stack["x_powered_by"]
     if name and not version:
         result["cves"].append({"id": None, "cvss": None, "description": f"Version masquée pour {name}"})
     elif name and version:
         result["cves"].extend(lookup_cves(name, version))
+
+    # actif — nmap
+    if scan_mode == "active":
+        logger.info("ACTIVE MODE")
+        try:
+            ports = get_stack_nmap(domain)
+            for p in ports:
+                name, version = parse_stack(p["version"])
+                p["cves"] = lookup_cves(name, version) if name and version else []
+            result["ports"] = ports
+        except Exception as e:
+            logger.warning("nmap scan failed for %s: %s", domain, e)
 
     return result

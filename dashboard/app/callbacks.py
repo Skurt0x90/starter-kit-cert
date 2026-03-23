@@ -35,10 +35,12 @@ def parse_localisation(loc_str):
         return None, None
 
 
-def build_marker(site):
+def build_marker(site, coord_offset=(0, 0)):
     lat, lon = parse_localisation(site.get("localisation", ""))
     if lat is None:
         return None
+    lat += coord_offset[0]
+    lon += coord_offset[1]
     color = get_marker_color(site)
     domain = site.get("domain", "?")
     site_up = "✅ En ligne" if site.get("site_up") else "❌ Hors ligne"
@@ -56,6 +58,7 @@ def build_marker(site):
         html.Span(f"Vérifié à : {checked_at}", style={"color": "#888", "fontSize": "0.8em"}),
     ]))
     return dl.CircleMarker(center=[lat, lon], radius=10, color=color, fillColor=color, fillOpacity=0.8, children=[tooltip, popup])
+ 
 
 
 # ─── Styles communs ───────────────────────────────────────────────────────────

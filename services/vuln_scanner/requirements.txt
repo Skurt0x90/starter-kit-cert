@@ -3,3 +3,4 @@ apscheduler
 requests
 dnspython
 dnstwist
+python-nmap
