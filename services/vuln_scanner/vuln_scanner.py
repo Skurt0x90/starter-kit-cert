@@ -11,6 +11,15 @@ from vuln_scanner.dnstwist import check as dnstwist_check
 
 logger = logging.getLogger(__name__)
 
+SENSITIVE_PORTS = {
+    21: "FTP",
+    23: "Telnet",
+    445: "SMB",
+    3389: "RDP",
+    1433: "MSSQL",
+    3306: "MySQL",
+    5432: "PostgreSQL",
+}
 
 def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_result):
     alerts = []
@@ -32,6 +41,22 @@ def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_resu
                 "message": f"{cve['id']} (CVSS {cve['cvss']}) sur {cve_result['server']} ({domain})"
             })
     
+    for port in cve_result.get("ports", []):
+        # alerte ports sensibles
+        if port["port"] in SENSITIVE_PORTS:
+            alerts.append({
+                "level": "CRITICAL",
+                "message": f"Port {SENSITIVE_PORTS[port['port']]} ({port['port']}) exposé publiquement sur {domain}"
+            })
+        # alerte CVE sur le port
+        for cve in port.get("cves", []):
+            if cve["cvss"] is None:
+                continue
+            level = "CRITICAL" if cve["cvss"] > 7 else "WARNING"
+            alerts.append({
+                "level": level,
+                "message": f"{cve['id']} (CVSS {cve['cvss']}) sur {port['product']} port {port['port']} ({domain})"
+            })
     for subdomain in subdomain_result.get("alerts", []):
         alerts.append(subdomain)
 
