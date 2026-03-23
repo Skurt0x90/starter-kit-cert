@@ -80,7 +80,12 @@ def run_cycle():
         sites.append({
             "domain": domain,
             "scan_mode": target["scan_mode"],
-            "headers": cve_result,
+            "headers": {
+                "server": cve_result["server"],
+                "x_powered_by": cve_result["x_powered_by"],
+                "cves": cve_result["cves"],
+            },
+            "ports": cve_result["ports"],        # ← extrait ici
             "subdomains": subdomain_result.get("subdomains", []),
             "dns": dns_result,
             "typosquatting": dnstwist_result.get("typosquatting", []),
