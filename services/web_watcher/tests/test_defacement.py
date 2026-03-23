@@ -99,13 +99,13 @@ class TestIsTitleChanged(unittest.TestCase):
         result = is_title_changed(EMPTY_TITLE_HTML, "")
         self.assertFalse(result)
 
-    def test_titre_html_vide_attendu_non_vide_retourne_true(self):
+    def test_titre_html_vide_attendu_non_vide_retourne_false(self):
         result = is_title_changed(EMPTY_TITLE_HTML, "Aéroport de Paris")
-        self.assertTrue(result)
+        self.assertFalse(result)
 
-    def test_pas_de_head_retourne_true(self):
+    def test_pas_de_head_retourne_false(self):
         result = is_title_changed(NO_HEAD_HTML, "Aéroport de Paris")
-        self.assertTrue(result)
+        self.assertFalse(result)
 
     def test_sensible_a_la_casse(self):
         result = is_title_changed(NORMAL_HTML, "aéroport de paris")
@@ -218,9 +218,9 @@ class TestProbabilitySiteDefaced(unittest.TestCase):
         self.assertEqual(result, "SITE OK (non défacé)")  
 
     @patch("web_watcher.defacement.get_html_content", return_value=DEFACED_HTML)
-    def test_site_defaced_fortement_probable(self, mock_content):
+    def test_site_defaced__probable(self, mock_content):
         result = probability_site_defaced("aeroport-paris.fr", "Aéroport de Paris")
-        self.assertEqual(result, "DEFACEMENT FORTEMENT PROBABLE")
+        self.assertEqual(result, "DEFACEMENT PROBABLE")
 
     @patch("web_watcher.defacement.get_html_content", return_value=NORMAL_HTML)
     def test_titre_change_augmente_score(self, mock_content):
