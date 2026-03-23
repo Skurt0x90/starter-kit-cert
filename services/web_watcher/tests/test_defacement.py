@@ -218,9 +218,9 @@ class TestProbabilitySiteDefaced(unittest.TestCase):
         self.assertEqual(result, "SITE OK (non défacé)")  
 
     @patch("web_watcher.defacement.get_html_content", return_value=DEFACED_HTML)
-    def test_site_defaced__probable(self, mock_content):
+    def test_site_defaced_probable(self, mock_content):
         result = probability_site_defaced("aeroport-paris.fr", "Aéroport de Paris")
-        self.assertEqual(result, "DEFACEMENT PROBABLE")
+        self.assertEqual(result, "DEFACEMENT FORTEMENT PROBABLE")
 
     @patch("web_watcher.defacement.get_html_content", return_value=NORMAL_HTML)
     def test_titre_change_augmente_score(self, mock_content):

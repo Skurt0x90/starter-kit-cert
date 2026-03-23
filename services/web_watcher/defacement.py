@@ -1,15 +1,8 @@
-import json
 import requests
 import logging
-import contextlib
-import socket
-import ssl
 import re
 import unicodedata
 from web_watcher import utils
-from datetime import datetime, timezone, date
-from zoneinfo import ZoneInfo
-from pathlib import Path
 from bs4 import BeautifulSoup
 from html import unescape
 
@@ -59,11 +52,12 @@ def compute_density_bonus(total_hits, total_length):
 
 
 def compute_category_bonus(categories_triggered):
-    if categories_triggered == 3:
-        return 8   # 3 + 5
+    if categories_triggered >= 3:
+        return 8  # 3 catégories = 8 points
     if categories_triggered >= 2:
-        return 3
+        return 3  # 2 catégories = 3 points
     return 0
+
 
 
 def process_defacement_scoring(content, domain="?"):
@@ -75,6 +69,7 @@ def process_defacement_scoring(content, domain="?"):
     medium_hits, medium_score = count_keyword_hits(text, utils.MEDIUM_CONFIDENCE, weight=2)
     tech_hits, tech_score = count_keyword_hits(text, utils.TECHNICAL_INDICATORS, weight=4)
 
+    matched = []
     if high_hits:
         matched = [kw for kw in utils.HIGH_CONFIDENCE if kw in text]
     if medium_hits:
@@ -82,21 +77,32 @@ def process_defacement_scoring(content, domain="?"):
     if tech_hits:
         matched = [kw for kw in utils.TECHNICAL_INDICATORS if kw in text]
 
+    
+    # Incrémente categories_triggered si des hits sont trouvés
+    if high_hits > 0:
+        categories_triggered += 1
+    if medium_hits > 0:
+        categories_triggered += 1
+    if tech_hits > 0:
+        categories_triggered += 1
+
+    # Ajoute les scores partiels
+    score += high_score + medium_score + tech_score
     score += compute_category_bonus(categories_triggered)
     score += compute_density_bonus(high_hits + medium_hits + tech_hits, len(text))
+
 
     return score
 
 def interprete_scoring(score):
     if score == 0:
         return "SITE OK (non défacé)"
-    if 0 < score <= 4:
+    elif score <= 4:
         return "DEFACEMENT PEU PROBABLE"
-    elif 4 < score < 10:
+    elif score <= 9:
         return "DEFACEMENT PROBABLE"
     else:
         return "DEFACEMENT FORTEMENT PROBABLE"
-    
 
 def probability_site_defaced(domain, title):
     content = get_html_content(domain)

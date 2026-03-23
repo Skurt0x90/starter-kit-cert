@@ -85,7 +85,7 @@ def run_watcher_cycle():
         http_code = is_site_up(d["domain"])
         certif_ssl_ok = is_ssl_expire_soon(d['domain'])
         response_time = check_response_time(d["domain"])
-        probability_defaced = probability_site_defaced(d["domain"], d["label"])
+        probability_defaced = probability_site_defaced(d["domain"], d["label"]) or "SITE OK (non défacé)"
         results.append({
             "domain": d["domain"],
             "site_up": http_code,
