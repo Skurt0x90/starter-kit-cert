@@ -1,16 +1,14 @@
-devenir-aviateur.gouv.fr,2.3522,48.8566,Rejoindre l'armée de l'Air et de l'Espace - Devenir Aviateur
-ecole-air-espace.fr,5.1116,43.6249,L'École de l'air et de l'espace
-english-version.ecole-air-espace.fr,5.1116,43.6249,Air and Space Force Academy
-eetaa722.fr,-0.6333,45.7467,EETAAE 722 | Ecole d'enseignement technique de l'Armée de l'air et de l'espace
-museeairespace.fr,2.4410,48.9436,Musée de l'Air et de l'Espace du Bourget
-ailesbrisees.asso.fr,2.4410,48.9436,Les Ailes Brisées
-ansoraa.fr,2.3358,48.8039,ACCUEIL
-aea.asso.fr,2.2369,48.8414,Association des Anciens Élèves de l'École de l'Air
-fondation-ailesdefrance.fr,2.3522,48.8566,Fondation Ailes de France
+# Club de foot
+girondins.com,-0.5792,44.8378,FC Girondins de Bordeaux - site officiel | Girondins.com
+toulousefc.com,1.4442,43.6047,Le site officiel du TéFéCé - Toulouse FC
+gf38.fr,5.7245,45.1885,Grenoble Foot 38 | Site Officiel du Grenoble Foot 38
 
+# Tourisme régional
+bretagne.bzh,-1.6778,48.1173,Tourisme Bretagne
+auvergnerhonealpes-tourisme.com,4.8357,45.7640,Tourisme Auvergne-Rhône-Alpes
+tourisme-occitanie.com,3.8767,43.6119,Tourisme Occitanie
+normandie-tourisme.fr,0.3714,49.1829,Tourisme Normandie
+provence-alpes-cotedazur.com,5.3698,43.2965,Tourisme Provence-Alpes-Côte d'Azur
 
 #DVWA
 target_test,2.3522,48.8566,DVWA Test,passive
-
-
-#tchap
