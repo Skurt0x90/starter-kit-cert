@@ -98,11 +98,13 @@ def run_watcher_cycle():
     alerts = create_alerts(results)
 
     if alerts:
+        headers = {"Host": "localhost", "Content-Type": "application/json"}  # Header corrigé
         logger.info(f"Envoi de {len(alerts)} alertes vers l'alert_service")
         try:
             requests.post(
                 f"{utils.ALERT_SERVICE_URL}/api/alert",
                 json={"service": "web_watcher", "alerts": alerts},
+                headers=headers,
                 timeout=5
             )
         except requests.exceptions.RequestException as e:

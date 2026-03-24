@@ -374,7 +374,7 @@ def build_modal_body(domain, vuln_sites):
 
 def build_service_indicator(name, url):
     try:
-        r = requests.get(url.replace("/api/data", "/health"), timeout=2)
+        r = requests.get(url.replace("/api/data", "/health"), headers={"Host": "localhost"}, timeout=2)
         ok = r.status_code == 200
     except Exception:
         ok = False
@@ -615,14 +615,10 @@ def close_modal(n_close, n_overlay):
 )
 def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     markers, lats, lons = [], [], []
-    logging.info(f"Update dashboard ")
     
-    logging.info(f" WATCHER_URL: {WATCHER_URL}")
-    logging.info(f" Request: {requests.get(WATCHER_URL, timeout=5)}")
 
     try:
-        watcher_data = requests.get(WATCHER_URL, timeout=5).json()
-        logging.info(f"Try watcher_data, len: {len(watcher_data)} ")
+        watcher_data = requests.get(WATCHER_URL, headers={"Host": "localhost"}, timeout=5).json()
     except Exception as e :
         logging.error(f"Erreur lors de la récupération des données depuis WATCHER_URL: {e}")
         watcher_data = {"sites": []}
@@ -647,7 +643,7 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     bounds = [[min(lats) - 1, min(lons) - 1], [max(lats) + 1, max(lons) + 1]] if lats else None
 
     try:
-        vuln_data = requests.get(VULN_URL, timeout=5).json()
+        vuln_data = requests.get(VULN_URL, headers={"Host": "localhost"}, timeout=5).json()
         vuln_sites = vuln_data.get("sites", [])
         vuln_last_run = vuln_data.get("last_run", "")[:19].replace("T", " ")
     except Exception:
