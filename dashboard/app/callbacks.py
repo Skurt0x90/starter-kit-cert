@@ -3,6 +3,7 @@ import os
 import requests
 from dash import Input, Output, callback, html, State, ctx
 import dash_leaflet as dl
+import logging
 
 WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
 VULN_URL = os.getenv("VULN_URL", "http://localhost:5002/api/data")
@@ -12,6 +13,15 @@ WATCHER_INTERVAL_MIN = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", os.getenv("WEB
 VULN_INTERVAL_H = int(os.getenv("SCHEDULE_INTERVAL_HOURS", os.getenv("VULN_SCANNER_INTERVAL", 24)))
 DASHBOARD_REFRESH_SEC = 60
 DEDUP_WINDOW_MIN = int(os.getenv("DEDUP_WINDOW_MINUTES", 30))
+
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),             # console
+        logging.FileHandler("alert.log")  # fichier
+    ]
+)
 
 
 # ─── Helpers carte ────────────────────────────────────────────────────────────
@@ -162,18 +172,19 @@ def build_typosquat_panel(sites):
 # ─── Panel bas ────────────────────────────────────────────────────────────────
 
 def build_cve_detail_panel(sites, filtre="all"):
+    logging.info(f"Construction du CVE detail panel avec {len(sites)} sites")
     rows = []
     for site in sites:
         domain = site.get("domain", "?")
-        cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
         checked_at = site.get("checked_at", "")[:19].replace("T", " ")
+        
+        # CVE headers (existant)
+        cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
         for cve in cves:
             cvss = cve.get("cvss")
             level = "critical" if cvss and cvss > 7 else "warning"
-            if filtre == "critical" and level != "critical":
-                continue
-            if filtre == "warning" and level != "warning":
-                continue
+            if filtre == "critical" and level != "critical": continue
+            if filtre == "warning" and level != "warning": continue
             color = cvss_color(cvss)
             rows.append(html.Div(
                 style={"display": "flex", "gap": "12px", "padding": "5px 0", "borderBottom": "1px solid #2a2d35", "alignItems": "flex-start", "backgroundColor": f"{color}11"},
@@ -181,14 +192,35 @@ def build_cve_detail_panel(sites, filtre="all"):
                     html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "150px"}),
                     html.Span(cve.get("id") or "—", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "140px"}),
                     html.Span(f"CVSS {cvss}" if cvss else "version masquée", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}),
+                    html.Span("header", style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "60px"}),
                     html.Span(cve.get("description", ""), style={"color": "#aaa", "fontSize": "0.78em", "flex": "1"}),
                     html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "120px"}),
                 ]
             ))
+
+        # CVE ports nmap (nouveau)
+        for port in site.get("ports", []):
+            for cve in port.get("cves", []):
+                cvss = cve.get("cvss")
+                if not cvss: continue
+                level = "critical" if cvss > 7 else "warning"
+                if filtre == "critical" and level != "critical": continue
+                if filtre == "warning" and level != "warning": continue
+                color = cvss_color(cvss)
+                rows.append(html.Div(
+                    style={"display": "flex", "gap": "12px", "padding": "5px 0", "borderBottom": "1px solid #2a2d35", "alignItems": "flex-start", "backgroundColor": f"{color}11"},
+                    children=[
+                        html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "150px"}),
+                        html.Span(cve.get("id") or "—", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "140px"}),
+                        html.Span(f"CVSS {cvss}", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}),
+                        html.Span(f"port {port['port']}", style={"color": "#5dade2", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "60px"}),
+                        html.Span(cve.get("description", ""), style={"color": "#aaa", "fontSize": "0.78em", "flex": "1"}),
+                        html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "120px"}),
+                    ]
+                ))
     if not rows:
         return html.Span("Aucune alerte CVE", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
     return rows
-
 
 def build_dns_detail_panel(sites, filtre="all"):
     rows = []
@@ -583,10 +615,16 @@ def close_modal(n_close, n_overlay):
 )
 def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     markers, lats, lons = [], [], []
+    logging.info(f"Update dashboard ")
+    
+    logging.info(f" WATCHER_URL: {WATCHER_URL}")
+    logging.info(f" Request: {requests.get(WATCHER_URL, timeout=5)}")
 
     try:
         watcher_data = requests.get(WATCHER_URL, timeout=5).json()
-    except Exception:
+        logging.info(f"Try watcher_data, len: {len(watcher_data)} ")
+    except Exception as e :
+        logging.error(f"Erreur lors de la récupération des données depuis WATCHER_URL: {e}")
         watcher_data = {"sites": []}
 
     # Décalage spiral : sépare les domaines aux coordonnées identiques
@@ -641,53 +679,3 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
         indicators,
         vuln_data,
     )
-
-def build_cve_detail_panel(sites, filtre="all"):
-    rows = []
-    for site in sites:
-        domain = site.get("domain", "?")
-        checked_at = site.get("checked_at", "")[:19].replace("T", " ")
-        
-        # CVE headers (existant)
-        cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
-        for cve in cves:
-            cvss = cve.get("cvss")
-            level = "critical" if cvss and cvss > 7 else "warning"
-            if filtre == "critical" and level != "critical": continue
-            if filtre == "warning" and level != "warning": continue
-            color = cvss_color(cvss)
-            rows.append(html.Div(
-                style={"display": "flex", "gap": "12px", "padding": "5px 0", "borderBottom": "1px solid #2a2d35", "alignItems": "flex-start", "backgroundColor": f"{color}11"},
-                children=[
-                    html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "150px"}),
-                    html.Span(cve.get("id") or "—", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "140px"}),
-                    html.Span(f"CVSS {cvss}" if cvss else "version masquée", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}),
-                    html.Span("header", style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "60px"}),
-                    html.Span(cve.get("description", ""), style={"color": "#aaa", "fontSize": "0.78em", "flex": "1"}),
-                    html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "120px"}),
-                ]
-            ))
-
-        # CVE ports nmap (nouveau)
-        for port in site.get("ports", []):
-            for cve in port.get("cves", []):
-                cvss = cve.get("cvss")
-                if not cvss: continue
-                level = "critical" if cvss > 7 else "warning"
-                if filtre == "critical" and level != "critical": continue
-                if filtre == "warning" and level != "warning": continue
-                color = cvss_color(cvss)
-                rows.append(html.Div(
-                    style={"display": "flex", "gap": "12px", "padding": "5px 0", "borderBottom": "1px solid #2a2d35", "alignItems": "flex-start", "backgroundColor": f"{color}11"},
-                    children=[
-                        html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "150px"}),
-                        html.Span(cve.get("id") or "—", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "140px"}),
-                        html.Span(f"CVSS {cvss}", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}),
-                        html.Span(f"port {port['port']}", style={"color": "#5dade2", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "60px"}),
-                        html.Span(cve.get("description", ""), style={"color": "#aaa", "fontSize": "0.78em", "flex": "1"}),
-                        html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "120px"}),
-                    ]
-                ))
-    if not rows:
-        return html.Span("Aucune alerte CVE", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
-    return rows
