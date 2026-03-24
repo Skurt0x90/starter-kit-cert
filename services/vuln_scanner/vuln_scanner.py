@@ -70,12 +70,14 @@ def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_resu
 
 
 def send_alerts(alerts_by_domain):
+    headers = {"Host": "localhost", "Content-Type": "application/json"}  # Header corrigé
     if not alerts_by_domain:
         return
     try:
         requests.post(
             f"{utils.ALERT_SERVICE_URL}/api/alert",
             json={"service": "vuln_scanner", "alerts": alerts_by_domain},
+            headers=headers,
             timeout=5
         )
     except requests.exceptions.RequestException as e:
