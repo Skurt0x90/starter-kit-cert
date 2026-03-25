@@ -1,0 +1,62 @@
+# Clubs de foot
+girondins
+toulouse fc
+grenoble foot
+
+# Partenaires / sponsors clubs
+ligue de football professionnel
+lfp
+fff
+adidas
+nike
+
+# Tourisme régional
+comite regional tourisme bretagne
+comite regional tourisme auvergne
+comite regional tourisme occitanie
+comite regional tourisme normandie
+comite regional tourisme provence
+bretagne
+auvergne
+occitanie
+normandie
+provence
+atout france
+office de tourisme
+
+# Hébergeurs / partenaires tourisme
+booking
+airbnb
+tripadvisor
+accor
+club med
+
+# Institutionnels liés
+region bretagne
+region occitanie
+region normandie
+region auvergne rhone alpes
+region provence alpes cote azur
+ministere du tourisme
+
+# Test
+dvwa
+nmap
+french engineering
+gustaVO Preston
+Estudio O'Farrell
+HLF Heizung-Sanitär 
+Anbogen Therapeutics Inc.
+Eastex Environmental Laboratory
+Vancompare Insurance
+Berkadia Commercial Mortgage, LLC. (berkadia.com)
+PWNA Plains
+kdmpop.com
+All Real Estate Title Solutions
+Pinnacle
+Ascent Asset Group
+Window & Door Design Center of Florida
+jenningsk12.org
+Aroostook Mental Health Services
+Retail Centenario
+Block Engineering

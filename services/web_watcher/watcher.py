@@ -99,7 +99,6 @@ def run_watcher_cycle():
 
     if alerts:
         headers = {"Host": "localhost", "Content-Type": "application/json"}  # Header corrigé
-        logger.info(f"Envoi de {len(alerts)} alertes vers l'alert_service")
         try:
             requests.post(
                 f"{utils.ALERT_SERVICE_URL}/api/alert",

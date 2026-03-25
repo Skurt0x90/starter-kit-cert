@@ -7,6 +7,7 @@ import logging
 
 WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
 VULN_URL = os.getenv("VULN_URL", "http://localhost:5002/api/data")
+RANSOMWARE_URL = os.getenv("RANSOMWARE_URL", "http://localhost:5003/api/data")
 
 # Délais lus depuis les variables d'environnement
 WATCHER_INTERVAL_MIN = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", os.getenv("WEB_WATCHER_INTERVAL", 15)))
@@ -79,6 +80,23 @@ def build_marker(site, coord_offset=(0, 0)):
     ]))
     return dl.CircleMarker(center=[lat, lon], radius=10, color=color, fillColor=color, fillOpacity=0.8, children=[tooltip, popup])
 
+
+def build_ransomware_panel(victims):
+    items, total = [], 0
+    for v in victims:
+        total += 1
+        items.append(html.Div(
+            style={"display": "flex", "justifyContent": "space-between", "alignItems": "center",
+                   "padding": "4px 8px", "marginBottom": "4px", "borderLeft": "3px solid #8e44ad"},
+            children=[
+                html.Span(v.get("victime", "?"), style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.82em", "flex": "1"}),
+                html.Span(v.get("acteur", "?"), style={"color": "#a569bd", "fontFamily": "monospace", "fontSize": "0.75em", "marginLeft": "6px"}),
+                html.Span(f"({v.get('source', '?')})", style={"color": "#a569bd", "fontFamily": "monospace", "fontSize": "0.75em", "marginLeft": "6px"})
+            ]
+        ))
+    if not items:
+        return html.Span("Aucune correspondance membre", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
+    return items, total
 
 # ─── Styles communs ───────────────────────────────────────────────────────────
 
@@ -172,7 +190,6 @@ def build_typosquat_panel(sites):
 # ─── Panel bas ────────────────────────────────────────────────────────────────
 
 def build_cve_detail_panel(sites, filtre="all"):
-    logging.info(f"Construction du CVE detail panel avec {len(sites)} sites")
     rows = []
     for site in sites:
         domain = site.get("domain", "?")
@@ -649,16 +666,26 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     except Exception:
         vuln_sites, vuln_last_run, vuln_data = [], "indisponible", {}
 
+    try:
+        ransomware_data = requests.get(RANSOMWARE_URL, headers={"Host": "localhost"}, timeout=5).json()
+        ransomware_victims = ransomware_data.get("ransomware", [])
+        ransomware_last_run = ransomware_data.get("last_run", "")[:19].replace("T", " ")
+    except Exception as e:
+        ransomware_victims, ransomware_last_run, ransomware_data = [], "indisponible", {}
+
     cve_panel, cve_total = build_cve_panel(vuln_sites)
     sub_panel, sub_total = build_subdomain_panel(vuln_sites)
     typo_panel, typo_total = build_typosquat_panel(vuln_sites)
+    ransomware_panel, ransomware_total = build_ransomware_panel(ransomware_victims)
 
     placeholder = html.Span("Service non disponible", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
 
     indicators = [
-        build_service_indicator("web_watcher", WATCHER_URL),
-        build_service_indicator("vuln_scanner", VULN_URL),
+        build_service_indicator("WEB SENTINEL", WATCHER_URL),
+        build_service_indicator("VULN", VULN_URL),
+        build_service_indicator("RANSOMWARE", RANSOMWARE_URL),
         html.Span(f"vuln: {vuln_last_run}", style={"color": "#444", "fontFamily": "monospace", "fontSize": "0.72em"}),
+        html.Span(f"ransom: {ransomware_last_run}", style={"color": "#444", "fontFamily": "monospace", "fontSize": "0.72em"}),
     ]
 
     return (
@@ -669,7 +696,7 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
         build_cve_detail_panel(vuln_sites, filter_cve or "all"),
         build_dns_detail_panel(vuln_sites, filter_dns or "all"),
         build_subdomain_detail_panel(vuln_sites, filter_sub or "all"),
-        placeholder, "—",
+        ransomware_panel, f"{ransomware_total} match(s) membres",
         placeholder, "—",
         build_global_counters(watcher_data.get("sites", []), vuln_sites),
         indicators,
