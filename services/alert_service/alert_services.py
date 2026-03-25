@@ -35,7 +35,6 @@ def is_duplicate(alert):
     return False
 
 def send_email(alerts_to_send):
-    logger.info(f"send_email appelé avec {len(alerts_to_send)} alerte(s)")
     if not utils.SMTP_USER:
         logger.warning("SMTP non configuré, email ignoré")
         return
@@ -122,9 +121,7 @@ def process_alert(payload):
                 "sent_at": datetime.now(ZoneInfo("Europe/Paris")).isoformat()
             })
             sent += 1
-    logger.info(f"Fin de boucle alert_services")
     if alerts_to_send:
-        logger.info(f"alerts_to_send non vide : {len(alerts_to_send)} alertes")
         send_email(alerts_to_send)
         send_signal(alerts_to_send)
 

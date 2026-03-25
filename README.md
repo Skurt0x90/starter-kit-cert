@@ -25,16 +25,18 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 sudo docker compose --profile test up --build
 ```
 
-| Service             | URL                              | Attendu          |
-|:--------------------|:---------------------------------|:-----------------|
-| signal_cli          | http://localhost:8080/v1/about   | JSON version     |
-| alert_service       | http://localhost:5005/health     | {"status":"ok"}  |
-| web_watcher         | http://localhost:5001/health     | {"status":"ok"}  |
-| web_watcher data    | http://localhost:5001/api/data   | JSON des sites   |
-| vuln_scanner        | http://localhost:5002/health     | {"status":"ok"}  |
-| vuln_scanner data   | http://localhost:5002/api/data   | JSON des CVE     |
-| dashboard           | http://localhost:8050            | Interface Dash   |
-| DVWA                | http://localhost:8888            | Interface DVWA   |
+| Service                 | URL                              | Attendu          |
+|:------------------------|:---------------------------------|:-----------------|
+| signal_cli              | http://localhost:8080/v1/about   | JSON version     |
+| alert_service           | http://localhost:5005/health     | {"status":"ok"}  |
+| web_watcher             | http://localhost:5001/health     | {"status":"ok"}  |
+| web_watcher data        | http://localhost:5001/api/data   | JSON des sites   |
+| vuln_scanner            | http://localhost:5002/health     | {"status":"ok"}  |
+| vuln_scanner data       | http://localhost:5002/api/data   | JSON des CVE     |
+| ransomware_monitor      | http://localhost:5003/health     | {"status":"ok"}  |
+| ransomware_monitor data | http://localhost:5003/api/data   | JSON ransomware  |
+| dashboard               | http://localhost:8050            | Interface Dash   |
+| DVWA                    | http://localhost:8888            | Interface DVWA   |
 ---
 
 ## Configuration
@@ -66,7 +68,7 @@ monmembre.fr,2.3522,48.8566,Lyon,active
   - Vérification SPF/DMARC ✅
   - Détection de typosquatting via dnstwist ✅
   - Mode `active` prévu pour les membres avec convention (Scan NMAP actif) ✅
-- **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware ❌
+- **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware ✅ clearweb ❌ Darwek
 - **Social Monitor** — surveillance des réseaux sociaux et sources OSINT ❌
 
 ---

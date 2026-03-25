@@ -103,7 +103,6 @@ def extract_cvss(metrics):
     return None
 
 def check(domain, scan_mode="passive"):
-    logger.info(f"SCAN MODE={scan_mode}")
     result = {"server": None, "x_powered_by": None, "cves": [], "ports": []}
 
     # passif — headers HTTP
@@ -125,7 +124,6 @@ def check(domain, scan_mode="passive"):
 
     # actif — nmap
     if scan_mode == "active":
-        logger.info("ACTIVE MODE")
         try:
             ports = get_stack_nmap(domain)
             for p in ports:
