@@ -4,7 +4,7 @@ import requests
 from datetime import datetime
 from zoneinfo import ZoneInfo
 from ransomware_monitor import utils
-from ransomware_monitor.correlator import get_victim_ransomfeed, get_victim_ransomlive, get_victim_ransomlook, correlate
+from ransomware_monitor.correlator import correlate
 
 
 logger = logging.getLogger(__name__)

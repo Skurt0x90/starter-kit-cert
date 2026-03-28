@@ -1,43 +1,14 @@
-# Clubs de foot
-girondins
-toulouse fc
-grenoble foot
-
-# Partenaires / sponsors clubs
-ligue de football professionnel
-lfp
-fff
-adidas
-nike
-
-# Tourisme régional
-comite regional tourisme bretagne
-comite regional tourisme auvergne
-comite regional tourisme occitanie
-comite regional tourisme normandie
-comite regional tourisme provence
-bretagne
-auvergne
-occitanie
-normandie
-provence
-atout france
-office de tourisme
-
-# Hébergeurs / partenaires tourisme
-booking
-airbnb
-tripadvisor
-accor
-club med
-
-# Institutionnels liés
-region bretagne
-region occitanie
-region normandie
-region auvergne rhone alpes
-region provence alpes cote azur
-ministere du tourisme
+Dassault Aviation
+Thales
+Airbus Defence and Space
+Safran
+MBDA
+Naval Group
+ArianeGroup
+Alta Ares
+Preligens
+The Exploration Company
+Helsing France
 
 # Test
 dvwa

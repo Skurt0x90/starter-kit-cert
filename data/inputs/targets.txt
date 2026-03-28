@@ -1,14 +1,15 @@
-# Club de foot
-girondins.com,-0.5792,44.8378,FC Girondins de Bordeaux - site officiel | Girondins.com
-toulousefc.com,1.4442,43.6047,Le site officiel du TéFéCé - Toulouse FC
-gf38.fr,5.7245,45.1885,Grenoble Foot 38 | Site Officiel du Grenoble Foot 38
+dassault-aviation.com,2.2876,48.8922,Dassault Aviation, acteur majeur de l&#039;aéronautique
+thalesgroup.com,2.2410611,48.8913501,Building a future | Thales Group
+airbus.com,1.3621,43.6330,Pioneering sustainable aerospace | Airbus
+safran-group.com,-0.6883019,46.2947063,Safran | Contribute to safer and more sustainable aviation
+mbda-systems.com,-6.0232544,44.5332272,MBDA, Excellence at your side | MBDA
+naval-group.com,5.8640582,43.1252939,Naval Group ⎮ Un groupe international
+ariane.group,0.6261522,46.8228239,ArianeGroup - Accueil
+altaares.com,2.4432716,48.8774535,Alta Ares | Tactical autonomy, operational superiority
+exploration.space,-0.7036974,44.8635153 The Exploration Company
+hypr-space.com,-0.6938848,44.8557818,Hybrid Rocket Propulsion | HyPrSpace – We dont follow trends. We set trajectories.
+helsing.ai,2.3522,48.8566,Helsing | L’intelligence artificielle pour protéger nos démocraties
 
-# Tourisme régional
-bretagne.bzh,-1.6778,48.1173,Tourisme Bretagne
-auvergnerhonealpes-tourisme.com,4.8357,45.7640,Tourisme Auvergne-Rhône-Alpes
-tourisme-occitanie.com,3.8767,43.6119,Tourisme Occitanie
-normandie-tourisme.fr,0.3714,49.1829,Tourisme Normandie
-provence-alpes-cotedazur.com,5.3698,43.2965,Tourisme Provence-Alpes-Côte d'Azur
 
 #DVWA
 target_test,2.3522,48.8566,DVWA Test,active
