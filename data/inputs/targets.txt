@@ -6,11 +6,11 @@ mbda-systems.com,-6.0232544,44.5332272,MBDA, Excellence at your side | MBDA
 naval-group.com,5.8640582,43.1252939,Naval Group ⎮ Un groupe international
 ariane.group,0.6261522,46.8228239,ArianeGroup - Accueil
 altaares.com,2.4432716,48.8774535,Alta Ares | Tactical autonomy, operational superiority
-exploration.space,-0.7036974,44.8635153 The Exploration Company
+exploration.space,-0.7036974,44.8635153,The Exploration Company
 hypr-space.com,-0.6938848,44.8557818,Hybrid Rocket Propulsion | HyPrSpace – We dont follow trends. We set trajectories.
 helsing.ai,2.3522,48.8566,Helsing | L’intelligence artificielle pour protéger nos démocraties
 
 
 #DVWA
 target_test,2.3522,48.8566,DVWA Test,active
-scanme.nmap.org,3.0364,45.7663,Go ahead and ScanMe!,activea
+scanme.nmap.org,3.0364,45.7663,Go ahead and ScanMe!,active

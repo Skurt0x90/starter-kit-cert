@@ -1,5 +1,17 @@
 import os
 import csv
+import logging 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
+    handlers=[
+        logging.StreamHandler(),             # console
+        logging.FileHandler("watcher.log")  # fichier
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
 
 SCHEDULE_INTERVAL_MINUTES = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", 1))
 
@@ -33,6 +45,7 @@ def load_domains(filepath):
     with open(filepath, newline='') as f:
         reader = csv.reader(f)
         for row in reader:
+            logger.info(f"ligne a lire {row}")
             if not row or row[0].startswith("#"):
                 continue
             domain, lon, lat, label, *rest = row
