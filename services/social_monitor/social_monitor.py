@@ -27,7 +27,7 @@ def send_alerts(alerts: dict):
     if not alerts:
         return
     try:
-        resp = requests.post(
+        requests.post(
             f"{utils.ALERT_SERVICE_URL}/api/alert",
             json={"service": "social_monitor", "alerts": alerts},
             headers=headers,
