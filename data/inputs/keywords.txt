@@ -1,0 +1,57 @@
+thales
+airbus
+dassault
+mbda
+naval group
+safran
+nexter
+arquus
+knds
+eurenco
+soitec
+lacroix
+sopra steria
+atos defense
+rafale
+leclerc
+tigre
+caesar
+mica
+fremm
+suffren
+barracuda
+scaf
+mgcs
+scorpion
+contact
+serval
+griffon
+dga
+dgse
+drsd
+etat-major
+armée de l'air
+armée de terre
+marine nationale
+gendarmerie
+otan
+nato
+eda
+occar
+defense
+défense
+militaire
+armement
+munitions
+missile
+drone
+cyber warfare
+apt
+ukraine
+russie
+chine
+iran
+corée du nord
+espionnage
+sabotage
+supply chain attack

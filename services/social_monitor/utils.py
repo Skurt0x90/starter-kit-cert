@@ -1,7 +1,9 @@
 import os
 
 FLASK_HOST = os.getenv("FLASK_HOST", "127.0.0.1")
-SCHEDULE_INTERVAL_HOURS = int(os.getenv("SCHEDULE_INTERVAL_HOURS", 24))
+FLASK_PORT = int(os.getenv("FLASK_PORT", 5004))
+SCHEDULE_INTERVAL_MINUTES = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", 60))
+LOOKBACK_DAYS = int(os.getenv("LOOKBACK_DAYS", 7))
 
 BASE = "/data" if os.path.exists("/data") else "../data"
 TARGETS_FILE = f"{BASE}/inputs/members.txt"
@@ -78,12 +80,16 @@ KEYWORDS = [
     "espionnage", "sabotage", "supply chain attack",
 ]
 
-def load_members(filepath):
+def load_members(filepath: str) -> list[str]:
     members = []
-    with open(filepath) as f:
-        for line in f:
-            if not line or line.startswith("#"):
-                continue
-            member = line
-            members.append({"member": member})
+    try:
+        with open(filepath) as f:
+            for line in f:
+                line = line.strip()
+                if not line or line.startswith("#"):
+                    continue
+                members.append(line.lower())
+    except FileNotFoundError:
+        pass
     return members
+ 

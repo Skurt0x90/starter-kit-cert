@@ -98,6 +98,24 @@ services:
     networks:
       - cert-net
 
+  social_monitor:
+    build: ./services/social_monitor
+    container_name: social_monitor
+    env_file:
+      - .env
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5004
+      - SCHEDULE_INTERVAL_MINUTES=${SOCIAL_INTERVAL:-60}
+    volumes:
+      - ./data:/data
+    ports:
+      - "5004:5004"
+    restart: unless-stopped
+    depends_on:
+      - alert_service
+    networks:
+      - cert-net
   dashboard:
     build: ./dashboard
     container_name: dashboard
