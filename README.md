@@ -35,6 +35,8 @@ sudo docker compose --profile test up --build
 | vuln_scanner data       | http://localhost:5002/api/data   | JSON des CVE     |
 | ransomware_monitor      | http://localhost:5003/health     | {"status":"ok"}  |
 | ransomware_monitor data | http://localhost:5003/api/data   | JSON ransomware  |
+| social_monitor          | http://localhost:5004/health     | {"status":"ok"}  |
+| social_monitor data     | http://localhost:5004/api/data   | JSON ransomware  |
 | dashboard               | http://localhost:8050            | Interface Dash   |
 | DVWA                    | http://localhost:8888            | Interface DVWA   |
 ---
@@ -69,7 +71,7 @@ monmembre.fr,2.3522,48.8566,Lyon,active
   - Détection de typosquatting via dnstwist ✅
   - Mode `active` prévu pour les membres avec convention (Scan NMAP actif) ✅
 - **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware ✅ clearweb ❌ Darwek
-- **Social Monitor** — surveillance des réseaux sociaux et sources OSINT ❌
+- **Social Monitor** — surveillance des réseaux sociaux et sources OSINT ✅
 
 ---
 
