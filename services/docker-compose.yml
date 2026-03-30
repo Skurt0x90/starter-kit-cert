@@ -1,15 +1,46 @@
 version: '3.8'
 
 services:
+  signal_cli:
+    build: ./services/signal_cli
+    container_name: signal_cli
+    volumes:
+      - ./data/signal-cli:/home/.local/share/signal-cli
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    networks:
+      - cert-net
+
+  alert_service:
+    build: ./services/alert_service
+    container_name: alert_service
+    env_file:
+      - .env
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5005
+      - DEDUP_WINDOW_MINUTES=30
+      - SIGNAL_API_URL=http://signal_cli:8080
+    volumes:
+      - ./data:/data
+    ports:
+      - "5005:5005"
+    restart: unless-stopped
+    depends_on:
+      - signal_cli
+    networks:
+      - cert-net
+
   web_watcher:
-    build: ./web_watcher
+    build: ./services/web_watcher
     container_name: web_watcher
     environment:
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5001
       - SCHEDULE_INTERVAL_MINUTES=${WEB_WATCHER_INTERVAL:-15}
     volumes:
-      - ../data:/data
+      - ./data:/data
     ports:
       - "5001:5001"
     restart: unless-stopped
@@ -18,22 +49,63 @@ services:
     networks:
       - cert-net
 
-  alert_service:
-    build: ./alert_service
-    container_name: alert_service
+  vuln_scanner:
+    build: ./services/vuln_scanner
+    container_name: vuln_scanner
     env_file:
-      - ../.env
+      - .env
     environment:
       - FLASK_HOST=0.0.0.0
-      - FLASK_PORT=5005
-      - DEDUP_WINDOW_MINUTES=30
+      - FLASK_PORT=5002
+      - SCHEDULE_INTERVAL_HOURS=${VULN_SCANNER_INTERVAL:-24}
     volumes:
-      - ../data:/data
+      - ./data:/data
     ports:
-      - "5005:5005"
+      - "5002:5002"
     restart: unless-stopped
+    depends_on:
+      - alert_service
     networks:
       - cert-net
+
+  ransomware_monitor:
+    build: ./services/ransomware_monitor
+    container_name: ransomware_monitor
+    env_file:
+      - .env
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5003
+      - SCHEDULE_INTERVAL_HOURS=${VULN_SCANNER_INTERVAL:-24}
+    volumes:
+      - ./data:/data
+    ports:
+      - "5003:5003"
+    restart: unless-stopped
+    depends_on:
+      - alert_service
+    networks:
+      - cert-net
+
+  social_monitor:
+    build: ./services/social_monitor
+    container_name: social_monitor
+    env_file:
+      - .env
+    environment:
+      - FLASK_HOST=0.0.0.0
+      - FLASK_PORT=5004
+      - SCHEDULE_INTERVAL_MINUTES=${SOCIAL_INTERVAL:-60}
+    volumes:
+      - ./data:/data
+    ports:
+      - "5004:5004"
+    restart: unless-stopped
+    depends_on:
+      - alert_service
+    networks:
+      - cert-net
+ 
 
 networks:
   cert-net:

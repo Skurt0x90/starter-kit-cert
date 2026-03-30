@@ -9,6 +9,6 @@ COPY . ./social_monitor/
 
 ENV PYTHONPATH=/app
 
-EXPOSE 5005
+EXPOSE 5004
 
 CMD ["python", "-m", "social_monitor.app"]
