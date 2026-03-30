@@ -10,6 +10,7 @@ services:
       - WATCHER_URL=http://web_watcher:5001/api/data
       - VULN_URL=http://vuln_scanner:5002/api/data
       - RANSOMWARE_URL=http://ransomware_monitor:5003/api/data
+      - SOCIAL_URL=http://social_monitor:5004/api/data
     restart: unless-stopped
     networks:
       - cert-net

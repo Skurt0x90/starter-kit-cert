@@ -8,6 +8,7 @@ import logging
 WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
 VULN_URL = os.getenv("VULN_URL", "http://localhost:5002/api/data")
 RANSOMWARE_URL = os.getenv("RANSOMWARE_URL", "http://localhost:5003/api/data")
+SOCIAL_URL = os.getenv("SOCIAL_URL", "http://localhost:5004/api/data")
 
 # Délais lus depuis les variables d'environnement
 WATCHER_INTERVAL_MIN = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", os.getenv("WEB_WATCHER_INTERVAL", 15)))
@@ -98,6 +99,23 @@ def build_ransomware_panel(victims):
         return html.Span("Aucune correspondance membre", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
     return items, total
 
+
+def build_social_panel(message):
+    items, total = [], 0
+    for m in message:
+        total += 1
+        items.append(html.Div(
+            style={"display": "flex", "justifyContent": "space-between", "alignItems": "center",
+                   "padding": "4px 8px", "marginBottom": "4px", "borderLeft": "3px solid #8e44ad"},
+            children=[
+                html.Span(m.get("channel", "?"), style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.82em", "flex": "1"}),
+                html.Span(m.get("content", "?"), style={"color": "#a569bd", "fontFamily": "monospace", "fontSize": "0.75em", "marginLeft": "6px"}),
+                html.A(m.get('url', '?'), href=m.get('url', '#'), style={"color": "#a569bd", "fontFamily": "monospace", "fontSize": "0.75em", "marginLeft": "6px",}, target="_blank")
+            ]
+        ))
+    if not items:
+        return html.Span("Aucune correspondance mots-clés", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
+    return items, total
 # ─── Styles communs ───────────────────────────────────────────────────────────
 
 def cvss_color(cvss):
@@ -673,10 +691,18 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     except Exception as e:
         ransomware_victims, ransomware_last_run, ransomware_data = [], "indisponible", {}
 
+    try:
+        social_data = requests.get(SOCIAL_URL, headers={"Host": "localhost"}, timeout=5).json()
+        social_message = social_data.get("items", [])
+        social_last_run = social_data.get("last_run", "")[:19].replace("T", " ")
+    except Exception as e:
+        social_message, social_last_run, social_data = [], "indisponible", {}
+
     cve_panel, cve_total = build_cve_panel(vuln_sites)
     sub_panel, sub_total = build_subdomain_panel(vuln_sites)
     typo_panel, typo_total = build_typosquat_panel(vuln_sites)
     ransomware_panel, ransomware_total = build_ransomware_panel(ransomware_victims)
+    social_panel, social_total = build_social_panel(social_message)
 
     placeholder = html.Span("Service non disponible", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
 
@@ -684,8 +710,10 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
         build_service_indicator("WEB SENTINEL", WATCHER_URL),
         build_service_indicator("VULN", VULN_URL),
         build_service_indicator("RANSOMWARE", RANSOMWARE_URL),
+        build_service_indicator("SOCIAL", SOCIAL_URL),
         html.Span(f"vuln: {vuln_last_run}", style={"color": "#444", "fontFamily": "monospace", "fontSize": "0.72em"}),
         html.Span(f"ransom: {ransomware_last_run}", style={"color": "#444", "fontFamily": "monospace", "fontSize": "0.72em"}),
+        html.Span(f"social: {social_last_run}", style={"color": "#444", "fontFamily": "monospace", "fontSize": "0.72em"}),
     ]
 
     return (
@@ -697,7 +725,7 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
         build_dns_detail_panel(vuln_sites, filter_dns or "all"),
         build_subdomain_detail_panel(vuln_sites, filter_sub or "all"),
         ransomware_panel, f"{ransomware_total} match(s) membres",
-        placeholder, "—",
+        social_panel, f"{social_total} match(s) message",
         build_global_counters(watcher_data.get("sites", []), vuln_sites),
         indicators,
         vuln_data,

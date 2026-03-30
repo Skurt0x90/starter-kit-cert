@@ -286,7 +286,7 @@ def create_layout():
 
                             # Carte
                             dmc.Box(
-                                style={"width": "75%", "position": "relative"},
+                                style={"width": "50%", "position": "relative"},
                                 children=[
                                     dl.Map(
                                         id="map", center=[48.0, 10.0], zoom=4,
@@ -317,7 +317,7 @@ def create_layout():
 
                             # Panels droite
                             dmc.Box(
-                                style={"width": "25%", "display": "flex", "flexDirection": "column", "overflowY": "auto", "maxHeight": "calc(100vh - 280px)"},
+                                style={"width": "50%", "display": "flex", "flexDirection": "column", "overflowY": "auto", "maxHeight": "calc(100vh - 280px)"},
                                 children=[
                                     dmc.Box(
                                         style={"backgroundColor": "#1a1b1e", "border": "1px solid #2a2d35", "borderRadius": "8px", "marginBottom": "10px", "overflow": "hidden"},

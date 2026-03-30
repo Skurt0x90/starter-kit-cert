@@ -27,14 +27,12 @@ def send_alerts(alerts: dict):
     if not alerts:
         return
     try:
-        logger.info(f"Try alert {utils.ALERT_SERVICE_URL}/api/alert")
         resp = requests.post(
             f"{utils.ALERT_SERVICE_URL}/api/alert",
             json={"service": "social_monitor", "alerts": alerts},
             headers=headers,
             timeout=5
         )
-        logger.info(f"resp request {resp}")
 
     except requests.exceptions.RequestException as e:
         logger.warning(f"Alert service injoignable : {e}")
