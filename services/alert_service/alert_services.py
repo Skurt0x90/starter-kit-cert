@@ -52,6 +52,8 @@ def send_email(alerts_to_send):
             s.starttls()
             s.login(utils.SMTP_USER, utils.SMTP_PASSWORD)
             s.sendmail(utils.ALERT_EMAIL_FROM, utils.ALERT_EMAIL_TO, msg.as_string())
+        logging.info(f"alert service send email {msg["Subject"]}")
+
     except Exception as e:
         logger.error(f"Erreur email : {e}")
 

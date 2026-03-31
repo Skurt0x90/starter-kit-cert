@@ -34,6 +34,7 @@ def send_alerts(alerts: dict):
             timeout=5
         )
 
+
     except requests.exceptions.RequestException as e:
         logger.warning(f"Alert service injoignable : {e}")
 
