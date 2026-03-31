@@ -32,15 +32,15 @@ def get_datas():
     
 @app.route("/api/alert", methods=["POST"])
 def post_alert():
-    payload = request.get_json(force=True)
+    payload = request.get_json(force=True, silent=True)
+    if not payload:
+        return jsonify({"error": "Payload JSON invalide ou vide"}), 400
     champs_requis = {"service", "alerts"}
     champs_manquants = champs_requis - payload.keys()
     if champs_manquants:
         return jsonify({"error": f"Champs manquants : {champs_manquants}"}), 400
     result = process_alert(payload)
-
     return jsonify(result), 200
-
 
 if __name__ == "__main__":
     app.run(host=os.getenv("FLASK_HOST", "127.0.0.1"), port=int(os.getenv("FLASK_PORT", 5005)))
