@@ -39,7 +39,7 @@ signal-cli/data/
 # Données d'entrée et de sortie (ne pas commiter les vraies cibles)
 data/inputs/members.json
 data/inputs/keywords.json
-data/outputs/
+data/outputs/*.json
 
 # Telethon sessions
 *.session
