@@ -31,9 +31,23 @@ def service_panel(title, list_id, badge_id, color_header="#c0392b"):
                         "padding": "2px 8px",
                         "borderRadius": "10px",
                     }),
+                    html.Button(
+                        "⛶",
+                        id={"type": "panel-expand-btn", "index": list_id},
+                        n_clicks=0,
+                        title="Agrandir",
+                        style={
+                            "fontFamily": "monospace", "fontSize": "0.72em", "cursor": "pointer",
+                            "padding": "1px 6px",
+                            "border": "1px solid rgba(255,255,255,0.3)",
+                            "borderRadius": "4px",
+                            "backgroundColor": "transparent", "color": "white",
+                        }
+                    ),
                 ]
             ),
             dmc.Box(
+                id={"type": "panel-body", "index": list_id},
                 style={"padding": "8px", "maxHeight": "150px", "overflowY": "auto"},
                 children=[html.Div(id=list_id)],
             ),

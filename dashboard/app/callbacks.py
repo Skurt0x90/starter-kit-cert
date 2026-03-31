@@ -1,7 +1,7 @@
 import ast
 import os
 import requests
-from dash import Input, Output, callback, html, State, ctx
+from dash import Input, Output, callback, html, State, ctx, MATCH
 import dash_leaflet as dl
 import logging
 
@@ -116,6 +116,8 @@ def build_social_panel(message):
     if not items:
         return html.Span("Aucune correspondance mots-clés", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}), 0
     return items, total
+
+
 # ─── Styles communs ───────────────────────────────────────────────────────────
 
 def cvss_color(cvss):
@@ -212,7 +214,7 @@ def build_cve_detail_panel(sites, filtre="all"):
     for site in sites:
         domain = site.get("domain", "?")
         checked_at = site.get("checked_at", "")[:19].replace("T", " ")
-        
+
         # CVE headers (existant)
         cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
         for cve in cves:
@@ -256,6 +258,7 @@ def build_cve_detail_panel(sites, filtre="all"):
     if not rows:
         return html.Span("Aucune alerte CVE", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
     return rows
+
 
 def build_dns_detail_panel(sites, filtre="all"):
     rows = []
@@ -512,6 +515,20 @@ def toggle_panel_expand(n_clicks, current_style):
 
 
 @callback(
+    Output({"type": "panel-body", "index": MATCH}, "style"),
+    Output({"type": "panel-expand-btn", "index": MATCH}, "title"),
+    Input({"type": "panel-expand-btn", "index": MATCH}, "n_clicks"),
+    State({"type": "panel-body", "index": MATCH}, "style"),
+    prevent_initial_call=True,
+)
+def toggle_service_panel(n_clicks, current_style):
+    expanded = current_style.get("maxHeight") == "400px"
+    new_h = "150px" if expanded else "400px"
+    label = "Agrandir" if expanded else "Réduire"
+    return {**current_style, "maxHeight": new_h}, label
+
+
+@callback(
     Output("tab-cve", "style"),
     Output("tab-dns", "style"),
     Output("tab-subdomains", "style"),
@@ -650,11 +667,10 @@ def close_modal(n_close, n_overlay):
 )
 def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     markers, lats, lons = [], [], []
-    
 
     try:
         watcher_data = requests.get(WATCHER_URL, headers={"Host": "localhost"}, timeout=5).json()
-    except Exception as e :
+    except Exception as e:
         logging.error(f"Erreur lors de la récupération des données depuis WATCHER_URL: {e}")
         watcher_data = {"sites": []}
 
@@ -703,8 +719,6 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
     typo_panel, typo_total = build_typosquat_panel(vuln_sites)
     ransomware_panel, ransomware_total = build_ransomware_panel(ransomware_victims)
     social_panel, social_total = build_social_panel(social_message)
-
-    placeholder = html.Span("Service non disponible", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
 
     indicators = [
         build_service_indicator("WEB SENTINEL", WATCHER_URL),
