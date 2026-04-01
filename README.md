@@ -22,6 +22,7 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 ## Lancement
 
 ```bash
+cp .env.example .env
 sudo docker compose --profile test up --build
 ```
 
@@ -36,7 +37,7 @@ sudo docker compose --profile test up --build
 | ransomware_monitor      | http://localhost:5003/health     | {"status":"ok"}  |
 | ransomware_monitor data | http://localhost:5003/api/data   | JSON ransomware  |
 | social_monitor          | http://localhost:5004/health     | {"status":"ok"}  |
-| social_monitor data     | http://localhost:5004/api/data   | JSON ransomware  |
+| social_monitor data     | http://localhost:5004/api/data   | JSON social      |
 | dashboard               | http://localhost:8050            | Interface Dash   |
 | DVWA                    | http://localhost:8888            | Interface DVWA   |
 ---
