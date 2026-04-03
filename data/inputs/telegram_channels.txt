@@ -1,0 +1,16 @@
+# Canaux Telegram surveillés — un handle par ligne
+# Lignes vides et commentaires (#) ignorés
+
+# Hacktivistes pro-russes — DDoS, défacement, revendications
+noname05716
+cyberarmyofrussia_reborn
+killnet_channel
+from_russia_with_love2022
+
+# Leaks / data brokers
+leakbase
+breachforums_official
+
+# CTI généraliste
+thecyberexpress
+vxunderground

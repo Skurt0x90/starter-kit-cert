@@ -57,8 +57,9 @@ def parse_feed(feed_cfg: dict) -> list[dict]:
 
 
 def collect() -> list[dict]:
+    rss_feeds = utils.load_rss_feeds()
     results = []
-    for feed_cfg in utils.RSS_FEEDS:
+    for feed_cfg in rss_feeds:
         items = parse_feed(feed_cfg)
         logger.info(f"[RSS] {feed_cfg['name']} : {len(items)} item(s) récupéré(s)")
         results.extend(items)
