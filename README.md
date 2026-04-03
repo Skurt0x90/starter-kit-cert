@@ -6,7 +6,7 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 [![Python](https://img.shields.io/badge/Python-3.12-blue?logo=python&logoColor=white)](https://python.org)
 [![Docker](https://img.shields.io/badge/Docker-Compose-2496ED?logo=docker&logoColor=white)](https://docker.com)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
-[![Status](https://img.shields.io/badge/Status-Active%20Development-yellow)]()
+[![Status](https://img.shields.io/badge/Status-Stable-brightgreen)]()
 [![MISC](https://img.shields.io/badge/Inspired%20by-MISC%20N°142-red)]()
 [![Author](https://img.shields.io/badge/Author-Skurt0x90-black?logo=github)](https://github.com/Skurt0x90)
 
@@ -40,40 +40,81 @@ sudo docker compose --profile test up --build
 | social_monitor data     | http://localhost:5004/api/data   | JSON social      |
 | dashboard               | http://localhost:8050            | Interface Dash   |
 | DVWA                    | http://localhost:8888            | Interface DVWA   |
+
 ---
-
+ 
 ## Configuration
-
+ 
 Copiez `.env.example` en `.env` et renseignez vos valeurs (SMTP, Signal...).
-
+ 
 La liste des cibles à surveiller se définit dans `data/inputs/targets.txt` :
-
+ 
 ```
 # domaine,longitude,latitude,label,scan_mode
 exemple.fr,2.3522,48.8566,Paris,passive
 monmembre.fr,2.3522,48.8566,Lyon,active
 ```
-
+ 
 - `passive` (défaut) — surveillance non intrusive, aucune autorisation requise
-- `active` — modules de scan supplémentaires, nécessite une convention avec le membre
-
+- `active` — modules de scan supplémentaires (nmap), **nécessite une convention signée avec le membre**
+ 
+Les sources de surveillance sont configurables via des fichiers plats dans `data/inputs/` :
+ 
+| Fichier                   | Format       | Usage                                  |
+|:--------------------------|:-------------|:---------------------------------------|
+| `rss_feeds.txt`           | `name\|url`  | Flux RSS CTI/institutionnels surveillés |
+| `telegram_channels.txt`   | handle       | Canaux Telegram publics surveillés     |
+| `keywords.txt`            | mot-clé      | Termes de corrélation sectorielle      |
+| `members.txt`             | domaine      | Membres et sous-traitants surveillés   |
+ 
+Tous ces fichiers acceptent les commentaires (`#`) et les lignes vides.
+ 
 ---
 
 ## Fonctionnalités
 
-- **Web Watcher** — surveillance de la disponibilité des sites exposés ✅
-- **Defacement detection** — détection de modifications non autorisées sur les pages web ✅
-- **Alerting** — notifications en cas d'incident détecté (email ✅ / signal ❌ enregistrement en attente)
-- **Dashboard** — centralisation et visualisation des résultats ✅
-- **Vuln Scanner** — surveillance passive de la surface d'attaque des membres 🔧
-  - Détection de stack technique exposée dans les headers HTTP (croisement NVD/CVE) ✅
-  - Enumération de sous-domaines via crt.sh ✅
-  - Vérification SPF/DMARC ✅
+- **Web Watcher** — surveillance de la disponibilité, temps de réponse, SSL, détection de défacement ✅
+- **Alerting** — notifications email HTML par cycle ✅ / Signal ⚠️ *(enregistrement du numéro à effectuer manuellement — voir ci-dessous)*
+- **Dashboard** — carte Leaflet dark, compteurs globaux, panel vuln, onglets CVE/DNS/typosquats ✅
+- **Vuln Scanner** — surveillance de la surface d'attaque ✅
+  - Headers HTTP → croisement NVD/CVE ✅
+  - Énumération de sous-domaines via crt.sh ✅
+  - Vérification SPF / DMARC ✅
   - Détection de typosquatting via dnstwist ✅
-  - Mode `active` prévu pour les membres avec convention (Scan NMAP actif) ✅
-- **Ransomware Monitor** — veille sur les sites de leak de groupes ransomware ✅ clearweb ❌ Darwek
-- **Social Monitor** — surveillance des réseaux sociaux et sources OSINT ✅
+  - Scan nmap + CVE sur services exposés (mode `active`) ✅
+- **Ransomware Monitor** — veille sur les sites de leak ransomware ✅ clear web (Ransomlive, Ransomlook, Ransomfeed)
+- **Social Monitor** — veille OSINT via flux RSS CTI/institutionnels et scraping Telegram public ✅
+ 
+### Ce qui n'est pas implémenté (hors scope de ce POC)
+ 
+| Fonctionnalité | Raison |
+|:---|:---|
+| Ransomware Monitor — dark web (.onion) | Nécessite un proxy Tor dédié ; les sources clear web couvrent l'essentiel des revendications publiques |
+| Social Monitor — Twitter/X | API devenue payante et très restrictive |
+| Social Monitor — HaveIBeenPwned | Nécessite une vérification de propriété de domaine par email |
+ 
+---
 
+## Enregistrement Signal *(optionnel)*
+ 
+L'alerting Signal est fonctionnel mais nécessite un enregistrement manuel unique :
+ 
+```bash
+# 1. Enregistrer le numéro
+docker exec signal_cli signal-cli -u +336XXXXXXXX register
+ 
+# 2. Vérifier avec le code SMS reçu
+docker exec signal_cli signal-cli -u +336XXXXXXXX verify CODE
+ 
+# 3. Récupérer l'ID du groupe (créer le groupe sur le téléphone avant)
+docker exec signal_cli signal-cli -u +336XXXXXXXX listGroups
+ 
+# 4. Ajouter dans .env
+SIGNAL_CLI_GROUP_ID=group.XXXXXXXXXXXXXXXX==
+```
+ 
+> ⚠️ L'enregistrement est rate-limited — réessayer après quelques minutes en cas de 429.
+ 
 ---
 
 ## Tests
