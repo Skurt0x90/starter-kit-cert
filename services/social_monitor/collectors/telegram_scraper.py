@@ -61,8 +61,9 @@ def parse_channel(channel: str) -> list[dict]:
 
 
 def collect() -> list[dict]:
+    telegram_channels = utils.load_telegram_channels()
     results = []
-    for channel in utils.TELEGRAM_CHANNELS:
+    for channel in telegram_channels:
         items = parse_channel(channel)
         logger.info(f"[Telegram] {channel} : {len(items)} message(s) récupéré(s)")
         results.extend(items)

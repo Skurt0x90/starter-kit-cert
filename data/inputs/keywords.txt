@@ -1,3 +1,7 @@
+# Mots-clés de corrélation — un mot-clé par ligne
+# Lignes vides et commentaires (#) ignorés
+
+# Acteurs FR majeurs
 thales
 airbus
 dassault
@@ -12,6 +16,8 @@ soitec
 lacroix
 sopra steria
 atos defense
+
+# Programmes / systèmes
 rafale
 leclerc
 tigre
@@ -26,6 +32,8 @@ scorpion
 contact
 serval
 griffon
+
+# Institutions
 dga
 dgse
 drsd
@@ -38,6 +46,8 @@ otan
 nato
 eda
 occar
+
+# Générique défense
 defense
 défense
 militaire
@@ -47,6 +57,8 @@ missile
 drone
 cyber warfare
 apt
+
+# Géopolitique pertinent
 ukraine
 russie
 chine

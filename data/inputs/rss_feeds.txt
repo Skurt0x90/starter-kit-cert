@@ -1,0 +1,16 @@
+# Institutionnel FR
+CERT-FR,https://www.cert.ssi.gouv.fr/feed/
+ANSSI,https://www.ssi.gouv.fr/feed/
+
+# Threat Intel
+Sekoia,https://blog.sekoia.io/feed/
+Recorded Future,https://www.recordedfuture.com/feed
+Mandiant,https://www.mandiant.com/resources/blog/rss.xml
+Microsoft MSRC,https://msrc.microsoft.com/blog/feed
+The Hacker News,https://feeds.feedburner.com/TheHackersNews
+Krebs on Security,https://krebsonsecurity.com/feed/
+Schneider on Security,https://www.schneier.com/feed/atom
+
+# Défense / géopolitique
+IHEDN,https://www.ihedn.fr/feed/
+Portail de l'IE,https://portail-ie.fr/feed

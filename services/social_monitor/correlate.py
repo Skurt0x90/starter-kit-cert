@@ -12,9 +12,9 @@ def clean_text(text: str) -> str:
     return text.lower()
 
 
-def find_keyword_matches(text: str) -> list[str]:
+def find_keyword_matches(text: str, keywords: list[str]) -> list[str]:
     cleaned = clean_text(text)
-    return [kw for kw in utils.KEYWORDS if kw.lower() in cleaned]
+    return [kw for kw in keywords if kw.lower() in cleaned]
 
 
 def find_member_matches(text: str, members: list[str]) -> list[str]:
@@ -23,13 +23,14 @@ def find_member_matches(text: str, members: list[str]) -> list[str]:
 
 
 def correlate(items: list[dict]) -> list[dict]:
-    members = utils.load_members(utils.TARGETS_FILE)
+    keywords = utils.load_keywords()
+    members = utils.load_members()
     results = []
 
     for item in items:
         searchable = f"{item.get('title', '')} {item.get('content', '')}".strip()
 
-        matched_keywords = find_keyword_matches(searchable)
+        matched_keywords = find_keyword_matches(searchable, keywords)
         matched_members = find_member_matches(searchable, members)
 
         if not matched_keywords and not matched_members:

@@ -13,6 +13,7 @@ SOCIAL_URL = os.getenv("SOCIAL_URL", "http://localhost:5004/api/data")
 # Délais lus depuis les variables d'environnement
 WATCHER_INTERVAL_MIN = int(os.getenv("SCHEDULE_INTERVAL_MINUTES", os.getenv("WEB_WATCHER_INTERVAL", 15)))
 VULN_INTERVAL_H = int(os.getenv("SCHEDULE_INTERVAL_HOURS", os.getenv("VULN_SCANNER_INTERVAL", 24)))
+SOCIAL_INTERVAL_H = int(os.getenv("SCHEDULE_INTERVAL_HOURS", os.getenv("VULN_SCANNER_INTERVAL", 24)))
 DASHBOARD_REFRESH_SEC = 60
 DEDUP_WINDOW_MIN = int(os.getenv("DEDUP_WINDOW_MINUTES", 30))
 
@@ -464,6 +465,7 @@ def build_delays_content():
         delay_row("Dashboard — rafraîchissement", f"{DASHBOARD_REFRESH_SEC}s"),
         delay_row("Web Watcher — cycle de scan", f"{WATCHER_INTERVAL_MIN} min", note="disponibilité, SSL, défacement"),
         delay_row("Vuln Scanner — cycle de scan", f"{VULN_INTERVAL_H}h", note="CVE, DNS, sous-domaines, typosquats"),
+        delay_row("Social et ransomware — cycle de scan", f"{SOCIAL_INTERVAL_H}h", note="CVE, DNS, sous-domaines, typosquats"),
         delay_row("Alert service — déduplication", f"{DEDUP_WINDOW_MIN} min", "#e67e22", note="fenêtre glissante anti-doublon"),
         html.Div(
             "Les délais sont configurables via les variables d'environnement du .env",
