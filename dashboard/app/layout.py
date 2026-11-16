@@ -1,6 +1,7 @@
 from dash import html, dcc
 import dash_mantine_components as dmc
 import dash_leaflet as dl
+from app import utils 
 
 
 def service_panel(title, list_id, badge_id, color_header="#c0392b"):
@@ -306,7 +307,7 @@ def create_layout():
                                         id="map", center=[48.0, 10.0], zoom=4,
                                         style={"height": "calc(100vh - 280px)", "width": "100%", "borderRadius": "8px", "border": "1px solid #2a2d35"},
                                         children=[
-                                            dl.TileLayer(url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png", attribution='&copy; <a href="https://carto.com/">CARTO</a>'),
+                                            dl.TileLayer(url=utils.CARTO_TILE_URL, attribution=utils.CARTO_ATTRIBUTION),
                                             dl.LayerGroup(id="markers"),
                                         ],
                                     ),

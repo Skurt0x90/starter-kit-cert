@@ -3,3 +3,4 @@ dash-leaflet==1.0.15
 dash-mantine-components==2.5.1
 requests==2.33.0
 gunicorn==23.0.0
+python-dotenv==1.0.1

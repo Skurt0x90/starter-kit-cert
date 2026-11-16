@@ -1,5 +1,14 @@
 python3 -m venv venv
 source venv/bin/activate
 pip install -m requirements.txt
-depuis services: python3 -m web_watcher.app
-depuis services: pytest --cov=web_watcher --cov-report=term-missing web_watcher/tests/
+
+Web watchet local (depuis services):
+set -a && source ../.env && set +a && python3 -m web_watcher.app
+pytest --cov=web_watcher --cov-report=term-missing web_watcher/tests/
+
+
+Pour le dashboard (depuis dashboard):
+python3 -m app.main
+
+Pour le alert service (depuis services):
+set -a && source ../.env && set +a && python3 -m alert_service.app

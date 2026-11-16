@@ -119,6 +119,8 @@ services:
   dashboard:
     build: ./dashboard
     container_name: dashboard
+    env_file:
+      - .env
     environment:
       - WATCHER_URL=http://web_watcher:5001/api/data
       - VULN_URL=http://vuln_scanner:5002/api/data
