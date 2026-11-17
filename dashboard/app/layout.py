@@ -239,10 +239,10 @@ def create_layout():
                                                 html.Div(
                                                     style={"paddingLeft": "8px", "fontFamily": "monospace", "fontSize": "0.8em", "color": "#888"},
                                                     children=[
-                                                        html.Span("Starter Kit CERT Aviation — "),
+                                                        html.Span("THREAT-RADAR — "),
                                                         html.Span("MIT License — "),
                                                         html.Span("Développé par "),
-                                                        html.Span("Skurt0x90", style={"color": "#00d4ff"}),
+                                                        html.Span("Clément C", style={"color": "#00d4ff"}),
                                                         html.Span(" — Inspiré de MISC N°142 (David LE GOFF & Marion BUCHET) — "),
                                                         html.A(
                                                             "github.com/Skurt0x90/starter-kit-cert",
@@ -269,7 +269,7 @@ def create_layout():
                             "alignItems": "center", "backgroundColor": "#141517",
                         },
                         children=[
-                            dmc.Text("CERT - Skurt0x90", size="xl", fw=700, c="cyan", style={"letterSpacing": "0.1em", "fontFamily": "monospace"}),
+                            dmc.Text("THREAT-RADAR", size="xl", fw=700, c="cyan", style={"letterSpacing": "0.1em", "fontFamily": "monospace"}),
                             html.Div(id="global-counters", style={"display": "flex", "gap": "10px", "alignItems": "center"}),
                             html.Div(id="service-indicators", style={"display": "flex", "gap": "16px", "alignItems": "center"}),
                             html.Div(

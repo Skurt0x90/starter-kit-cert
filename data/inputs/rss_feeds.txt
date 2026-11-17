@@ -1,16 +1,33 @@
-# Institutionnel FR
-CERT-FR,https://www.cert.ssi.gouv.fr/feed/
-ANSSI,https://www.ssi.gouv.fr/feed/
+# Nom,URL
+# ==========================================
+# INSTITUTIONNEL FR & EUROPÉEN
+# ==========================================
+CERT-FR Alertes,https://www.cert.ssi.gouv.fr/alerte/feed/
+CERT-FR Avis,https://www.cert.ssi.gouv.fr/avis/feed/
+CERT-FR Menaces et Incidents,https://www.cert.ssi.gouv.fr/cti/feed/
+ANSSI (Cyber.gouv.fr),https://cyber.gouv.fr/actualites/feed
+Cybermalveillance.gouv.fr,https://www.cybermalveillance.gouv.fr/feed
+ENISA (Agence UE Cybersécurité),https://www.enisa.europa.eu/rss.xml
 
-# Threat Intel
-Sekoia,https://blog.sekoia.io/feed/
+# ==========================================
+# THREAT INTEL & VULNÉRABILITÉS
+# ==========================================
+Sekoia TDR Blog,https://blog.sekoia.io/feed/
+Google Threat Intelligence (ex-Mandiant),https://cloudblog.withgoogle.com/topics/threat-intelligence/rss/
 Recorded Future,https://www.recordedfuture.com/feed
-Mandiant,https://www.mandiant.com/resources/blog/rss.xml
-Microsoft MSRC,https://msrc.microsoft.com/blog/feed
+Microsoft MSRC Security Updates,https://msrc.microsoft.com/blog/feed/
+CISA Advisories (US),https://www.cisa.gov/cybersecurity-advisories/all.xml
+Cisco Talos Intelligence,https://blog.talosintelligence.com/rss/
 The Hacker News,https://feeds.feedburner.com/TheHackersNews
+BleepingComputer,https://www.bleepingcomputer.com/feed/
 Krebs on Security,https://krebsonsecurity.com/feed/
-Schneider on Security,https://www.schneier.com/feed/atom
+Schneier on Security,https://www.schneier.com/feed/atom
 
-# Défense / géopolitique
+# ==========================================
+# DÉFENSE, AÉROSPATIAL & GÉOPOLITIQUE
+# ==========================================
 IHEDN,https://www.ihedn.fr/feed/
-Portail de l'IE,https://portail-ie.fr/feed
+Portail de l'IE,https://www.portail-ie.fr/feed/
+Opex360 (Zone Militaire),https://www.opex360.com/feed/
+FOB (Forces Operations Blog),https://forcesoperations.com/feed/
+Air & Cosmos,https://air-cosmos.com/rss

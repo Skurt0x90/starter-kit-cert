@@ -1,16 +1,35 @@
-# Canaux Telegram surveillés — un handle par ligne
+# Canaux Telegram surveillés — un handle ou nom exact par ligne
 # Lignes vides et commentaires (#) ignorés
 
-# Hacktivistes pro-russes — DDoS, défacement, revendications
+# ==========================================
+# HACKTIVISTES PRO-RUSSES & ALLIANCES (DDoS / ICS / Revendications)
+# ==========================================
 noname05716
+noname05716_eng
 cyberarmyofrussia_reborn
-killnet_channel
-from_russia_with_love2022
+WeAreKillnet_Official
+WeAreKillnet_Channel
+itarmyofrussianews
+serverkillers
+z_pentest_alliance
+darkstormteam
 
-# Leaks / data brokers
+# ==========================================
+# LEAKS, DATA BROKERS & CREDENTIALS (Stealers / Bases de données)
+# ==========================================
 leakbase
-breachforums_official
+breaches
+Chthonic
+Eternity
+EternityAIO
+Xtreme
+hackmanac
 
-# CTI généraliste
-thecyberexpress
+# ==========================================
+# CTI GÉNÉRALISTE & ALERTES VULNÉRABILITÉS
+# ==========================================
 vxunderground
+thecyberexpress
+DailyDarkWeb
+ransomwarelive
+falconfeedsio

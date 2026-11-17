@@ -66,7 +66,7 @@ def send_signal(alerts_to_send):
     for a in alerts_to_send:
         lignes.append(f"[{a['level']}] {a['domain']} — {a['message']}")
 
-    texte = f"🚨 Skurt0x90 CERT — {len(alerts_to_send)} alerte(s)\n\n"
+    texte = f"🚨 THREAT-RADAR — {len(alerts_to_send)} alerte(s)\n\n"
     texte += "\n".join(lignes)
     texte += f"\n\n🕐 {datetime.now(ZoneInfo('Europe/Paris')).strftime('%d/%m/%Y %H:%M')}"
 
@@ -137,16 +137,16 @@ def process_alert(payload):
 
 def format_email(alerts_to_send):
     if not alerts_to_send:
-        subject = "[CERT] 0 alerte détectée"
+        subject = "[THREAT-RADAR] 0 alerte détectée"
         body = f"""
-        <h2>[CERT] Rapport d'alertes</h2>
+        <h2>[THREAT-RADAR] Rapport d'alertes</h2>
         <p><b>Heure :</b> {datetime.now(ZoneInfo("Europe/Paris")).isoformat()}</p>
         <p>Aucune alerte détectée.</p>
         """
         return subject, body
 
     service_label = alerts_to_send[0]["service"].replace("_", " ").upper()
-    subject = f"[CERT - {service_label}] {len(alerts_to_send)} alerte(s) détectée(s)"
+    subject = f"[THREAT-RADAR - {service_label}] {len(alerts_to_send)} alerte(s) détectée(s)"
 
     rows = ""
     for a in alerts_to_send:
@@ -160,7 +160,7 @@ def format_email(alerts_to_send):
         """
 
     body = f"""
-    <h2>[CERT] Rapport d'alertes</h2>
+    <h2>[THREAT-RADAR] Rapport d'alertes</h2>
     <p><b>Heure :</b> {datetime.now(ZoneInfo("Europe/Paris")).isoformat()}</p>
     <table border="1" cellpadding="5">
         <tr><th>Niveau</th><th>Domaine</th><th>Message</th></tr>

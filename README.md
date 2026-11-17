@@ -1,4 +1,4 @@
-# 🛡️ Starter Kit CERT — POC
+# 🛡️ "Starter Kit CERT" — THREAT-RADAR
 
 Ce projet est une implémentation personnelle inspirée de l'article **"Déploiement opérationnel d'un starter kit du CERT"** publié dans [MISC n°142](https://connect.ed-diamond.com/misc/misc-142/deploiement-operationnel-d-un-starter-kit-du-cert-retour-d-experience-et-outils-open-source-pour-la-surveillance-proactive).
 

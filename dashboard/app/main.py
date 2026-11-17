@@ -5,7 +5,7 @@ import app.callbacks
 
 _dash_renderer._set_react_version("18.2.0") 
 
-app = Dash(__name__, title="CERT - Skurt0x90", suppress_callback_exceptions=True)
+app = Dash(__name__, title="THREAT-RADAR", suppress_callback_exceptions=True)
 app.layout = create_layout()
 
 server = app.server
