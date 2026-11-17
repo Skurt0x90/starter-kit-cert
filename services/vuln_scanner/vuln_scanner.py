@@ -94,6 +94,7 @@ def run_cycle():
 
     for target in targets:
         domain = target["domain"]
+        logger.info(f"----> Scan {domain}")
         cve_result = cve_check(domain, scan_mode=target["scan_mode"],)
         subdomain_result = subdomain_check(domain)
         dns_result = dns_check(domain)

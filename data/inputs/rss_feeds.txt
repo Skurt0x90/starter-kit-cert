@@ -5,9 +5,9 @@
 CERT-FR Alertes,https://www.cert.ssi.gouv.fr/alerte/feed/
 CERT-FR Avis,https://www.cert.ssi.gouv.fr/avis/feed/
 CERT-FR Menaces et Incidents,https://www.cert.ssi.gouv.fr/cti/feed/
-ANSSI (Cyber.gouv.fr),https://cyber.gouv.fr/actualites/feed
-Cybermalveillance.gouv.fr,https://www.cybermalveillance.gouv.fr/feed
-ENISA (Agence UE Cybersécurité),https://www.enisa.europa.eu/rss.xml
+ANSSI (Cyber.gouv.fr),https://cyber.gouv.fr/actualites/rss/
+Cybermalveillance.gouv.fr,https://www.cybermalveillance.gouv.fr/feed/atom-flux-actualites
+Cybermalveillance.gouv.fr/ALERTES,https://www.cybermalveillance.gouv.fr/feed/atom-flux-alertes
 
 # ==========================================
 # THREAT INTEL & VULNÉRABILITÉS
@@ -30,4 +30,3 @@ IHEDN,https://www.ihedn.fr/feed/
 Portail de l'IE,https://www.portail-ie.fr/feed/
 Opex360 (Zone Militaire),https://www.opex360.com/feed/
 FOB (Forces Operations Blog),https://forcesoperations.com/feed/
-Air & Cosmos,https://air-cosmos.com/rss
