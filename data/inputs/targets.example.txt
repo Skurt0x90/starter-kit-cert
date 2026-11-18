@@ -1,0 +1,3 @@
+# domaine,longitude,latitude,label,scan_mode
+scanme.nmap.org,-122.0840,37.3861,Test Nmap,active
+testphp.vulnweb.com,2.3522,48.8566,Test Acunetix,passive

@@ -78,4 +78,4 @@ spider_output/
 *.onion_dump/
 
 # MISP (si réactivé plus tard)
-misp/config/
+misp/config/data/inputs/targets.txt
