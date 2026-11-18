@@ -1,0 +1,7 @@
+# Mots-clés de corrélation — un mot-clé par ligne
+# Lignes vides et commentaires (#) ignorés
+
+nmap
+vulnweb
+CVE
+CVSS

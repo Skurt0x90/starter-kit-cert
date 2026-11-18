@@ -42,6 +42,7 @@ data/inputs/keywords.json
 data/outputs/*.json
 data/inputs/targets.txt
 data/inputs/members.txt
+data/inputs/keywords.txt
 
 # Telethon sessions
 *.session
