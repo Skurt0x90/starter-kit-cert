@@ -46,7 +46,7 @@ sudo docker compose --profile test up --build
 ## Configuration
  
 Copiez `.env.example` en `.env` et renseignez vos valeurs (SMTP, Signal...).
- 
+`NVD_API_KEY` est optionnelle mais recommandée (clé gratuite sur nvd.nist.gov). Sans elle, le scanner attend 6 s entre deux requêtes NVD et les scans sont beaucoup plus longs.
 La liste des cibles à surveiller se définit dans `data/inputs/targets.txt` :
  
 ```
@@ -77,14 +77,26 @@ Tous ces fichiers acceptent les commentaires (`#`) et les lignes vides.
 - **Alerting** — notifications email HTML par cycle ✅ / Signal ⚠️ *(enregistrement du numéro à effectuer manuellement — voir ci-dessous)*
 - **Dashboard** — carte Leaflet dark, compteurs globaux, panel vuln, onglets CVE/DNS/typosquats ✅
 - **Vuln Scanner** — surveillance de la surface d'attaque ✅
-  - Headers HTTP → croisement NVD/CVE ✅
-  - Énumération de sous-domaines via crt.sh ✅
+  - Shodan InternetDB (ports, logiciels et CVE connus par IP, sans contact direct avec la cible), prioritaire sur les headers HTTP ✅
+  - Headers HTTP → croisement NVD/CVE par CPE (version exacte, ou plage si la version est partielle) ✅
+  - Énumération de sous-domaines via crt.sh (retries + fallback Certspotter) ✅
   - Vérification SPF / DMARC ✅
   - Détection de typosquatting via dnstwist ✅
   - Scan nmap + CVE sur services exposés (mode `active`) ✅
 - **Ransomware Monitor** — veille sur les sites de leak ransomware ✅ clear web (Ransomlive, Ransomlook, Ransomfeed)
 - **Social Monitor** — veille OSINT via flux RSS CTI/institutionnels et scraping Telegram public ✅
- 
+
+### Niveaux d'alerte (Vuln Scanner)
+
+| Cas | Niveau |
+|:---|:---|
+| CVSS > 7 sur une version précise | CRITICAL |
+| CVSS > 7 mais version partielle (ex: `PHP/8.5`) ou recherche par mot-clé | WARNING |
+| CVSS ≤ 7 | WARNING |
+| CVE signalée par InternetDB mais non confirmée par NVD | WARNING |
+| Version masquée ou partielle | WARNING |
+| Port sensible exposé (mode `active`) | CRITICAL |
+
 ### Ce qui n'est pas implémenté (hors scope de ce POC)
  
 | Fonctionnalité | Raison |
@@ -92,6 +104,18 @@ Tous ces fichiers acceptent les commentaires (`#`) et les lignes vides.
 | Ransomware Monitor — dark web (.onion) | Nécessite un proxy Tor dédié ; les sources clear web couvrent l'essentiel des revendications publiques |
 | Social Monitor — Twitter/X | API devenue payante et très restrictive |
 | Social Monitor — HaveIBeenPwned | Nécessite une vérification de propriété de domaine par email |
+
+### Sources externes et limites
+
+Le mode `passive` interroge des services tiers. Les adresses IP et domaines des membres surveillés leur sont transmis :
+
+- **Shodan InternetDB** : usage non commercial, données mises à jour chaque semaine, uniquement pour les IP déjà scannées par Shodan. Derrière un CDN ou un hébergement mutualisé, les résultats décrivent l'IP et pas forcément le site.
+- **crt.sh / Certspotter** : disponibilité variable, d'où les retries et le fallback.
+- **NVD** : quotas plus larges avec une clé API.
+
+Limites des résultats :
+- Les CVE sont déduites des versions détectées, donc des faux positifs sont possibles.
+- Quand seule une version partielle est exposée (ex: `PHP/8.5`), la CVE trouvée peut ne concerner que certaines 8.5.x, ce qui est signalé dans l'alerte.
  
 ---
 

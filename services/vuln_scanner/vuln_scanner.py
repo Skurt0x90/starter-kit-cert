@@ -21,25 +21,57 @@ SENSITIVE_PORTS = {
     5432: "PostgreSQL",
 }
 
+def match_note(cve):
+    # précise si la CVE vient d'une version précise ou d'une version incomplète
+    match = cve.get("match")
+    if match == "range":
+        return " [version partielle : CVE possible sur certaines versions de la branche, à confirmer]"
+    if match == "keyword":
+        return " [recherche par mot-clé : à vérifier]"
+    return ""
+
+
+def alert_level(cve):
+    # CRITICAL seulement si CVSS > 7 ET version précise, sinon WARNING quel que soit le score
+    return "CRITICAL" if cve["cvss"] > 7 and cve.get("match") == "exact" else "WARNING"
+
+
 def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_result):
     alerts = []
 
     for cve in cve_result["cves"]:
-        if cve["cvss"] is None:
+        # note sans id (ex: version masquée) : on garde le message tel quel
+        if cve["id"] is None:
             alerts.append({
                 "level": "WARNING",
                 "message": cve["description"]
             })
-        elif cve["cvss"] > 7:
-            alerts.append({
-                "level": "CRITICAL",
-                "message": f"{cve['id']} (CVSS {cve['cvss']}) sur {cve_result['server']} ({domain})"
-            })
-        else:
+            continue
+
+        # CVE signalée par InternetDB mais sans score (non retrouvée via NVD)
+        if cve["cvss"] is None:
             alerts.append({
                 "level": "WARNING",
-                "message": f"{cve['id']} (CVSS {cve['cvss']}) sur {cve_result['server']} ({domain})"
+                "message": f"{cve['id']} signalée par Shodan InternetDB (non confirmée via NVD) sur l'IP de {domain}"
             })
+            continue
+
+        # où se trouve le composant : produit, port probable, site ou service de la même IP
+        component = cve.get("component") or cve_result["server"] or "composant inconnu"
+        ports = cve.get("ports") or []
+        where = component
+        if ports:
+            where += f" (port {', '.join(str(p) for p in ports)})"
+        if cve.get("scope") == "infra":
+            where += f", service sur la même IP que {domain}"
+        else:
+            where += f" sur {domain}"
+
+        level = alert_level(cve)
+        alerts.append({
+            "level": level,
+            "message": f"{cve['id']} (CVSS {cve['cvss']}) : {where}{match_note(cve)}"
+        })
     
     for port in cve_result.get("ports", []):
         # alerte ports sensibles
@@ -52,10 +84,10 @@ def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_resu
         for cve in port.get("cves", []):
             if cve["cvss"] is None:
                 continue
-            level = "CRITICAL" if cve["cvss"] > 7 else "WARNING"
+            level = alert_level(cve)
             alerts.append({
                 "level": level,
-                "message": f"{cve['id']} (CVSS {cve['cvss']}) sur {port['product']} port {port['port']} ({domain})"
+                "message": f"{cve['id']} (CVSS {cve['cvss']}) sur {port['product']} port {port['port']} ({domain}){match_note(cve)}"
             })
     for subdomain in subdomain_result.get("alerts", []):
         alerts.append(subdomain)
@@ -111,6 +143,7 @@ def run_cycle():
                 "x_powered_by": cve_result["x_powered_by"],
                 "cves": cve_result["cves"],
             },
+            "internetdb": cve_result.get("internetdb"),
             "ports": cve_result["ports"],        # ← extrait ici
             "subdomains": subdomain_result.get("subdomains", []),
             "dns": dns_result,
