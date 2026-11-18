@@ -31,6 +31,24 @@ def match_note(cve):
     return ""
 
 
+def cve_location(domain, cve_result, cve):
+    # où se trouve le composant : produit, port probable, site ou service de la même IP
+    component = cve.get("component")
+    if not component:
+        if cve.get("source") == "internetdb":
+            return f"composant non identifié sur l'IP de {domain}"
+        component = cve_result["server"] or "composant inconnu"
+    ports = cve.get("ports") or []
+    where = component
+    if ports:
+        where += f" (port {', '.join(str(p) for p in ports)})"
+    if cve.get("scope") == "infra":
+        where += f", service sur la même IP que {domain}"
+    else:
+        where += f" sur {domain}"
+    return where
+
+
 def alert_level(cve):
     # CRITICAL seulement si CVSS > 7 ET version précise, sinon WARNING quel que soit le score
     return "CRITICAL" if cve["cvss"] > 7 and cve.get("match") == "exact" else "WARNING"
@@ -56,16 +74,7 @@ def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_resu
             })
             continue
 
-        # où se trouve le composant : produit, port probable, site ou service de la même IP
-        component = cve.get("component") or cve_result["server"] or "composant inconnu"
-        ports = cve.get("ports") or []
-        where = component
-        if ports:
-            where += f" (port {', '.join(str(p) for p in ports)})"
-        if cve.get("scope") == "infra":
-            where += f", service sur la même IP que {domain}"
-        else:
-            where += f" sur {domain}"
+        where = cve_location(domain, cve_result, cve)
 
         level = alert_level(cve)
         alerts.append({
@@ -134,6 +143,12 @@ def run_cycle():
         alerts = build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_result)
         if alerts:
             alerts_by_domain[domain] = alerts
+
+        # champs prêts à afficher pour le dashboard (même texte que dans les mails)
+        for cve in cve_result["cves"]:
+            if cve["id"] is not None:
+                cve["where"] = cve_location(domain, cve_result, cve)
+                cve["match_note"] = match_note(cve).strip()
 
         sites.append({
             "domain": domain,

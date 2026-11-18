@@ -230,7 +230,7 @@ def build_cve_detail_panel(sites, filtre="all"):
                     html.Span(domain, style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "150px"}),
                     html.Span(cve.get("id") or "—", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "140px"}),
                     html.Span(f"CVSS {cvss}" if cvss else "version masquée", style={"color": color, "fontFamily": "monospace", "fontSize": "0.8em", "minWidth": "90px"}),
-                    html.Span("header", style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "60px"}),
+                    html.Span(cve.get("where", ""), style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "60px"}),
                     html.Span(cve.get("description", ""), style={"color": "#aaa", "fontSize": "0.78em", "flex": "1"}),
                     html.Span(checked_at, style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.75em", "minWidth": "120px"}),
                 ]
