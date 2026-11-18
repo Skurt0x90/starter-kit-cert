@@ -23,6 +23,9 @@ Ce projet est une implémentation personnelle inspirée de l'article **"Déploie
 
 ```bash
 cp .env.example .env
+cp ./data/inputs/keywords.example.txt ./data/inputs/keywords.txt
+cp ./data/inputs/members.example.txt ./data/inputs/members.txt
+cp ./data/inputs/targets.example.txt ./data/inputs/targets.txt
 sudo docker compose --profile test up --build
 ```
 
@@ -58,7 +61,7 @@ monmembre.fr,2.3522,48.8566,Lyon,active
 - `passive` (défaut) — surveillance non intrusive, aucune autorisation requise
 - `active` — modules de scan supplémentaires (nmap), **nécessite une convention signée avec le membre**
  
-Les sources de surveillance sont configurables via des fichiers plats dans `data/inputs/` :
+Les sources de surveillance sont configurables via des fichiers plats dans `data/inputs/` des examples sont disponibles :
  
 | Fichier                   | Format       | Usage                                  |
 |:--------------------------|:-------------|:---------------------------------------|
