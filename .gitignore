@@ -40,6 +40,8 @@ signal-cli/data/
 data/inputs/members.json
 data/inputs/keywords.json
 data/outputs/*.json
+data/inputs/targets.txt
+data/inputs/members.txt
 
 # Telethon sessions
 *.session
