@@ -129,18 +129,18 @@ def correlate():
     memberlist = utils.load_members(utils.TARGETS_FILE)
     
     matches = []
-        for member in memberlist:
-            member_clean = clean_name(member['member'])
-            if not member_clean:
-                continue
-            for victime in ransomlist:
-                if member_clean == clean_name(victime['victime']):
-                    matches.append({
-                        'victime': victime['victime'],
-                        'acteur': victime['acteur'],
-                        'date': victime['date'],
-                        'source': victime['source']
-                    })
-                    break
+    for member in memberlist:
+        member_clean = clean_name(member['member'])
+        if not member_clean:
+            continue
+        for victime in ransomlist:
+            if member_clean == clean_name(victime['victime']):
+                matches.append({
+                    'victime': victime['victime'],
+                    'acteur': victime['acteur'],
+                    'date': victime['date'],
+                    'source': victime['source']
+                })
+                break
     
     return matches
