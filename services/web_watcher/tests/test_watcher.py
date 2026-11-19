@@ -374,10 +374,15 @@ class TestCreateAlerts(unittest.TestCase):
 def _result(domain, **over):
     r = {"domain": domain, "site_up": True, "ssl_ok": True, "ssl_days_left": 60, "ssl_checked_at": "x",
          "response_time": "OK", "response_seconds": 0.5, "defacement": "SITE OK (non défacé)",
-         "failures": {"down": 0, "slow": 0, "defacement": 0}, "checked_at": "x", "localisation": "(48.0, 2.0)"}
+         "checked_at": "x", "localisation": "(48.0, 2.0)"}
     r.update(over)
+    # compteurs cohérents avec l'état, comme check_site (1er cycle en anomalie)
+    r.setdefault("failures", {
+        "down": 0 if r["site_up"] else 1,
+        "slow": 1 if r["response_time"] in ("DEF", "KO") else 0,
+        "defacement": 1 if r["defacement"] in ("DEFACEMENT PROBABLE", "DEFACEMENT FORTEMENT PROBABLE") else 0,
+    })
     return r
-
 
 class TestRunWatcherCycle(unittest.TestCase):
 
