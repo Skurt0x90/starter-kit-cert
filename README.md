@@ -247,7 +247,6 @@ coverage report
 | `social_monitor`     | corrélation par mots entiers, collecteurs RSS/Telegram, alertes, cycle           |
 | `ransomware_monitor` | normalisation des noms, sources, corrélation, alertes, cycle                     |
 | `alert_service`      | déduplication, email, Signal, historique, API                                    |
-| `dashboard`          | fonctions de rendu et de filtrage, unicité des identifiants du layout            |
 
 ### Cibles de test
 
