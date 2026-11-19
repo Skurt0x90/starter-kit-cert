@@ -33,8 +33,9 @@ def normalize_title(t):
     t = unescape(t or "")
     t = unicodedata.normalize("NFKC", t)
     t = t.replace("\u2019", "'").replace("\u2018", "'")  # apostrophes typographiques
+    t = re.sub(r"[\u2010-\u2015\u2212]", "-", t)          # tirets typographiques -> "-"
+    t = re.sub(r"\s+", " ", t)                            # espaces multiples / insécables
     return t.strip()
-
 
 def is_title_changed(content, title):
     # pas de titre attendu configuré : on ne compare pas

@@ -34,7 +34,14 @@ def load_domains(filepath):
             line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            domain, lon, lat, label, *rest = line.split(",")
-            scan_mode = rest[0].strip() if rest else "passive"
-            domains_to_check.append({"domain": domain.strip(), "longitude": float(lon), "latitude": float(lat), "label": label.strip(), "scan_mode": scan_mode.strip()})
+            parts = line.split(",", 3)
+            if len(parts) < 4:
+                raise ValueError(f"ligne de cible invalide : {line!r}")
+            domain, lon, lat, rest = (p.strip() for p in parts)
+            scan_mode = "passive"
+            head, sep, tail = rest.rpartition(",")
+            if sep and tail.strip().lower() in ("active", "passive"):
+                scan_mode = tail.strip().lower()
+                rest = head.strip()
+            domains_to_check.append({"domain": domain, "longitude": float(lon), "latitude": float(lat), "label": rest, "scan_mode": scan_mode})
     return domains_to_check

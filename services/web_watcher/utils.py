@@ -46,24 +46,37 @@ HEADERS = {
     "Sec-Fetch-User": "?1",
 }
 
+def parse_target_line(line):
+    # domaine,longitude,latitude,titre[,scan_mode] : le titre peut contenir des virgules
+    parts = line.split(",", 3)
+    if len(parts) < 4:
+        raise ValueError(f"ligne de cible invalide : {line!r}")
+    domain, lon, lat, rest = (p.strip() for p in parts)
+
+    scan_mode = "passive"
+    head, sep, tail = rest.rpartition(",")
+    if sep and tail.strip().lower() in ("active", "passive"):
+        scan_mode = tail.strip().lower()
+        rest = head.strip()
+
+    return {
+        "domain": domain,
+        "longitude": float(lon),
+        "latitude": float(lat),
+        "label": rest,     # titre attendu de la page
+        "title": rest,
+        "scan_mode": scan_mode,
+    }
+
+
 def load_domains(filepath):
     domains_to_check = []
-    with open(filepath, newline='') as f:
-        reader = csv.reader(f)
-        for row in reader:
-            if not row or row[0].startswith("#"):
+    with open(filepath) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
                 continue
-            domain, lon, lat, label, *rest = row
-            scan_mode = rest[0].strip() if rest else "passive"
-            title = rest[1].strip() if len(rest) > 1 else ""
-            domains_to_check.append({
-                "domain": domain.strip(),
-                "longitude": float(lon),
-                "latitude": float(lat),
-                "label": label.strip(),
-                "scan_mode": scan_mode.strip(),
-                "title": title,
-            })
+            domains_to_check.append(parse_target_line(line))
     return domains_to_check
 
 
