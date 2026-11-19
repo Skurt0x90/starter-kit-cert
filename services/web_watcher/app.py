@@ -5,6 +5,7 @@ from flask import Flask, jsonify
 from apscheduler.schedulers.background import BackgroundScheduler
 from web_watcher.watcher import run_watcher_cycle
 from web_watcher import utils
+from datetime import datetime
 
 logging.basicConfig(
     level=logging.INFO,
@@ -33,7 +34,7 @@ def get_datas():
         return jsonify({"error": "Pas encore de données, premier cycle en cours"}), 503
     
 if __name__ == "__main__":
-    scheduler.add_job(run_watcher_cycle, "interval", minutes=utils.SCHEDULE_INTERVAL_MINUTES)
+    scheduler.add_job(run_watcher_cycle, "interval", minutes=utils.SCHEDULE_INTERVAL_MINUTES,
+                      next_run_time=datetime.now(), max_instances=1, coalesce=True)
     scheduler.start()
-    run_watcher_cycle()  # premier cycle immédiat
     app.run(host=os.getenv("FLASK_HOST", "127.0.0.1"), port=int(os.getenv("FLASK_PORT", 5001)))

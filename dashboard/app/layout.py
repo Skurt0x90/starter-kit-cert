@@ -261,6 +261,71 @@ def create_layout():
                         ]
                     ),
 
+                    # ── Modal agrandir (⛶) ────────────────────────────────────
+                    html.Div(
+                        id="expand-modal",
+                        style={"display": "none"},
+                        children=[
+                            html.Div(
+                                id="expand-modal-overlay",
+                                n_clicks=0,
+                                style={
+                                    "position": "fixed", "top": "0", "left": "0",
+                                    "width": "100%", "height": "100%",
+                                    "backgroundColor": "rgba(0,0,0,0.75)", "zIndex": "999",
+                                }
+                            ),
+                            html.Div(
+                                style={
+                                    "position": "fixed", "top": "50%", "left": "50%",
+                                    "transform": "translate(-50%, -50%)",
+                                    "width": "80%", "maxWidth": "1200px", "maxHeight": "85vh",
+                                    "backgroundColor": "#1a1b1e", "border": "1px solid #2a2d35",
+                                    "borderRadius": "10px", "zIndex": "1000",
+                                    "overflow": "hidden", "display": "flex", "flexDirection": "column",
+                                },
+                                children=[
+                                    # Header
+                                    html.Div(
+                                        style={
+                                            "backgroundColor": "#141517", "padding": "12px 20px",
+                                            "display": "flex", "justifyContent": "space-between",
+                                            "alignItems": "center", "borderBottom": "1px solid #2a2d35",
+                                        },
+                                        children=[
+                                            html.Span(id="expand-modal-title", style={"color": "#00d4ff", "fontFamily": "monospace", "fontWeight": "bold", "fontSize": "1em"}),
+                                            html.Button("✕", id="expand-modal-close", n_clicks=0, style={"background": "none", "border": "none", "color": "#888", "fontSize": "1.2em", "cursor": "pointer"}),
+                                        ]
+                                    ),
+                                    # Barre d'outils : onglets + filtres + recherche (vue Vuln uniquement)
+                                    html.Div(
+                                        id="expand-modal-toolbar",
+                                        style={"display": "none"},
+                                        children=[
+                                            html.Div(id="expand-modal-views", style={"display": "flex", "gap": "2px"}),
+                                            html.Span("│", style={"color": "#2a2d35"}),
+                                            html.Div(id="expand-modal-filters", style={"display": "flex", "alignItems": "center", "gap": "2px", "flexWrap": "wrap"}),
+                                            dcc.Input(
+                                                id="expand-search",
+                                                type="text",
+                                                value="",
+                                                placeholder="Rechercher domaine / CVE…",
+                                                style={
+                                                    "marginLeft": "auto", "fontFamily": "monospace", "fontSize": "0.75em",
+                                                    "padding": "3px 10px", "width": "220px",
+                                                    "backgroundColor": "#1a1b1e", "color": "#ddd",
+                                                    "border": "1px solid #2a2d35", "borderRadius": "4px", "outline": "none",
+                                                },
+                                            ),
+                                        ]
+                                    ),
+                                    # Corps scrollable
+                                    html.Div(id="expand-modal-body", style={"overflowY": "auto", "padding": "16px 20px", "flex": "1"}),
+                                ]
+                            ),
+                        ]
+                    ),
+
                     # ── Header ───────────────────────────────────────────────
                     dmc.Box(
                         style={
@@ -337,7 +402,25 @@ def create_layout():
                                     dmc.Box(
                                         style={"backgroundColor": "#1a1b1e", "border": "1px solid #2a2d35", "borderRadius": "8px", "marginBottom": "10px", "overflow": "hidden"},
                                         children=[
-                                            dmc.Box(style={"backgroundColor": "#922b21", "padding": "6px 14px"}, children=[dmc.Text("🔍 Vuln Scanner", size="sm", fw=700, c="white", style={"fontFamily": "monospace"})]),
+                                            dmc.Box(
+                                                style={"backgroundColor": "#922b21", "padding": "6px 14px", "display": "flex", "justifyContent": "space-between", "alignItems": "center"},
+                                                children=[
+                                                    dmc.Text("🔍 Vuln Scanner", size="sm", fw=700, c="white", style={"fontFamily": "monospace"}),
+                                                    html.Button(
+                                                        "⛶",
+                                                        id="vuln-expand-btn",
+                                                        n_clicks=0,
+                                                        title="Agrandir",
+                                                        style={
+                                                            "fontFamily": "monospace", "fontSize": "0.72em", "cursor": "pointer",
+                                                            "padding": "1px 6px",
+                                                            "border": "1px solid rgba(255,255,255,0.3)",
+                                                            "borderRadius": "4px",
+                                                            "backgroundColor": "transparent", "color": "white",
+                                                        }
+                                                    ),
+                                                ]
+                                            ),
                                             dmc.Box(style={"padding": "6px 10px", "borderBottom": "1px solid #2a2d35"}, children=[
                                                 html.Div(style={"display": "flex", "justifyContent": "space-between", "marginBottom": "5px"}, children=[
                                                     html.Span("CVE", style={"color": "#888", "fontFamily": "monospace", "fontSize": "0.75em", "textTransform": "uppercase"}),
@@ -418,6 +501,9 @@ def create_layout():
                     dcc.Store(id="active-filter-dns", data="all"),
                     dcc.Store(id="active-filter-sub", data="all"),
                     dcc.Store(id="vuln-data-store", data={}),
+                    dcc.Store(id="ransomware-data-store", data=[]),
+                    dcc.Store(id="social-data-store", data=[]),
+                    dcc.Store(id="expand-state", data={"open": False, "view": None, "filter": "all"}),
                     dcc.Interval(id="interval", interval=60 * 1000, n_intervals=0),
                 ]
             )
