@@ -238,11 +238,6 @@ pip install -r web_watcher/requirements.txt -r vuln_scanner/requirements.txt \
             -r alert_service/requirements.txt coverage
 coverage run -m unittest discover -v
 coverage report
-
-# dashboard (depuis dashboard/)
-cd ../dashboard
-pip install -r requirements.txt
-python -m unittest discover -s tests -t . -v
 ```
 
 | Service              | Couvert                                                                          |

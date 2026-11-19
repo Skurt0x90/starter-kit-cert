@@ -1,16 +1,17 @@
 [run]
-# Chemin relatif depuis la racine (services/)
-source = web_watcher
+# chemins relatifs depuis services/
+source =
+    web_watcher
+    vuln_scanner
+    social_monitor
+    ransomware_monitor
+    alert_service
 
-# Ignorer les tests et l'environnement virtuel
 omit =
     */tests/*
     */venv/*
-    config.py
-    app.py
 
 [report]
-# Exclure les lignes non pertinentes
 exclude_lines =
     pragma: no cover
     def __repr__

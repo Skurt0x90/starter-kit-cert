@@ -30,8 +30,8 @@ def load_members(filepath):
     members = []
     with open(filepath) as f:
         for line in f:
+            line = line.strip()
             if not line or line.startswith("#"):
                 continue
-            member = line
-            members.append({"member": member})
+            members.append({"member": line})
     return members
