@@ -10,3 +10,6 @@ CARTO_TILE_URL = (
     f"?key={CARTO_API_KEY}"
 )
 CARTO_ATTRIBUTION = '&copy; <a href="https://carto.com/">CARTO</a> &copy; OpenStreetMap contributors'
+
+CVE_GRID = "150px 125px 70px 90px 100px 210px minmax(320px, 1fr) 90px"
+CVE_GRID_MIN_WIDTH = "1260px"  

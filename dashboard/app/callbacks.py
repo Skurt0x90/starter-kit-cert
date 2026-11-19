@@ -4,6 +4,7 @@ import requests
 from dash import Input, Output, callback, html, State, ctx, ALL, no_update
 import dash_leaflet as dl
 import logging
+from app import utils
 
 WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
 VULN_URL = os.getenv("VULN_URL", "http://localhost:5002/api/data")
@@ -366,6 +367,100 @@ def build_subdomain_detail_panel(sites, filtre="all", search=""):
         return html.Span("Aucune donnée", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
     return rows
 
+# ─── Tableau CVE du popup (colonnes alignées + filtres par colonne) ──────────
+
+MATCH_LABELS = {"exact": "exacte", "range": "partielle", "keyword": "mot-clé"}
+
+
+def collect_cve_rows(sites):
+    # une ligne par CVE : headers / InternetDB / nmap (déjà fusionnés par cve_lookup) + CVE par port si présentes
+    rows = []
+    for site in sites:
+        domain = site.get("domain", "?")
+        scan = site.get("checked_at", "")[:10]
+        for cve in site.get("headers", {}).get("cves", []):
+            if not cve.get("id"):
+                continue
+            rows.append({
+                "domain": domain, "id": cve["id"], "cvss": cve.get("cvss"),
+                "match": cve.get("match"),
+                "where": cve.get("where") or cve.get("component") or "—",
+                "description": cve.get("description", ""), "scan": scan,
+            })
+        for port in site.get("ports", []):
+            for cve in port.get("cves", []):
+                if not cve.get("cvss"):
+                    continue
+                rows.append({
+                    "domain": domain, "id": cve.get("id") or "—", "cvss": cve["cvss"],
+                    "match": cve.get("match"),
+                    "where": f"{port.get('product') or port.get('service') or '?'} (port {port['port']})",
+                    "description": cve.get("description", ""), "scan": scan,
+                })
+    return rows
+
+
+def row_passes(row, f):
+    cvss = row["cvss"]
+    level = "critical" if cvss is not None and cvss >= CVSS_CRITICAL else "warning"
+    if f["domain"] and f["domain"] not in row["domain"].lower():
+        return False
+    if f["cve"] and f["cve"] not in row["id"].lower():
+        return False
+    if f["cvss_min"] != "all" and (cvss is None or cvss < float(f["cvss_min"])):
+        return False
+    if f["level"] != "all" and level != f["level"]:
+        return False
+    if f["match"] != "all" and (row["match"] or "none") != f["match"]:
+        return False
+    if f["where"] and f["where"] not in row["where"].lower():
+        return False
+    if f["desc"] and f["desc"] not in row["description"].lower():
+        return False
+    return True
+
+
+def cve_cell(text, color="#aaa", size="0.8em", mono=True):
+    # retour à la ligne autorisé : la description n'est plus écrasée
+    return html.Div(text, title=text, style={
+        "color": color, "fontSize": size, "fontFamily": "monospace" if mono else "inherit",
+        "wordBreak": "break-word", "lineHeight": "1.4",
+    })
+
+
+def build_cve_table(sites, f):
+    all_rows = collect_cve_rows(sites)
+    rows = [r for r in all_rows if row_passes(r, f)]
+    rows.sort(key=lambda r: (r["cvss"] is None, -(r["cvss"] or 0), r["domain"]))
+
+    out = [html.Div(f"{len(rows)} / {len(all_rows)} CVE", style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.72em", "marginBottom": "6px"})]
+    if not rows:
+        out.append(html.Span("Aucune CVE ne correspond aux filtres", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}))
+        return out
+
+    table = []
+    for r in rows:
+        cvss = r["cvss"]
+        color = cvss_color(cvss)
+        critical = cvss is not None and cvss >= CVSS_CRITICAL
+        table.append(html.Div(
+            style={
+                "display": "grid", "gridTemplateColumns": utils.CVE_GRID, "gap": "10px", "alignItems": "start",
+                "padding": "6px 0", "borderBottom": "1px solid #2a2d35", "backgroundColor": f"{color}11",
+            },
+            children=[
+                cve_cell(r["domain"], "#888"),
+                cve_cell(r["id"], color),
+                cve_cell(f"{cvss}" if cvss is not None else "—", color),
+                cve_cell("Critical" if critical else "Warning", color),
+                cve_cell(MATCH_LABELS.get(r["match"], "non confirmée"), "#888", "0.75em"),
+                cve_cell(r["where"], "#5dade2", "0.75em"),
+                cve_cell(r["description"], "#aaa", "0.78em", mono=False),
+                cve_cell(r["scan"], "#555", "0.75em"),
+            ]
+        ))
+    out.append(html.Div(table, style={"minWidth": utils.CVE_GRID_MIN_WIDTH}))
+    return out
 
 # ─── Modal domaine ────────────────────────────────────────────────────────────
 
@@ -509,7 +604,7 @@ VULN_VIEWS = {
 
 # filtres par vue (valeur -> libellé), mêmes valeurs que les filtres du panel du bas
 VULN_FILTERS = {
-    "cve": [("all", "Tous"), ("critical", "Critical"), ("warning", "Warning"), ("exact", "Version exacte"), ("range", "Partielle / mot-clé")],
+    "cve": [],
     "dns": [("all", "Tous"), ("spf", "SPF ✗"), ("dmarc", "DMARC ✗"), ("none", "p=none")],
     "sub": [("all", "Tous"), ("subdomains", "Sous-domaines"), ("typo", "Typosquats")],
 }
@@ -631,15 +726,24 @@ def update_expand_state(n_bottom, n_vuln, n_services, n_close, n_overlay, n_view
     Output("expand-modal-filters", "children"),
     Output("expand-modal-toolbar", "style"),
     Output("expand-search", "style"),
-    Output("expand-modal-body", "children"),
+    Output("expand-cve-filters", "style"),
+    Output("expand-modal-content", "children"),
     Input("expand-state", "data"),
     Input("expand-search", "value"),
+    Input("f-domain", "value"),
+    Input("f-cve", "value"),
+    Input("f-cvss", "value"),
+    Input("f-level", "value"),
+    Input("f-match", "value"),
+    Input("f-where", "value"),
+    Input("f-desc", "value"),
     State("vuln-data-store", "data"),
     State("ransomware-data-store", "data"),
     State("social-data-store", "data"),
     prevent_initial_call=True,
 )
-def render_expand_modal(state, search, vuln_data, ransomware_data, social_data):
+def render_expand_modal(state, search, f_domain, f_cve, f_cvss, f_level, f_match, f_where, f_desc,
+                        vuln_data, ransomware_data, social_data):
     hidden = {"display": "none"}
     visible = {"display": "block"}
     toolbar_on = {
@@ -652,33 +756,64 @@ def render_expand_modal(state, search, vuln_data, ransomware_data, social_data):
         "backgroundColor": "#1a1b1e", "color": "#ddd",
         "border": "1px solid #2a2d35", "borderRadius": "4px", "outline": "none",
     }
+    cve_filters_on = {
+        "display": "block", "position": "sticky", "top": "0", "zIndex": "5",
+        "backgroundColor": "#1a1b1e", "padding": "12px 0 8px 0", "borderBottom": "1px solid #2a2d35",
+        "minWidth": utils.CVE_GRID_MIN_WIDTH,
+    }
 
     if not state or not state.get("open"):
-        return hidden, "", [], [], hidden, hidden, []
+        return hidden, "", [], [], hidden, hidden, hidden, []
 
     view = state.get("view")
     filtre = state.get("filter") or "all"
     search = (search or "").strip().lower()
 
-    # détail Vuln : onglets + filtres + recherche
+    # détail Vuln : onglets + filtres (+ recherche globale sauf vue CVE, qui a ses filtres de colonnes)
     if view in VULN_VIEWS:
         vuln_sites = (vuln_data or {}).get("sites", [])
         label, builder = VULN_VIEWS[view]
         views = [expand_btn(lbl, {"type": "expand-view", "index": key}, active=(key == view), tab=True) for key, (lbl, _) in VULN_VIEWS.items()]
         filters = [expand_btn(lbl, {"type": "expand-filter", "index": val}, active=(val == filtre)) for val, lbl in VULN_FILTERS[view]]
-        body = builder(vuln_sites, filtre, search)
-        return visible, f"🔍 Vuln Scanner — {label}", views, filters, toolbar_on, search_on, body
+        title = f"🔍 Vuln Scanner — {label}"
+
+        if view == "cve":
+            f = {
+                "domain": (f_domain or "").strip().lower(),
+                "cve": (f_cve or "").strip().lower(),
+                "cvss_min": f_cvss or "all",
+                "level": f_level or "all",
+                "match": f_match or "all",
+                "where": (f_where or "").strip().lower(),
+                "desc": (f_desc or "").strip().lower(),
+            }
+            return visible, title, views, filters, toolbar_on, hidden, cve_filters_on, build_cve_table(vuln_sites, f)
+
+        return visible, title, views, filters, toolbar_on, search_on, hidden, builder(vuln_sites, filtre, search)
 
     # panels Ransomware / Social : liste complète, pas de filtres
     if view == "ransomware":
         content, total = build_ransomware_panel(ransomware_data or [])
-        return visible, f"🦠 Ransomware Monitor — {total} match(s) membres", [], [], hidden, hidden, content
+        return visible, f"🦠 Ransomware Monitor — {total} match(s) membres", [], [], hidden, hidden, hidden, content
     if view == "social":
         content, total = build_social_panel(social_data or [])
-        return visible, f"📡 Social Monitor — {total} match(s) message", [], [], hidden, hidden, content
+        return visible, f"📡 Social Monitor — {total} match(s) message", [], [], hidden, hidden, hidden, content
 
-    return hidden, "", [], [], hidden, hidden, []
+    return hidden, "", [], [], hidden, hidden, hidden, []
 
+@callback(
+    Output("f-domain", "value"),
+    Output("f-cve", "value"),
+    Output("f-cvss", "value"),
+    Output("f-level", "value"),
+    Output("f-match", "value"),
+    Output("f-where", "value"),
+    Output("f-desc", "value"),
+    Input("f-reset", "n_clicks"),
+    prevent_initial_call=True,
+)
+def reset_cve_filters(n_clicks):
+    return "", "", "all", "all", "all", "", ""
 
 @callback(
     Output("tab-cve", "style"),

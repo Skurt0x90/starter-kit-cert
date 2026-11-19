@@ -106,6 +106,53 @@ def help_line(text, color="#aaa"):
     return html.Div(text, style={"color": color, "fontSize": "0.82em", "fontFamily": "monospace", "marginBottom": "4px", "paddingLeft": "8px"})
 
 
+def cve_filter_input(input_id, placeholder):
+    return dcc.Input(
+        id=input_id, type="text", value="", placeholder=placeholder,
+        style={
+            "width": "100%", "boxSizing": "border-box", "fontFamily": "monospace", "fontSize": "0.72em",
+            "padding": "3px 6px", "backgroundColor": "#141517", "color": "#ddd",
+            "border": "1px solid #2a2d35", "borderRadius": "4px", "outline": "none",
+        },
+    )
+
+
+def cve_filter_select(select_id, data):
+    return dmc.Select(
+        id=select_id, data=data, value="all", size="xs",
+        clearable=False, allowDeselect=False,
+        comboboxProps={"zIndex": 2000},  # au-dessus du popup (zIndex 1000)
+        styles={
+            "input": {"backgroundColor": "#141517", "color": "#ddd", "border": "1px solid #2a2d35", "fontFamily": "monospace", "fontSize": "0.72em"},
+            "dropdown": {"backgroundColor": "#141517", "border": "1px solid #2a2d35"},
+            "option": {"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.75em"},
+        },
+    )
+
+
+def cve_filter_header():
+    # en-tête + filtres du tableau CVE (fixes : pas recréés à chaque rendu, donc pas de perte de focus)
+    head = {"color": "#888", "fontFamily": "monospace", "fontSize": "0.72em", "textTransform": "uppercase", "letterSpacing": "0.05em"}
+    grid = {"display": "grid", "gridTemplateColumns": utils.CVE_GRID, "gap": "10px", "alignItems": "center", "minWidth": utils.CVE_GRID_MIN_WIDTH}
+    return [
+        html.Div(style={**grid, "marginBottom": "6px"}, children=[
+            html.Span(label, style=head) for label in ("Domaine", "CVE", "CVSS", "Niveau", "Précision", "Composant", "Description", "Scan")
+        ]),
+        html.Div(style=grid, children=[
+            cve_filter_input("f-domain", "domaine…"),
+            cve_filter_input("f-cve", "CVE-…"),
+            cve_filter_select("f-cvss", [{"value": "all", "label": "Tous"}, {"value": "7", "label": "≥ 7"}, {"value": "8", "label": "≥ 8"}, {"value": "9", "label": "≥ 9"}]),
+            cve_filter_select("f-level", [{"value": "all", "label": "Tous"}, {"value": "critical", "label": "Critical"}, {"value": "warning", "label": "Warning"}]),
+            cve_filter_select("f-match", [{"value": "all", "label": "Toutes"}, {"value": "exact", "label": "Exacte"}, {"value": "range", "label": "Partielle"}, {"value": "keyword", "label": "Mot-clé"}, {"value": "none", "label": "Non confirmée"}]),
+            cve_filter_input("f-where", "composant, port…"),
+            cve_filter_input("f-desc", "texte de la description…"),
+            html.Button("↺", id="f-reset", n_clicks=0, title="Réinitialiser les filtres", style={
+                "fontFamily": "monospace", "cursor": "pointer", "padding": "2px 8px",
+                "border": "1px solid #2a2d35", "borderRadius": "4px", "backgroundColor": "transparent", "color": "#00d4ff",
+            }),
+        ]),
+    ]
+
 def create_layout():
     return dmc.MantineProvider(
         theme={"colorScheme": "dark"},
@@ -279,7 +326,7 @@ def create_layout():
                                 style={
                                     "position": "fixed", "top": "50%", "left": "50%",
                                     "transform": "translate(-50%, -50%)",
-                                    "width": "80%", "maxWidth": "1200px", "maxHeight": "85vh",
+                                    "width": "90%", "maxWidth": "1400px", "maxHeight": "85vh",
                                     "backgroundColor": "#1a1b1e", "border": "1px solid #2a2d35",
                                     "borderRadius": "10px", "zIndex": "1000",
                                     "overflow": "hidden", "display": "flex", "flexDirection": "column",
@@ -319,8 +366,14 @@ def create_layout():
                                             ),
                                         ]
                                     ),
-                                    # Corps scrollable
-                                    html.Div(id="expand-modal-body", style={"overflowY": "auto", "padding": "16px 20px", "flex": "1"}),
+                                    html.Div(
+                                        id="expand-modal-body",
+                                        style={"overflow": "auto", "padding": "0 20px 16px 20px", "flex": "1"},
+                                        children=[
+                                            html.Div(id="expand-cve-filters", style={"display": "none"}, children=cve_filter_header()),
+                                            html.Div(id="expand-modal-content", style={"paddingTop": "12px"}),
+                                        ],
+                                    ),
                                 ]
                             ),
                         ]
