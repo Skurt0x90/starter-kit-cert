@@ -17,6 +17,8 @@ SOCIAL_INTERVAL_H = int(os.getenv("SCHEDULE_INTERVAL_HOURS", os.getenv("VULN_SCA
 DASHBOARD_REFRESH_SEC = 60
 DEDUP_WINDOW_MIN = int(os.getenv("DEDUP_WINDOW_MINUTES", 30))
 
+CVSS_CRITICAL = float(9.0)
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
@@ -124,11 +126,9 @@ def build_social_panel(message):
 def cvss_color(cvss):
     if cvss is None:
         return "#555"
-    if cvss >= 9:
+    if cvss >= CVSS_CRITICAL:
         return "#c0392b"
-    if cvss > 7:
-        return "#e67e22"
-    return "#f1c40f"
+    return "#e67e22"
 
 
 def tag_style(color, bg):

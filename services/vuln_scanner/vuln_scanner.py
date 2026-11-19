@@ -21,6 +21,9 @@ SENSITIVE_PORTS = {
     5432: "PostgreSQL",
 }
 
+CVSS_MIN = float(7.0)
+CVSS_CRITICAL = float(9.0)
+
 def match_note(cve):
     # précise si la CVE vient d'une version précise ou d'une version incomplète
     match = cve.get("match")
@@ -50,8 +53,8 @@ def cve_location(domain, cve_result, cve):
 
 
 def alert_level(cve):
-    # CRITICAL seulement si CVSS > 7 ET version précise, sinon WARNING quel que soit le score
-    return "CRITICAL" if cve["cvss"] > 7 and cve.get("match") == "exact" else "WARNING"
+    # CRITICAL seulement si CVSS >= seuil critique ET version précise, sinon WARNING quel que soit le score
+    return "CRITICAL" if cve["cvss"] >= CVSS_CRITICAL and cve.get("match") == "exact" else "WARNING"
 
 
 def build_alerts(domain, cve_result, subdomain_result, dns_result, dnstwist_result):

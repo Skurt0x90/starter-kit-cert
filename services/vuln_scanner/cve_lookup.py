@@ -15,6 +15,16 @@ NVD_RETRIES = 3
 INTERNETDB_URL = "https://internetdb.shodan.io"
 MAX_IPS = 5        # nombre max d'IP interrogées par domaine (CDN = beaucoup d'IP)
 
+# confiance par source : nmap > headers > InternetDB 
+SOURCE_TRUST = {"nmap": 3, "headers": 2, "internetdb": 1}
+LIVE_SOURCES = {"nmap", "headers"}
+
+# ordre de préférence quand la même CVE est trouvée plusieurs fois
+MATCH_ORDER = {"exact": 0, "range": 1, "keyword": 2}
+
+CVSS_MIN = float(7.0)
+CVSS_CRITICAL = float(9.0)
+
 # nom du produit (en minuscules, comme dans les headers / nmap) -> [(vendor, product)] CPE
 # plusieurs entrées possibles : NVD a parfois changé de vendor selon les années (ex: nginx)
 CPE_MAP = {
@@ -28,12 +38,26 @@ CPE_MAP = {
     "mariadb": [("mariadb", "mariadb")],
     "lighttpd": [("lighttpd", "lighttpd")],
     "microsoft-iis": [("microsoft", "internet_information_services")],
+    "microsoft iis httpd": [("microsoft", "internet_information_services")],
     "proftpd": [("proftpd", "proftpd")],
     "postfix": [("postfix", "postfix")],
+    "postfix smtpd": [("postfix", "postfix")],
+    "exim smtpd": [("exim", "exim")],
+    "dovecot": [("dovecot", "dovecot")],
+    "haproxy": [("haproxy", "haproxy")],
+    "isc bind": [("isc", "bind")],
+    "bind": [("isc", "bind")],
 }
 
-# ports habituels par produit (vendor, product) : InternetDB ne dit pas quel port
-# correspond à quel CPE, on déduit donc en croisant avec les ports ouverts de l'IP
+# produit -> vendors possibles
+PRODUCT_VENDORS = {}
+for _entries in CPE_MAP.values():
+    for _vendor, _product in _entries:
+        _vendors = PRODUCT_VENDORS.setdefault(_product, [])
+        if _vendor not in _vendors:
+            _vendors.append(_vendor)
+
+# ports usuels par produit (vendor, product)
 PRODUCT_PORTS = {
     ("isc", "bind"): [53],
     ("openbsd", "openssh"): [22],
@@ -53,7 +77,7 @@ PRODUCT_PORTS = {
     ("proftpd", "proftpd"): [21],
 }
 
-# produits qui servent le site web lui-même, les autres sont des services de l'IP ("infra")
+# produits qui font marcher le sites les autres sont des services de l'IP --> infra
 WEB_PRODUCTS = {
     ("apache", "http_server"),
     ("f5", "nginx"),
@@ -68,6 +92,7 @@ WEB_PRODUCTS = {
 TWO_PART_VERSIONS = {("openbsd", "openssh")}
 
 
+
 def get_stack_nmap(domain: str) -> list[dict]:
     try:
         nm = nmap.PortScanner()
@@ -78,17 +103,16 @@ def get_stack_nmap(domain: str) -> list[dict]:
     # -Pn : pas de ping préalable (beaucoup d'hôtes bloquent l'ICMP)
     # --host-timeout : évite un scan qui dure des minutes sur un seul hôte
     nm.scan(domain, arguments="-sV -T4 -Pn --host-timeout 120s")
-    
+
     # nmap indexe par IP résolue, pas par hostname
     host = nm.all_hosts()[0] if nm.all_hosts() else None
     if not host:
         return []
-    
+
     ports = []
     for port, data in nm[host].get("tcp", {}).items():
         if data["state"] != "open":
             continue
-        banner = f"{data['product']} {data['version']}".strip()
         ports.append({
             "port": port,
             "service": data["name"],
@@ -154,6 +178,7 @@ def get_internetdb(domain):
     return {k: (sorted(v) if isinstance(v, set) else v) for k, v in merged.items()}
 
 
+
 def parse_idb_cpe(cpe):
     # "cpe:/a:apache:http_server:2.4.41" -> ("a", "apache", "http_server", "2.4.41")
     parts = cpe.split(":")
@@ -168,14 +193,15 @@ def parse_idb_cpe(cpe):
         version = parts[4] if len(parts) > 4 and parts[4] else None
     return part, vendor, product, version
 
-    
+
 def parse_stack(header_value):
+    # "Apache/2.4.41 (Ubuntu) OpenSSL/1.1.1" -> ("Apache", "2.4.41") : on ne garde que le premier token
     if not header_value:
         return None, None
-    parts = header_value.split("/")
+    token = header_value.strip().split(" ")[0]
+    parts = token.split("/")
     if len(parts) == 2:
-        version = parts[1].split(" ")[0].strip()
-        return parts[0].strip(), version
+        return parts[0].strip(), parts[1].strip()
     return parts[0].strip(), None
 
 
@@ -184,16 +210,22 @@ def is_partial_version(version):
     return version.count(".") < 2
 
 
-def version_precision(vendor, product, version):
-    # "exact" : CVE trouvée pour une version précise (ex: PHP 8.5.1)
-    # "range" : version incomplète (ex: PHP 8.5), la CVE touche peut-être seulement certaines 8.5.x
-    if (vendor, product) in TWO_PART_VERSIONS:
+def is_two_part(vendors, product):
+    return any((v, product) in TWO_PART_VERSIONS for v in vendors)
+
+
+def version_precision(vendors, product, version):
+    # "exact" : version précise (ex: PHP 8.5.1)
+    # "range" : version incomplète (ex: PHP 8.5)
+    if is_two_part(vendors, product):
         return "exact"
     return "range" if is_partial_version(version) else "exact"
 
 
 def normalize_version(version):
     # garde juste la partie numérique : "7.4p1" -> "7.4", "1.18.0-ubuntu" -> "1.18.0"
+    if not version:
+        return None
     m = re.match(r"\d+(\.\d+)*", version)
     return m.group(0) if m else None
 
@@ -205,7 +237,6 @@ def version_tuple(version):
 
 
 def next_version(version):
-    # "8.2" -> "8.3", "8" -> "9"
     parts = version.split(".")
     parts[-1] = str(int(parts[-1]) + 1)
     return ".".join(parts)
@@ -227,17 +258,119 @@ def build_cpe_params(vendor, product, version, part="a", exact=False):
     return {"virtualMatchString": cpe}
 
 
-def build_cpe_queries(name, version):
-    # renvoie la liste des paramètres NVD à interroger, ou None si le produit est inconnu
-    products = CPE_MAP.get(name.lower())
-    if not products:
-        return None
+def extract_cvss(metrics):
+    for key in ("cvssMetricV31", "cvssMetricV30", "cvssMetricV2"):
+        entries = metrics.get(key, [])
+        if entries:
+            return entries[0]["cvssData"]["baseScore"]
+    return None
 
-    version = normalize_version(version)
-    if not version:
-        return None
 
-    return [build_cpe_params(vendor, product, version) for vendor, product in products]
+# fusion
+def add_candidate(inventory, name, version, source, part="a", vendor=None, ports=()):
+    # une même techno vue par plusieurs sources atterrit sur la même clé (le produit CPE)
+    entries = CPE_MAP.get(name.lower().strip())
+    if vendor:                       # InternetDB : vendor/product déjà connus
+        key, vendors = name, [vendor]
+    elif entries:
+        key, vendors = entries[0][1], [v for v, _ in entries]
+    else:                            # produit inconnu : recherche par mot-clé
+        key, vendors = f"kw:{name.lower().strip()}", []
+
+    comp = inventory.setdefault(key, {"name": None, "vendors": [], "candidates": []})
+    for v in vendors + PRODUCT_VENDORS.get(key, []):
+        if v not in comp["vendors"]:
+            comp["vendors"].append(v)
+    if comp["name"] is None or source in LIVE_SOURCES:
+        comp["name"] = name
+    comp["candidates"].append({
+        "version": normalize_version(version),
+        "source": source,
+        "part": part,
+        "ports": set(ports),
+    })
+
+
+def collect_idb(inventory, idb):
+    if not idb:
+        return
+    for cpe in idb["cpes"]:
+        parsed = parse_idb_cpe(cpe)
+        if parsed:
+            part, vendor, product, version = parsed
+            add_candidate(inventory, product, version, "internetdb", part=part, vendor=vendor)
+
+
+def collect_headers(inventory, stack):
+    for header in (stack["server"], stack["x_powered_by"]):
+        name, version = parse_stack(header)
+        if name:
+            add_candidate(inventory, name, version, "headers")
+
+
+def collect_nmap(inventory, nmap_ports):
+    for p in nmap_ports:
+        if p["product"]:
+            add_candidate(inventory, p["product"], p["version"], "nmap", ports=[p["port"]])
+
+
+def expected_ports(vendors, product, idb_ports):
+    # ports probables = ports habituels du produit qui sont réellement ouverts sur l'IP
+    expected = set()
+    for v in vendors:
+        expected.update(PRODUCT_PORTS.get((v, product), []))
+    return sorted(p for p in expected if p in idb_ports)
+
+
+def merge_stack(inventory, idb_ports, domain):
+    # une version retenue par produit : la plus récente, à égalité la source la plus fiable
+    items, notes = [], []
+    idb_outdated = False
+
+    for key, comp in inventory.items():
+        versioned = [c for c in comp["candidates"] if c["version"]]
+        live = [c for c in comp["candidates"] if c["source"] in LIVE_SOURCES]
+
+        if not versioned:
+            if live:
+                notes.append({"id": None, "cvss": None, "description": f"Version masquée pour {comp['name']}", "source": live[0]["source"], "scope": "web"})
+            continue
+
+        best = max(versioned, key=lambda c: (version_tuple(c["version"]), SOURCE_TRUST[c["source"]]))
+        chosen = version_tuple(best["version"])
+        sources = sorted({c["source"] for c in versioned if c["version"] == best["version"]})
+
+        # versions écartées : plus anciennes et pas simplement moins précises
+        for c in versioned:
+            if c["version"] == best["version"]:
+                continue
+            t = version_tuple(c["version"])
+            if chosen[:len(t)] == t:
+                continue
+            logger.info(f"{domain} -> {comp['name']} : version {c['version']} ({c['source']}) écartée au profit de {best['version']} ({best['source']})")
+            if c["source"] == "internetdb":
+                idb_outdated = True
+
+        nmap_ports = sorted({p for c in comp["candidates"] if c["source"] == "nmap" for p in c["ports"]})
+        ports = nmap_ports or expected_ports(comp["vendors"], key, idb_ports)
+        scope = "web" if ("headers" in sources or any((v, key) in WEB_PRODUCTS for v in comp["vendors"])) else "infra"
+
+        if is_partial_version(best["version"]) and not is_two_part(comp["vendors"], key):
+            notes.append({"id": None, "cvss": None, "description": f"Version partielle pour {comp['name']} ({best['version']}), recherche sur la plage de versions, résultats indicatifs", "source": best["source"], "scope": scope})
+
+        items.append({
+            "key": key,
+            "name": comp["name"],
+            "vendors": comp["vendors"],
+            "part": best["part"],
+            "version": best["version"],
+            "source": best["source"],
+            "sources": sources,
+            "ports": ports,
+            "scope": scope,
+        })
+
+    return items, notes, idb_outdated
 
 
 def query_nvd(params, domain, label):
@@ -272,101 +405,59 @@ def query_nvd(params, domain, label):
         description = next((d["value"] for d in descriptions if d["lang"] == "en"), "")
         metrics = cve.get("metrics", {})
         cvss_score = extract_cvss(metrics)
-        if cve_id and cvss_score is not None:
+        if cve_id and cvss_score is not None and cvss_score >= CVSS_MIN:
             cves.append({
                 "id": cve_id,
                 "cvss": cvss_score,
                 "description": description
             })
 
-    logger.info(f"{domain} -> {len(cves)} CVE kept after filter for {label}")
+    logger.info(f"{domain} -> {len(cves)} CVE kept (CVSS >= {CVSS_MIN}) for {label}")
     return cves
 
 
-def lookup_cves(name, version, domain):
-    if not name or not version:
-        return []
+def lookup_item(item, domain):
+    # CVE d'un composant fusionné : "exact" (version complète), "range" (version partielle) ou "keyword"
+    version = item["version"]
 
-    queries = build_cpe_queries(name, version)
-
-    # produit absent de CPE_MAP : on retombe sur la recherche par mot-clé
-    if queries is None:
-        keyword = f"{name} {version}"
-        logger.info(f"{domain} -> no CPE mapping for {name}, fallback keyword lookup for {keyword}")
+    if item["key"].startswith("kw:"):
+        # produit absent de CPE_MAP : recherche par mot-clé
+        keyword = f"{item['name']} {version}"
+        logger.info(f"{domain} -> no CPE mapping for {item['name']}, fallback keyword lookup for {keyword}")
         cves = query_nvd({"keywordSearch": keyword}, domain, keyword)
-        for c in cves:
-            c["match"] = "keyword"
-        return cves
+        match = "keyword"
+        component = keyword
+    else:
+        cves = []
+        for vendor in item["vendors"]:
+            exact = (vendor, item["key"]) in TWO_PART_VERSIONS
+            params = build_cpe_params(vendor, item["key"], version, item["part"], exact=exact)
+            label = params["virtualMatchString"]
+            logger.info(f"{domain} -> CPE lookup for {label} ({'+'.join(item['sources'])})")
+            cves.extend(query_nvd(params, domain, label))
+        match = version_precision(item["vendors"], item["key"], version)
+        component = f"{item['vendors'][0]}:{item['key']} {version}"
 
-    vendor, product = CPE_MAP[name.lower()][0]
-    match = version_precision(vendor, product, normalize_version(version) or version)
-
-    cves = []
-    for params in queries:
-        label = params["virtualMatchString"]
-        logger.info(f"{domain} -> CPE lookup for {label}")
-        found = query_nvd(params, domain, label)
-        for c in found:
-            c["match"] = match
-        cves.extend(found)
-    return cves
-
-
-def describe_component(vendor, product, version, idb_ports):
-    # ports probables = ports habituels du produit qui sont réellement ouverts sur l'IP
-    expected = PRODUCT_PORTS.get((vendor, product), [])
-    ports = [p for p in expected if p in idb_ports]
-    scope = "web" if (vendor, product) in WEB_PRODUCTS else "infra"
-    return {"component": f"{vendor}:{product} {version}", "ports": ports, "scope": scope}
-
-
-def lookup_cpe(part, vendor, product, version, domain, idb_ports):
-    # recherche NVD directe à partir d'un CPE renvoyé par InternetDB
-    version = normalize_version(version) if version else None
-    if not version:
-        return []
-    exact = (vendor, product) in TWO_PART_VERSIONS
-    params = build_cpe_params(vendor, product, version, part, exact=exact)
-    label = params["virtualMatchString"]
-    logger.info(f"{domain} -> CPE lookup (InternetDB) for {label}")
-    cves = query_nvd(params, domain, label)
-    info = describe_component(vendor, product, version, idb_ports)
-    match = version_precision(vendor, product, version)
     for c in cves:
-        c.update(info)
         c["match"] = match
+        c["component"] = component
+        c["ports"] = item["ports"]
+        c["scope"] = item["scope"]
+        c["source"] = item["source"]
+        c["sources"] = item["sources"]
     return cves
 
 
-def extract_cvss(metrics):
-    for key in ("cvssMetricV31", "cvssMetricV30", "cvssMetricV2"):
-        entries = metrics.get(key, [])
-        if entries:
-            return entries[0]["cvssData"]["baseScore"]
-    return None
-
-
-def find_idb_match(name, idb_products):
-    # cherche le produit d'un header dans les CPE d'InternetDB
-    # idb_products : liste de (part, vendor, product, version)
-    candidates = CPE_MAP.get(name.lower(), [])
-    for p in idb_products:
-        if (p[1], p[2]) in candidates:
-            return p
-    return None
-
-
-def header_is_newer(name, version, idb_products):
-    # True si le header apporte une info plus récente que InternetDB
-    match = find_idb_match(name, idb_products)
-    if match is None:
-        return True   # produit absent d'InternetDB : rien à comparer, on garde le header
-    idb_version = match[3]
-    if not version:
-        return False  # header masqué, InternetDB en sait plus ou autant
-    if not idb_version:
-        return True   # InternetDB sans version, le header est plus précis
-    return version_tuple(version) > version_tuple(idb_version)
+def dedup(cves):
+    # une CVE par id (on garde la correspondance la plus précise), les notes sans id sont conservées
+    best = {}
+    for c in cves:
+        if c["id"] is None:
+            continue
+        cur = best.get(c["id"])
+        if cur is None or MATCH_ORDER.get(c.get("match"), 3) < MATCH_ORDER.get(cur.get("match"), 3):
+            best[c["id"]] = c
+    return [c for c in cves if c["id"] is None] + list(best.values())
 
 
 def check(domain, scan_mode="passive"):
@@ -377,78 +468,45 @@ def check(domain, scan_mode="passive"):
     result["server"] = stack["server"]
     result["x_powered_by"] = stack["x_powered_by"]
 
-    # passif — InternetDB (prioritaire sur les headers)
+    # passif — InternetDB
     idb = get_internetdb(domain)
     result["internetdb"] = idb
 
-    idb_products = []
+    # actif — nmap
+    nmap_ports = []
+    if scan_mode == "active":
+        try:
+            nmap_ports = get_stack_nmap(domain)
+        except Exception as e:
+            logger.warning("nmap scan failed for %s: %s", domain, e)
+
+    # fusion des trois sources : une version retenue par produit
+    inventory = {}
+    collect_idb(inventory, idb)
+    collect_headers(inventory, stack)
+    collect_nmap(inventory, nmap_ports)
+    items, notes, idb_outdated = merge_stack(inventory, idb["ports"] if idb else [], domain)
+
+    cves = list(notes)
+    for item in items:
+        cves.extend(lookup_item(item, domain))
+
+    # CVE signalées par InternetDB mais non retrouvées via NVD (cvss inconnu)
     if idb:
-        for cpe in idb["cpes"]:
-            parsed = parse_idb_cpe(cpe)
-            if parsed:
-                idb_products.append(parsed)
-
-        for part, vendor, product, version in idb_products:
-            if not version:
-                continue
-            for c in lookup_cpe(part, vendor, product, version, domain, idb["ports"]):
-                c["source"] = "internetdb"
-                result["cves"].append(c)
-
-        # CVE signalées par InternetDB mais non retrouvées via NVD (cvss inconnu)
-        known = {c["id"] for c in result["cves"] if c["id"]}
-        for cve_id in idb["vulns"]:
-            if cve_id not in known:
-                result["cves"].append({
+        if idb_outdated:
+            logger.info(f"{domain} -> CVE brutes InternetDB ignorées (versions InternetDB périmées)")
+        else:
+            for cve_id in idb["vulns"]:
+                cves.append({
                     "id": cve_id,
                     "cvss": None,
                     "description": "Signalée par Shodan InternetDB, non confirmée via NVD",
                     "source": "internetdb",
                 })
 
-    # passif — headers HTTP : ignorés si InternetDB a identifié des logiciels, sauf s'ils sont plus récents
-    for header in (stack["server"], stack["x_powered_by"]):
-        name, version = parse_stack(header)
-        if not name:
-            continue
-        if idb_products and not header_is_newer(name, version, idb_products):
-            match = find_idb_match(name, idb_products)
-            if not version and match and not match[3]:
-                # ni le header ni InternetDB ne donnent la version : on garde la note
-                result["cves"].append({"id": None, "cvss": None, "description": f"Version masquée pour {name}", "source": "headers", "scope": "web"})
-            else:
-                logger.info(f"{domain} -> header {header} ignoré (InternetDB prioritaire)")
-            continue
-        if not version:
-            result["cves"].append({"id": None, "cvss": None, "description": f"Version masquée pour {name}", "source": "headers"})
-            continue
-        if is_partial_version(version):
-            result["cves"].append({"id": None, "cvss": None, "description": f"Version partielle pour {name} ({version}), recherche sur la plage de versions, résultats indicatifs", "source": "headers"})
-        for c in lookup_cves(name, version, domain):
-            c["source"] = "headers"
-            c["component"] = f"{name} {version}"
-            c["scope"] = "web"
-            result["cves"].append(c)
+    result["cves"] = dedup(cves)
 
-    # dédoublonnage par id (on garde les entrées sans id, ce sont des notes)
-    seen = set()
-    unique = []
-    for c in result["cves"]:
-        if c["id"] is not None:
-            if c["id"] in seen:
-                continue
-            seen.add(c["id"])
-        unique.append(c)
-    result["cves"] = unique
-
-    # actif — nmap
-    if scan_mode == "active":
-        try:
-            ports = get_stack_nmap(domain)
-            for p in ports:
-                p["cves"] = lookup_cves(p["product"], p["version"], domain) if p["product"] and p["version"] else []
-            result["ports"] = ports
-        except Exception as e:
-            logger.warning("nmap scan failed for %s: %s", domain, e)
+    # les CVE nmap sont déjà fusionnées dans result["cves"] : pas de doublon par port
+    result["ports"] = [{**p, "cves": []} for p in nmap_ports]
 
     return result
