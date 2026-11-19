@@ -7,31 +7,40 @@ logger = logging.getLogger(__name__)
 
 
 def clean_text(text: str) -> str:
-    text = unicodedata.normalize("NFKD", text).encode("ascii", "ignore").decode("ascii")
+    # sans accents, ponctuation remplacée par des espaces, espaces écrasés, minuscules
+    text = unicodedata.normalize("NFKD", text or "").encode("ascii", "ignore").decode("ascii")
     text = re.sub(r"[^a-zA-Z0-9\s]", " ", text)
-    return text.lower()
+    return re.sub(r"\s+", " ", text).lower().strip()
 
 
-def find_keyword_matches(text: str, keywords: list[str]) -> list[str]:
-    cleaned = clean_text(text)
-    return [kw for kw in keywords if kw.lower() in cleaned]
+def compile_terms(terms: list[str]) -> list[tuple[str, re.Pattern]]:
+    # mots entiers uniquement : "iga" ne matche plus "investigation", "aster" ne matche plus "disaster"
+    # un "s" final est toléré ("drone" matche "drones"), les termes multi-mots sont normalisés comme le texte
+    compiled = []
+    for term in terms:
+        cleaned = clean_text(term)
+        if not cleaned:
+            continue
+        pattern = re.compile(rf"(?<![a-z0-9]){re.escape(cleaned)}s?(?![a-z0-9])")
+        compiled.append((term, pattern))
+    return compiled
 
 
-def find_member_matches(text: str, members: list[str]) -> list[str]:
-    cleaned = clean_text(text)
-    return [m for m in members if m in cleaned]
+def find_matches(cleaned_text: str, compiled: list[tuple[str, re.Pattern]]) -> list[str]:
+    return [term for term, pattern in compiled if pattern.search(cleaned_text)]
 
 
 def correlate(items: list[dict]) -> list[dict]:
-    keywords = utils.load_keywords()
-    members = utils.load_members()
+    keywords = compile_terms(utils.load_keywords())
+    members = compile_terms(utils.load_members())
     results = []
 
     for item in items:
-        searchable = f"{item.get('title', '')} {item.get('content', '')}".strip()
+        # title vaut None pour Telegram : "or ''" évite d'analyser le mot "None"
+        searchable = clean_text(f"{item.get('title') or ''} {item.get('content') or ''}")
 
-        matched_keywords = find_keyword_matches(searchable, keywords)
-        matched_members = find_member_matches(searchable, members)
+        matched_keywords = find_matches(searchable, keywords)
+        matched_members = find_matches(searchable, members)
 
         if not matched_keywords and not matched_members:
             continue

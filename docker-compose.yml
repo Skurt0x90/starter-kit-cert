@@ -39,6 +39,11 @@ services:
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5001
       - SCHEDULE_INTERVAL_MINUTES=${WEB_WATCHER_INTERVAL:-15}
+      - FAILURES_BEFORE_ALERT=1        # alerte dès le 1er cycle (sinon il en faut 2)
+      - RESPONSE_WARN_SECONDS=0.05     # tout site devient "DEF"
+      - RESPONSE_KO_SECONDS=0.3        # puis "KO"
+      - SSL_EXPIRY_WARNING_DAYS=365    # tout certificat valide devient "expire bientôt"
+      - WEB_WATCHER_INTERVAL=1         # un cycle par minute
     volumes:
       - ./data:/data
     ports:

@@ -419,7 +419,7 @@ def create_layout():
 
                             # Carte
                             dmc.Box(
-                                style={"width": "50%", "position": "relative"},
+                                style={"width": "50%", "position": "relative", "zIndex": 0},
                                 children=[
                                     dl.Map(
                                         id="map", center=[48.0, 10.0], zoom=4,

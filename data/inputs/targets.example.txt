@@ -1,3 +1,16 @@
-# domaine,longitude,latitude,label,scan_mode
+# ── Cas nominal (doit rester vert) ──
+example.com,2.3522,48.8566,Example Domain
+# ── Titre attendu faux : +3 points seulement, donc "PEU PROBABLE", sans alerte ──
+example.org,2.40,48.90,Titre volontairement faux
+# ── DOWN : domaine garanti inexistant (.invalid est réservé) ──
+site-inexistant.invalid,3.00,47.00,Site inexistant
+# ── DOWN + SSL KO : le certificat est expiré ──
+expired.badssl.com,4.00,46.00,expired.badssl.com
+# ── DOWN + SSL KO : certificat auto-signé ──
+self-signed.badssl.com,5.00,45.00,self-signed.badssl.com
+# ── DOWN + SSL KO : certificat pour un autre hôte ──
+wrong.host.badssl.com,6.00,44.00,wrong.host.badssl.com
+# ── Défacement : page pleine du mot "pwned" ──
+haveibeenpwned.com,1.00,47.50,Have I Been Pwned: Check if your email has been compromised in a data breach
 scanme.nmap.org,-122.0840,37.3861,Test Nmap,active
 testphp.vulnweb.com,2.3522,48.8566,Test Acunetix,passive
