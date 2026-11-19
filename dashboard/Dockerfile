@@ -9,4 +9,4 @@ COPY . .
 
 EXPOSE 8050
 
-CMD ["gunicorn", "app.main:server", "--bind", "0.0.0.0:8050", "--workers", "1"]
+CMD ["gunicorn", "app.main:server", "--bind", "0.0.0.0:8050", "--worker-tmp-dir", "/dev/shm", "1"]

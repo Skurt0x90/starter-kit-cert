@@ -3,6 +3,8 @@ import os
 FLASK_HOST = os.getenv("FLASK_HOST", "127.0.0.1")
 FLASK_PORT = int(os.getenv("FLASK_PORT", 5005))
 
+API_TOKEN = os.getenv("API_TOKEN", "")
+
 BASE = "/data" if os.path.exists("/data") else "../data"
 OUTPUT_FILE = os.getenv("OUTPUT_FILE", f"{BASE}/outputs/alert_service.json")
 DEDUP_FILE  = os.getenv("DEDUP_FILE",  f"{BASE}/outputs/alert_dedup.json")

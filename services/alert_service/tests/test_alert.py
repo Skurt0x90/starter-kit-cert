@@ -170,7 +170,7 @@ class TestSendEmail(unittest.TestCase):
              patch("alert_service.alert_services.smtplib.SMTP", return_value=mock_instance) as mock_smtp:
             send_email([ALERT_FLAT])
 
-        mock_smtp.assert_called_once_with("smtp.gmail.com", 587)
+        mock_smtp.assert_called_once_with("smtp.gmail.com", 587, timeout=10)
         mock_instance.starttls.assert_called_once()
         mock_instance.login.assert_called_once_with("user@gmail.com", "secret")
         mock_instance.sendmail.assert_called_once()
