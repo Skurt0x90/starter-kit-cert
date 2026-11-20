@@ -13,6 +13,7 @@ eggs/
 lib/
 lib64/
 wheels/
+data/outputs/*.json
 
 # Environnements virtuels
 .env
