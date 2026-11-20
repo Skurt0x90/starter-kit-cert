@@ -13,7 +13,11 @@ eggs/
 lib/
 lib64/
 wheels/
-data/outputs/*.json
+data/outputs/alert_service/*.json
+data/outputs/ransomware_monitor/*.json
+data/outputs/social_monitor/*.json
+data/outputs/vuln_scanner/*.json
+data/outputs/web_watcher/*.json
 
 # Environnements virtuels
 .env
