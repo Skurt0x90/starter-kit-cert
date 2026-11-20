@@ -19,6 +19,7 @@ x-hardened: &hardened
 
 services:
   signal_cli:
+    profiles: ["signal"]      # optionnel : lancé seulement avec --profile signal
     build: ./services/signal_cli
     container_name: signal_cli
     volumes:
@@ -56,8 +57,6 @@ services:
       - SIGNAL_CLI_GROUP_ID=${SIGNAL_CLI_GROUP_ID:-}
     volumes:
       - ./data/outputs/alert_service:/data/outputs
-    depends_on:
-      - signal_cli
     networks:
       - cert-net
       - egress
@@ -132,6 +131,30 @@ services:
       - cert-net
       - egress
 
+  dashboard:
+    <<: *hardened
+    build: ./dashboard
+    container_name: dashboard
+    ports:
+      - "127.0.0.1:8050:8050"     # jamais accessible depuis le LAN
+    environment:
+      - WATCHER_URL=http://web_watcher:5001/api/data
+      - VULN_URL=http://vuln_scanner:5002/api/data
+      - RANSOMWARE_URL=http://ransomware_monitor:5003/api/data
+      - SOCIAL_URL=http://social_monitor:5004/api/data
+      - CARTO_API_KEY=${CARTO_API_KEY:-}
+      - WEB_WATCHER_INTERVAL=${WEB_WATCHER_INTERVAL:-15}
+      - VULN_SCANNER_INTERVAL=${VULN_SCANNER_INTERVAL:-24}
+      - DEDUP_WINDOW_MINUTES=30
+    depends_on:
+      - web_watcher
+      - vuln_scanner
+      - ransomware_monitor
+      - social_monitor
+    networks:
+      - cert-net
+      - front
+
 networks:
   cert-net:
     name: cert-net
@@ -141,3 +164,4 @@ networks:
     ipam:
       config:
         - subnet: 172.28.0.0/24   # sous-réseau fixe
+  front: {}                   # réseau non interne, nécessaire pour publier 127.0.0.1:8050
