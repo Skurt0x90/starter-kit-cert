@@ -1,8 +1,10 @@
 import json
 import logging
 import smtplib
+import ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from html import escape
 from pathlib import Path
 from alert_service import utils
 from datetime import datetime
@@ -49,7 +51,7 @@ def send_email(alerts_to_send):
 
     try:
         with smtplib.SMTP(utils.SMTP_HOST, utils.SMTP_PORT) as s:
-            s.starttls()
+            s.starttls(context=ssl.create_default_context())   # vérifie le certificat du serveur SMTP
             s.login(utils.SMTP_USER, utils.SMTP_PASSWORD)
             s.sendmail(utils.ALERT_EMAIL_FROM, utils.ALERT_EMAIL_TO, msg.as_string())
         logging.info(f"alert service send email {msg["Subject"]}")
@@ -151,11 +153,12 @@ def format_email(alerts_to_send):
     rows = ""
     for a in alerts_to_send:
         color = "red" if a["level"] == "CRITICAL" else "orange"
+        # tout ce qui vient de l'extérieur (RSS, Telegram, DNS...) est échappé
         rows += f"""
         <tr>
-            <td style="color:{color}"><b>{a["level"]}</b></td>
-            <td>{a["domain"]}</td>
-            <td>{a["message"]}</td>
+            <td style="color:{color}"><b>{escape(a["level"])}</b></td>
+            <td>{escape(a["domain"])}</td>
+            <td>{escape(a["message"])}</td>
         </tr>
         """
 

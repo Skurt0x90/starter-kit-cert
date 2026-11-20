@@ -1,4 +1,21 @@
-version: '3.8'
+x-hardened: &hardened
+  restart: unless-stopped
+  read_only: true
+  working_dir: /tmp          # les .log relatifs (FileHandler) sont écrits ici
+  tmpfs:
+    - /tmp
+  cap_drop:
+    - ALL
+  security_opt:
+    - no-new-privileges:true
+  mem_limit: 512m
+  cpus: 1.0
+  pids_limit: 200
+  logging:
+    driver: json-file
+    options:
+      max-size: "10m"
+      max-file: "3"
 
 services:
   signal_cli:
@@ -6,33 +23,47 @@ services:
     container_name: signal_cli
     volumes:
       - ./data/signal-cli:/home/.local/share/signal-cli
-    ports:
-      - "8080:8080"
     restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    mem_limit: 1g
+    pids_limit: 300
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     networks:
       - cert-net
+      - egress
 
   alert_service:
+    <<: *hardened
     build: ./services/alert_service
     container_name: alert_service
-    env_file:
-      - .env
     environment:
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5005
       - DEDUP_WINDOW_MINUTES=30
       - SIGNAL_API_URL=http://signal_cli:8080
+      - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
+      - SMTP_PORT=${SMTP_PORT:-587}
+      - SMTP_USER=${SMTP_USER:-}
+      - SMTP_PASSWORD=${SMTP_PASSWORD:-}
+      - ALERT_EMAIL_FROM=${ALERT_EMAIL_FROM:-}
+      - ALERT_EMAIL_TO=${ALERT_EMAIL_TO:-}
+      - SIGNAL_CLI_NUMBER=${SIGNAL_CLI_NUMBER:-}
+      - SIGNAL_CLI_GROUP_ID=${SIGNAL_CLI_GROUP_ID:-}
     volumes:
-      - ./data:/data
-    ports:
-      - "5005:5005"
-    restart: unless-stopped
+      - ./data/outputs/alert_service:/data/outputs
     depends_on:
       - signal_cli
     networks:
       - cert-net
+      - egress
 
   web_watcher:
+    <<: *hardened
     build: ./services/web_watcher
     container_name: web_watcher
     environment:
@@ -40,100 +71,73 @@ services:
       - FLASK_PORT=5001
       - SCHEDULE_INTERVAL_MINUTES=${WEB_WATCHER_INTERVAL:-15}
     volumes:
-      - ./data:/data
-    ports:
-      - "5001:5001"
-    restart: unless-stopped
+      - ./data/inputs:/data/inputs:ro
+      - ./data/outputs/web_watcher:/data/outputs
     depends_on:
       - alert_service
     networks:
       - cert-net
-
-  target_test:
-    image: vulnerables/web-dvwa
-    container_name: target_test
-    ports:
-      - "8888:80"
-    restart: unless-stopped
-    profiles:
-      - test
-    networks:
-      - cert-net
+      - egress
 
   vuln_scanner:
+    <<: *hardened
+    mem_limit: 1g
     build: ./services/vuln_scanner
     container_name: vuln_scanner
-    env_file:
-      - .env
     environment:
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5002
       - SCHEDULE_INTERVAL_HOURS=${VULN_SCANNER_INTERVAL:-24}
+      - NVD_API_KEY=${NVD_API_KEY:-}
     volumes:
-      - ./data:/data
-    ports:
-      - "5002:5002"
-    restart: unless-stopped
+      - ./data/inputs:/data/inputs:ro
+      - ./data/outputs/vuln_scanner:/data/outputs
     depends_on:
       - alert_service
     networks:
       - cert-net
+      - egress
 
   ransomware_monitor:
+    <<: *hardened
     build: ./services/ransomware_monitor
     container_name: ransomware_monitor
-    env_file:
-      - .env
     environment:
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5003
       - SCHEDULE_INTERVAL_HOURS=${VULN_SCANNER_INTERVAL:-24}
     volumes:
-      - ./data:/data
-    ports:
-      - "5003:5003"
-    restart: unless-stopped
+      - ./data/inputs:/data/inputs:ro
+      - ./data/outputs/ransomware_monitor:/data/outputs
     depends_on:
       - alert_service
     networks:
       - cert-net
+      - egress
 
   social_monitor:
+    <<: *hardened
     build: ./services/social_monitor
     container_name: social_monitor
-    env_file:
-      - .env
     environment:
       - FLASK_HOST=0.0.0.0
       - FLASK_PORT=5004
       - SCHEDULE_INTERVAL_MINUTES=${SOCIAL_INTERVAL:-60}
     volumes:
-      - ./data:/data
-    ports:
-      - "5004:5004"
-    restart: unless-stopped
+      - ./data/inputs:/data/inputs:ro
+      - ./data/outputs/social_monitor:/data/outputs
     depends_on:
       - alert_service
     networks:
       - cert-net
-  dashboard:
-    build: ./dashboard
-    container_name: dashboard
-    env_file:
-      - .env
-    environment:
-      - WATCHER_URL=http://web_watcher:5001/api/data
-      - VULN_URL=http://vuln_scanner:5002/api/data
-      - RANSOMWARE_URL=http://ransomware_monitor:5003/api/data
-      - SOCIAL_URL=http://social_monitor:5004/api/data
-    ports:
-      - "${DASHBOARD_PORT:-8050}:8050"
-    restart: unless-stopped
-    depends_on:
-      - web_watcher
-    networks:
-      - cert-net
+      - egress
 
 networks:
   cert-net:
+    name: cert-net
+    internal: true            # communication entre services uniquement, pas d'Internet
+  egress:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24   # sous-réseau fixe
