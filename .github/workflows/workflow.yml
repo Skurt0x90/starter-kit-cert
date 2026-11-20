@@ -2,6 +2,9 @@ name: Tests
 
 on: [push, pull_request]
 
+permissions:
+  contents: read   # le workflow n'a besoin que de lire le repo
+
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -9,22 +12,25 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
+          cache: pip
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r services/web_watcher/requirements.txt
           pip install -r services/alert_service/requirements.txt
-          pip install pytest pytest-mock pytest-cov bandit pip-audit
+          pip install pytest pytest-mock pytest-cov
+
       - name: Run unit tests
         working-directory: services
         run: |
           pytest web_watcher/tests alert_service/tests \
             --cov=web_watcher --cov=alert_service \
             --cov-report=xml --cov-report=term-missing
+
       - name: Upload coverage
         uses: codecov/codecov-action@v4
         with:
@@ -38,21 +44,23 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Set up Python
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install dependencies
+      - name: Install tools
         run: |
           python -m pip install --upgrade pip
-          pip install -r services/web_watcher/requirements.txt
-          pip install -r services/alert_service/requirements.txt
           pip install bandit pip-audit
+
       - name: Bandit - analyse sécurité statique
         run: |
-          bandit -r services/web_watcher/ services/alert_service/ -ll \
-            --exclude services/web_watcher/tests,services/alert_service/tests
+          bandit -r services dashboard -ll \
+            --exclude "*/tests/*"
+
       - name: pip-audit - vulnérabilités dépendances
         run: |
-          pip-audit -r services/web_watcher/requirements.txt
-          pip-audit -r services/alert_service/requirements.txt
+          for f in services/*/requirements.txt dashboard/requirements.txt; do
+            echo "== $f"
+            pip-audit -r "$f"
+          done
