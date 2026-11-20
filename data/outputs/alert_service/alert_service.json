@@ -1,0 +1,1405 @@
+{
+  "alerts": [
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "DMARC absent sur scanme.nmap.org \u2014 aucune politique de traitement des mails non authentifi\u00e9s, les tentatives d'usurpation ne sont pas bloqu\u00e9es",
+      "sent_at": "2026-11-20T10:54:10.117458+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "SPF absent sur scanme.nmap.org \u2014 le domaine peut \u00eatre usurp\u00e9 pour envoyer des mails de phishing en se faisant passer pour scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:10.104737+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-93546 (CVSS 8.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.091929+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-79768 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.078747+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-73637 (CVSS 7.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.065757+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-73636 (CVSS 8.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.052927+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-63686 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.040075+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-63292 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.027005+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-63045 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.014262+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2026-59797 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:10.000740+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-59685 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.986844+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-58415 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.973350+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2026-57941 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.960214+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-56449 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.946754+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2026-56154 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.933531+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-56153 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.920406+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-48005 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.906570+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-46729 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.892508+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-42528 (CVSS 4.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.877478+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-42356 (CVSS 3.7) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.863697+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2026-44631 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.849836+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-44186 (CVSS 7.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.835157+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-44185 (CVSS 7.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.821284+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-44119 (CVSS 5.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.806902+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-43951 (CVSS 6.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.791722+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-42536 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.776218+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2026-42535 (CVSS 9.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.756440+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-34356 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.742461+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-34355 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.728434+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-29170 (CVSS 6.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.712824+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2026-29167 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.698869+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2026-28780 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.686114+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-33523 (CVSS 6.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.673449+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-33007 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.659750+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-33006 (CVSS 4.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.646949+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-29169 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.633609+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-34032 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.619398+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-33857 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.604174+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-34059 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.588191+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-24072 (CVSS 8.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.575718+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2025-58098 (CVSS 8.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.563805+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2025-66200 (CVSS 5.4) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.551592+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2025-65082 (CVSS 6.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.539401+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2025-59775 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.527224+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2025-49812 (CVSS 7.4) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.514561+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-47252 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.501923+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-43394 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.489064+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-43204 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.475838+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-42516 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.459957+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-40898 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.447077+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-39573 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.433140+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-38477 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.419822+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2024-38476 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.406070+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2024-38475 (CVSS 9.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.392503+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2024-38474 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.378529+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-38473 (CVSS 8.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.364833+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-38472 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.349418+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2024-24795 (CVSS 6.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.331489+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2023-38709 (CVSS 7.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.314676+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2023-31122 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.302064+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2023-25690 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.290159+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2022-37436 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.278474+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2022-36760 (CVSS 9.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.265939+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2006-20001 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.252215+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2022-31813 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.239282+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2022-30556 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.227977+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2022-29404 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.215603+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2022-28615 (CVSS 9.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.202719+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2022-28614 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.191171+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2022-28330 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.179443+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2022-26377 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.167041+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2022-23943 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.155363+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2022-22721 (CVSS 9.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.143892+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2022-22720 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.132075+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2022-22719 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.120345+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2021-44790 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.108909+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-44224 (CVSS 8.2) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.097309+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2021-40438 (CVSS 9.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.085557+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2021-39275 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.074073+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-34798 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.062816+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-32792 (CVSS 3.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.050769+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-32791 (CVSS 5.9) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.038713+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-32786 (CVSS 4.7) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.027151+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-32785 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.015658+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2021-26691 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:09.004374+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-26690 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.993145+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2020-35452 (CVSS 7.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.981552+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2020-13938 (CVSS 5.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.969122+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-17567 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.957419+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2020-11985 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.945194+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2020-1927 (CVSS 6.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.933106+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2020-1934 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.921041+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-10092 (CVSS 6.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.909048+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-10098 (CVSS 6.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.896747+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-0220 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.885168+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-0217 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.873331+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-17199 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.861152+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-4975 (CVSS 6.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.850129+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2018-1312 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.839213+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-1303 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.828388+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-1302 (CVSS 5.9) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.816818+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-1301 (CVSS 5.9) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.805393+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-1283 (CVSS 5.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.794667+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2017-15715 (CVSS 8.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.783752+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2017-15710 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.771660+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-8612 (CVSS 4.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.759947+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2017-9798 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.748661+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-8743 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.736356+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-2161 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.724613+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-0736 (CVSS 7.5) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.713549+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2017-9788 (CVSS 9.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.702249+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2017-7679 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.690305+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2017-3167 (CVSS 9.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.678249+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-5387 (CVSS 8.1) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.667151+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-3184 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.656009+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-3185 (CVSS 4.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.644738+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-3183 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.633279+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-0228 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.622044+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-8109 (CVSS 4.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.610812+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-3581 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.599725+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-3523 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.588361+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-0231 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.576694+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-0226 (CVSS 6.8) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.565463+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-0118 (CVSS 4.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.553502+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-0117 (CVSS 4.3) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.542887+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2013-5704 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.532043+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2014-0098 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.520947+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2013-6438 (CVSS 5.0) sur Apache httpd port 80 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.509191+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-123158 (CVSS 8.1) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.498146+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106583 (CVSS 2.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.486807+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106587 (CVSS 3.6) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.475970+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106586 (CVSS 2.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.465228+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106585 (CVSS 6.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.454038+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106584 (CVSS 2.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.442023+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106582 (CVSS 3.7) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.426392+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106555 (CVSS 2.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.414428+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106553 (CVSS 2.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.403160+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106552 (CVSS 4.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.392065+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-73283 (CVSS 2.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.380051+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-73282 (CVSS 4.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.368955+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-73281 (CVSS 3.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.357001+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-60002 (CVSS 7.7) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.346050+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-60001 (CVSS 6.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.335215+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-60000 (CVSS 3.7) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.323538+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-59999 (CVSS 5.9) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.309541+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-59998 (CVSS 4.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.296792+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-59997 (CVSS 4.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.285563+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-59996 (CVSS 4.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.274054+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-59995 (CVSS 4.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.262707+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-35414 (CVSS 4.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.251252+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-35388 (CVSS 2.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.239774+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-35387 (CVSS 3.1) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.228656+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-35385 (CVSS 7.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.217503+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2023-51385 (CVSS 6.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.206704+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2023-48795 (CVSS 5.9) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.195467+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2023-38408 (CVSS 9.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.183644+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-36368 (CVSS 3.7) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.172238+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2021-41617 (CVSS 7.0) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.161470+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-20012 (CVSS 5.3) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.150648+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2020-15778 (CVSS 7.4) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.139116+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2020-14145 (CVSS 5.9) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.128687+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-6111 (CVSS 5.9) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.117688+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-6110 (CVSS 6.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.106702+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2019-6109 (CVSS 6.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.095424+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-20685 (CVSS 5.3) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.084491+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-15919 (CVSS 5.3) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.073123+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2018-15473 (CVSS 5.3) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.062792+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-10708 (CVSS 7.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.051895+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2017-15906 (CVSS 5.3) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.040844+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "CRITICAL",
+      "message": "CVE-2016-1908 (CVSS 9.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.030252+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-6210 (CVSS 5.9) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.019438+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-10012 (CVSS 7.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:08.008782+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-10011 (CVSS 6.2) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.996824+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-10010 (CVSS 7.0) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.986507+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-10009 (CVSS 7.3) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.975832+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-6515 (CVSS 7.5) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.965418+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-8325 (CVSS 7.8) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.954564+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2016-3115 (CVSS 6.4) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.944080+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-6564 (CVSS 7.0) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.933423+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-6563 (CVSS 6.4) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.922503+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-5600 (CVSS 8.1) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.912126+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2015-5352 (CVSS 4.3) sur OpenSSH port 22 (scanme.nmap.org)",
+      "sent_at": "2026-11-20T10:54:07.901724+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2013-4365 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.891122+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2013-2765 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.879696+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2013-0942 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.869392+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2013-0941 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.858390+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2012-4360 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.847878+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2012-4001 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.837085+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2012-3526 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.827015+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2011-2688 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.816321+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2011-1176 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.805321+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2009-2299 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.794507+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2009-0796 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.783506+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2007-4723 signal\u00e9e par Shodan InternetDB (non confirm\u00e9e via NVD) sur l'IP de scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.772282+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-123158 (CVSS 8.1) : openbsd:openssh 6.6.1 (port 22), service sur la m\u00eame IP que scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.761922+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106583 (CVSS 2.5) : openbsd:openssh 6.6.1 (port 22), service sur la m\u00eame IP que scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.751313+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106587 (CVSS 3.6) : openbsd:openssh 6.6.1 (port 22), service sur la m\u00eame IP que scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.740577+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106586 (CVSS 2.5) : openbsd:openssh 6.6.1 (port 22), service sur la m\u00eame IP que scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.730056+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106585 (CVSS 6.5) : openbsd:openssh 6.6.1 (port 22), service sur la m\u00eame IP que scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.719025+01:00"
+    },
+    {
+      "service": "vuln_scanner",
+      "domain": "scanme.nmap.org",
+      "level": "WARNING",
+      "message": "CVE-2026-106584 (CVSS 2.5) : openbsd:openssh 6.6.1 (port 22), service sur la m\u00eame IP que scanme.nmap.org",
+      "sent_at": "2026-11-20T10:54:07.707973+01:00"
+    }
+  ],
+  "last_run": "2026-11-20T11:06:32.342174+01:00"
+}

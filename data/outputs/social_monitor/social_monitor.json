@@ -1,0 +1,541 @@
+{
+  "last_run": "2026-11-20T10:51:17.937814+01:00",
+  "items": [
+    {
+      "source": "rss",
+      "channel": "Sekoia TDR Blog",
+      "title": "A Glimpse Into The India-China Cyber Espionage Landscape",
+      "url": "https://www.sekoia.com/blog/neighbors-being-neighborly-a-glimpse-into-the-india-china-cyber-espionage-landscape",
+      "content": "China and India are strategic competitors but remain economically interdependent, with close supply-chain links and $155.6 billion in bilateral trade in 2025.",
+      "detected_at": "2026-11-20T10:51:18.912081+01:00",
+      "matched_keywords": [
+        "china",
+        "espionage"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Google Threat Intelligence (ex-Mandiant)",
+      "title": "COLD RELIC: A Case Study in Impersonation and Compromise",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/cold-relic-a-case-study-in-impersonation-and-compromise/",
+      "content": "Written by: Josh Murchie, John Wolfram, Joseph Spero, Peter Ukhanov, Fernando Tomlinson, Jr., Wesley Shields Introduction Over the past year, Mandiant has responded to a series of linked intrusions demonstrating how Russian cyber espionage group COLD RELIC (formerly tracked as COLDRIVER and UNC4057; also known as Star Blizzard, Callisto, and Gossamer Bear) turns a single cloud compromise into a springboard for ongoing third party compromise and espionage. Most recently, Mandiant investigated a 2",
+      "detected_at": "2026-11-20T10:51:21.744897+01:00",
+      "matched_keywords": [
+        "espionage"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Google Threat Intelligence (ex-Mandiant)",
+      "title": "GTIG AI Threat Tracker: Agentic Threat Activity Crosses a Significant Threshold",
+      "url": "https://cloud.google.com/blog/topics/threat-intelligence/agentic-threat-activity-crosses-a-significant-threshold/",
+      "content": "Written by: Aurora Blum, Kelli Vanderlee, Jess Xia, David Mainor Executive Summary As threat actors increasingly move beyond basic prompting to deploying autonomous multi-agent frameworks , automated vulnerability exploitation pipelines, and alternative monetization schemes like LLMJacking , the adversarial AI landscape has reached a critical inflection point. In this update, Google Threat Intelligence Group (GTIG) and Mandiant examine how adversaries across the cyber crime, espionage, and infor",
+      "detected_at": "2026-11-20T10:51:21.758617+01:00",
+      "matched_keywords": [
+        "espionage"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Cisco Talos Intelligence",
+      "title": "UAT-12643: Suspected North Korea-aligned actor blends blockchain resilience with targeted infostealing",
+      "url": "https://blog.talosintelligence.com/uat-12643-suspected-north-korea-aligned-actor-blends-blockchain-resilience-with-targeted-infostealing/",
+      "content": "Cisco Talos discovered malicious infrastructure associated with a financially motivated threat group we are tracking as UAT-12643.",
+      "detected_at": "2026-11-20T10:51:23.023824+01:00",
+      "matched_keywords": [
+        "north korea"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "The Hacker News",
+      "title": "China-Linked Hackers Exploit Critical VMware vCenter Zero-Day to Gain Admin Access and Steal Data",
+      "url": "https://thehackernews.com/2026/11/china-linked-hackers-exploit-critical.html",
+      "content": "The suspected China-nexus cyber espionage group known as Armory Castle (formerly UNC5221) has been attributed to the zero-day exploitation of a critical security flaw in VMware vCenter Server in early September 2026.\n\nThe vulnerability, tracked as CVE-2026-123890 (CVSS score: 9.8), is a case of authentication bypass in the VMware Directory Service that could be exploited to gain unauthorized",
+      "detected_at": "2026-11-20T10:51:23.196139+01:00",
+      "matched_keywords": [
+        "china",
+        "espionage"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "The Hacker News",
+      "title": "CISA Warns of 4 Exploited Flaws Linked to Ransomware, Cryptomining, and LLMjacking Attacks",
+      "url": "https://thehackernews.com/2026/11/cisa-warns-of-4-exploited-flaws-linked.html",
+      "content": "The U.S. Cybersecurity and Infrastructure Security Agency (CISA) on Wednesday added four vulnerabilities impacting Synology DiskStation Manager (DSM), BerriAI LiteLLM, Apache Axis, and Vanderbilt University Research Electronic Data Capture (REDCap) to its Known Exploited Vulnerabilities (KEV) catalog, citing evidence of active exploitation.\n\nThe vulnerabilities are listed below -",
+      "detected_at": "2026-11-20T10:51:23.196545+01:00",
+      "matched_keywords": [
+        "ransomware"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "The Hacker News",
+      "title": "New EggStreme Malware Variant Goes Silent to Evade Security Tools in Government Attacks",
+      "url": "https://thehackernews.com/2026/11/eggstreme-hackers-rebuild-malware-with.html",
+      "content": "The suspected Chinese advanced persistent threat (APT) group behind the sophisticated EggStreme malware has rebuilt its toolkit as it continues to target government organizations in the Philippines.\n\n\"When attackers are exposed, the cheap response is to rotate,\" Bitdefender said in a technical report shared with The Hacker News. \"A file hash changes with every recompile, a domain costs a few",
+      "detected_at": "2026-11-20T10:51:23.196720+01:00",
+      "matched_keywords": [
+        "apt"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "The Hacker News",
+      "title": "Russian COLD RELIC Hackers Use Stolen Google Workspace Data to Breach Second U.S. Organization",
+      "url": "https://thehackernews.com/2026/11/russian-cold-relic-hackers-use-stolen.html",
+      "content": "The Russia-linked cyber espionage group known as Cold Relic (formerly COLDRIVER and UNC4057) has been observed weaponizing a single cloud compromise into a launchpad for a series of linked intrusions resulting in third-party compromise.\n\nGoogle's Mandiant and Threat Intelligence Group (GTIG) said it investigated a 2026 compromise at a U.S.-based organization in which the adversary leveraged",
+      "detected_at": "2026-11-20T10:51:23.196975+01:00",
+      "matched_keywords": [
+        "russia",
+        "espionage"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "The Hacker News",
+      "title": "Researchers Claim Two RCE Exploits That Bypass Telegram’s New Android Defenses",
+      "url": "https://thehackernews.com/2026/11/researchers-claim-two-rce-exploits-that.html",
+      "content": "A malicious widget can bypass the security filter that Telegram added to its Android app last week and run code outside it, according to NebuSec, a security company.\n\nWidgets are small interactive blocks that bots send inside chat messages, and their JavaScript runs on the user's phone. The researchers ran their demonstration on a Telegram test server, because only approved bots can send",
+      "detected_at": "2026-11-20T10:51:23.197007+01:00",
+      "matched_keywords": [
+        "defense",
+        "défense"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "The Hacker News",
+      "title": "Hackers Found a Way Around GitHub SHA Pinning. This Webinar Explains How to Close the Gap",
+      "url": "https://thehackernews.com/2026/11/hackers-found-way-around-github-sha.html",
+      "content": "Pinning GitHub Actions to an exact version of their code, known as SHA pinning, has become the go-to defense against software supply chain attacks. Attackers have already found a way around it.\n\nIn March 2026, the hackers who hijacked Trivy, a widely used open-source security scanner, planted malicious code that looked like it came from GitHub's official checkout tool. They even labeled it a",
+      "detected_at": "2026-11-20T10:51:23.197166+01:00",
+      "matched_keywords": [
+        "defense",
+        "défense",
+        "supply chain attack"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "The Hacker News",
+      "title": "FBI Says North Korean Hackers Stole Over $400 Million in Crypto Using Deepfake Video Calls",
+      "url": "https://thehackernews.com/2026/11/fbi-says-north-korean-hackers-stole.html",
+      "content": "The U.S. Federal Bureau of Investigation (FBI) has established that threat actors tied to the Democratic People's Republic of Korea (DPRK aka North Korea) have stolen more than $400 million worth of cryptocurrency as part of a social engineering scheme codenamed FaceStealer in the last 18 months.\n\nAs part of a coordinated set of actions announced by the U.S. government, the cloud-based",
+      "detected_at": "2026-11-20T10:51:23.197869+01:00",
+      "matched_keywords": [
+        "north korea"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "BleepingComputer",
+      "title": "Transport for London breach exposes 265,000 Oyster card users' data",
+      "url": "https://www.bleepingcomputer.com/news/security/transport-for-london-breach-exposes-265-000-oyster-card-users-data/",
+      "content": "Transport for London (TfL) has announced that around 265,000 Oyster photocard customers may have had their account details exposed in a data breach. [...]",
+      "detected_at": "2026-11-20T10:51:23.281227+01:00",
+      "matched_keywords": [
+        "data breach"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "BleepingComputer",
+      "title": "Five warning signs of ransomware breach before encryption or data theft",
+      "url": "https://www.bleepingcomputer.com/news/security/five-warning-signs-of-ransomware-breach-before-encryption-or-data-theft/",
+      "content": "Ransomware attacks often involve credential theft, lateral movement, and attempts to disable security controls long before encryption begins. Acronis examines five warning signs that can help defenders detect intrusions earlier, contain malicious activity, and protect critical systems and backups. [...]",
+      "detected_at": "2026-11-20T10:51:23.281304+01:00",
+      "matched_keywords": [
+        "ransomware"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "BleepingComputer",
+      "title": "NVIDIA investigating Gentlemen ransomware breach claims",
+      "url": "https://www.bleepingcomputer.com/news/security/nvidia-investigating-gentlemen-ransomware-breach-claims/",
+      "content": "NVIDIA is investigating claims of a security breach after the Gentlemen ransomware group has added the company to its dark web data leak site. [...]",
+      "detected_at": "2026-11-20T10:51:23.281487+01:00",
+      "matched_keywords": [
+        "leak",
+        "ransomware"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "BleepingComputer",
+      "title": "Ukraine, FBI arrest ransomware gang members tied to $40M in ransoms",
+      "url": "https://www.bleepingcomputer.com/news/security/ukraine-fbi-arrest-ransomware-gang-members-tied-to-40m-in-ransoms/",
+      "content": "Ukrainian authorities, working with the FBI, have arrested four suspected members of an international ransomware organization linked to more than $40.5 million in ransom payments from at least 28 companies worldwide. [...]",
+      "detected_at": "2026-11-20T10:51:23.281522+01:00",
+      "matched_keywords": [
+        "ransomware",
+        "ukraine"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "BleepingComputer",
+      "title": "Data breach impacts 40 Irish credit unions in reported IT provider hack",
+      "url": "https://www.bleepingcomputer.com/news/security/data-breach-impacts-40-irish-credit-unions-in-reported-it-provider-hack/",
+      "content": "A reported cyberattack on Wellington IT has exposed sensitive information belonging to members of 50 credit unions, the majority of which are located in Ireland. [...]",
+      "detected_at": "2026-11-20T10:51:23.281628+01:00",
+      "matched_keywords": [
+        "cyberattack",
+        "data breach"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Schneier on Security",
+      "title": "France Is Blaming Iran for the Fridge Cyberattack",
+      "url": "https://www.schneier.com/blog/archives/2026/11/france-is-blaming-iran-for-the-fridge-cyberattack.html",
+      "content": "Interesting : U.S. intelligence agencies have recently reached a “low confidence” assessment that Iran was responsible for the attacks in France, according to three U.S. officials who spoke on the condition of anonymity to discuss sensitive intelligence. A “low confidence” assessment generally means that there is some intelligence that points in a certain direction but is fragmented, and that the assessment could change as more information is collected. The agencies’ judgment on the French incid",
+      "detected_at": "2026-11-20T10:51:23.543438+01:00",
+      "matched_keywords": [
+        "cyberattack",
+        "iran"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "IHEDN",
+      "title": "« Agir dans un monde fracturé » : l’Année de la Défense Nationale 2027 en débat",
+      "url": "https://ihedn.fr/notre-selection/agir-dans-un-monde-fracture-lannee-de-la-defense-nationale-2027-en-debat/",
+      "content": "Le 16 novembre, l’IHEDN et La Documentation française ont présenté la quatrième édition de L’Année de la défense nationale. Le général de corps d’armée Hervé de Courrèges, directeur de l’IHEDN, a ouvert la soirée avec cette question centrale : « comment préserver et renforcer notre capacité d’action face à la multiplication des crises et à la recomposition des équilibres internationaux ? ». Comme l’a rappelé Véronique Lehideux, Directrice de l’information légale et administrative, l’ADN permet d",
+      "detected_at": "2026-11-20T10:51:26.820056+01:00",
+      "matched_keywords": [
+        "defense",
+        "défense"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Portail de l'IE",
+      "title": "Corvette européenne : quelle opportunité pour la Marine nationale ?",
+      "url": "https://www.portail-ie.fr/univers/defense-industrie-de-larmement-et-renseignement/2026/corvette-europeenne-quelle-opportunite-pour-la-marine-nationale/",
+      "content": "À Euronaval 2026, Naval Group, Fincantieri et Navantia ont signé un accord pour poursuivre le développement de l’European Patrol Corvette (EPC). Alors que la France doit remplacer ses frégates de […] L’article Corvette européenne : quelle opportunité pour la Marine nationale ? est apparu en premier sur Portail de l'IE .",
+      "detected_at": "2026-11-20T10:51:27.003845+01:00",
+      "matched_keywords": [
+        "naval group"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Portail de l'IE",
+      "title": "Euronaval 2026, le navire de guerre devient un réseau informatique à défendre",
+      "url": "https://www.portail-ie.fr/univers/defense-industrie-de-larmement-et-renseignement/2026/euronaval-2026-le-navire-de-guerre-devient-un-reseau-informatique-a-defendre/",
+      "content": "À Euronaval, drones, capteurs et intelligence artificielle occupent le devant de la scène. Derrière cette vitrine technologique, une réalité moins visible s’impose : un bâtiment moderne fonctionne comme un réseau […] L’article Euronaval 2026, le navire de guerre devient un réseau informatique à défendre est apparu en premier sur Portail de l'IE .",
+      "detected_at": "2026-11-20T10:51:27.004293+01:00",
+      "matched_keywords": [
+        "drone"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Portail de l'IE",
+      "title": "RÉARMEMENT POLONAIS : COMMENT VARSOVIE CONTRÔLE UNE CHAÎNE D’APPROVISIONNEMENT DE DÉFENSE LARGEMENT IMPORTÉE",
+      "url": "https://www.portail-ie.fr/univers/defense-industrie-de-larmement-et-renseignement/2026/rearmement-polonais-comment-varsovie-controle-une-chaine-dapprovisionnement-de-defense-largement-importee/",
+      "content": "Char K2 polonais lors d’un exercice de tir réel avec le groupement tactique de l’OTAN en Pologne, à Bemowo Piskie, en mars 2023. Crédit : Matthew A. Foster/DVIDS Près de […] L’article RÉARMEMENT POLONAIS : COMMENT VARSOVIE CONTRÔLE UNE CHAÎNE D’APPROVISIONNEMENT DE DÉFENSE LARGEMENT IMPORTÉE est apparu en premier sur Portail de l'IE .",
+      "detected_at": "2026-11-20T10:51:27.004423+01:00",
+      "matched_keywords": [
+        "defense",
+        "défense"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "Utilisé par la Marine nationale, le Camcopter S100 peut aussi être configuré en «porte-drones»",
+      "url": "https://www.opex360.com/2026/11/19/utilise-par-la-marine-nationale-le-camcopter-s100-peut-aussi-etre-configure-en-porte-drones/",
+      "content": "En janvier, la Direction générale de l’armement [DGA] fit savoir qu’elle avait notifié la commande cinq systèmes de drones à décollage vertical Camcopter S-100 supplémentaires auprès de l’industriel autrichien Schiebel [via Naval Group] afin de les intégrer à bord des frégates multimissions [FREMM] de la Marine nationale. Et cela alors que ce type d’appareil, appelé... Cet article Utilisé par la Marine nationale, le Camcopter S100 peut aussi être configuré en «porte-drones» est apparu en premier",
+      "detected_at": "2026-11-20T10:51:27.496615+01:00",
+      "matched_keywords": [
+        "naval group",
+        "dga",
+        "drone"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "La Malaisie envisage de commander 36 canons LG1 de 105 mm supplémentaires à KNDS France",
+      "url": "https://www.opex360.com/2026/11/19/la-malaisie-envisage-de-commander-36-canons-lg1-de-105-mm-supplementaires-a-knds-france/",
+      "content": "À l’occasion d’une visite officielle du président Macron à Kuala Lumpur, le 17 novembre, la France et la Malaisie ont affirmé leur volonté de renforcer leur coopération dans le domaine de la défense, avec la signature prochaine d’un accord sur le statut des forces [SOFA], lequel facilitera, entre autres, la tenue d’exercices conjoints. Il est... Cet article La Malaisie envisage de commander 36 canons LG1 de 105 mm supplémentaires à KNDS France est apparu en premier sur Zone Militaire .",
+      "detected_at": "2026-11-20T10:51:27.496813+01:00",
+      "matched_keywords": [
+        "defense",
+        "défense",
+        "militaire"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "La France et la Suède ont mené leur premier exercice aérien de dissuasion nucléaire avancée",
+      "url": "https://www.opex360.com/2026/11/19/la-france-et-la-suede-ont-mene-leur-premier-exercice-aerien-de-dissuasion-nucleaire-avancee/",
+      "content": "Avec le Royaume-Uni, l’Allemagne, la Pologne, la Belgique, la Grèce, les Pays-Bas et le Danemark, la Suède a été l’un des premiers pays européens à adhérer au concept de «dissuasion avancée» que le président Macron a défini lors d’un discours prononcé à l’Île-Longue, le 2 mars. Pour rappel, il s’agit d’associer les partenaires européens qui... Cet article La France et la Suède ont mené leur premier exercice aérien de dissuasion nucléaire avancée est apparu en premier sur Zone Militaire .",
+      "detected_at": "2026-11-20T10:51:27.496978+01:00",
+      "matched_keywords": [
+        "militaire"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "Le ministère des Armées a commandé 72 000 fusils d’assaut HK416F supplémentaires auprès d’Heckler & Koch",
+      "url": "https://www.opex360.com/2026/11/19/le-ministere-des-armees-a-commande-72-000-fusils-dassaut-hk416f-supplementaires-aupres-dheckler-koch/",
+      "content": "U En septembre 2016, après des polémiques sur les modalités de l’appel d’offres d’une valeur estimée à 350 millions d’euros qu’elle avait émis quelques mois plus tôt, la Direction générale de l’armement [DGA] annonça qu’elle venait de retenir le fusil d’assaut HK-416F de conception allemande afin de remplacer le célèbre FAMAS, dans le cadre du... Cet article Le ministère des Armées a commandé 72 000 fusils d’assaut HK416F supplémentaires auprès d’Heckler & Koch est apparu en premier sur Zone Mil",
+      "detected_at": "2026-11-20T10:51:27.497152+01:00",
+      "matched_keywords": [
+        "dga",
+        "ministère des armées",
+        "ministere des armees"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "Grâce au BIC, l’armée de Terre entraîne ses artilleurs sans tirer un seul obus",
+      "url": "https://www.opex360.com/2026/11/18/grace-au-bic-larmee-de-terre-entraine-ses-artilleurs-sans-tirer-un-seul-obus/",
+      "content": "Former et entraîner les servants d’un CAESAr [Camion équipé d’un système d’artillerie] sans tirer d’obus et à moindre coût : tel est l’intérêt du BIC [pour «Banc d’Instruction au Chargement] que KNDS France a récemment livré à l’École d’artillerie. Selon les explications données par l’armée de Terre, le BIC est un simulateur qui reproduit la... Cet article Grâce au BIC, l’armée de Terre entraîne ses artilleurs sans tirer un seul obus est apparu en premier sur Zone Militaire .",
+      "detected_at": "2026-11-20T10:51:27.499235+01:00",
+      "matched_keywords": [
+        "caesar",
+        "militaire"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "MBDA Deutschland et Atmos Space Cargo veulent développer une capacité de «frappe orbitale de précision»",
+      "url": "https://www.opex360.com/2026/11/18/mbda-deutschland-et-atmos-space-cargo-veulent-developper-une-capacite-de-frappe-orbitale-de-precision/",
+      "content": "Créée en 2021, Atmos Space Cargo est une entreprise allemande spécialisée dans la logistique spatiale et la conception de capsules réutilisables permettant de ramener sur Terre des charges utiles placées en orbite basse. Et elle va étendre ses activités au secteur de la défense. En effet, le 18 novembre, MBDA Deutschland a signé avec Atmos... Cet article MBDA Deutschland et Atmos Space Cargo veulent développer une capacité de «frappe orbitale de précision» est apparu en premier sur Zone Militair",
+      "detected_at": "2026-11-20T10:51:27.499660+01:00",
+      "matched_keywords": [
+        "mbda",
+        "defense",
+        "défense",
+        "space"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "Washington propose de vendre deux systèmes d’artillerie M142 HIMARS à l’Albanie pour 210 millions de dollars",
+      "url": "https://www.opex360.com/2026/11/18/washington-propose-de-vendre-deux-systemes-dartillerie-m142-himars-a-lalbanie-pour-210-millions-de-dollars/",
+      "content": "La semaine passée, le Premier ministre albanais, Edi Rama, a indiqué que, contrairement à ce qui avait été annoncé, Tirana n’accueillerait pas le prochain sommet de l’Otan. A priori, cette décision serait liée au fait que l’Albanie ne consacre pas suffisamment de moyens à sa défense. Pourtant, selon les chiffres de l’Otan, les dépenses militaires... Cet article Washington propose de vendre deux systèmes d’artillerie M142 HIMARS à l’Albanie pour 210 millions de dollars est apparu en premier sur Z",
+      "detected_at": "2026-11-20T10:51:27.499848+01:00",
+      "matched_keywords": [
+        "defense",
+        "défense",
+        "militaire"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "La France réaffirme son soutien au projet européen HYDIS², dédié à la défense contre les missiles hypersoniques",
+      "url": "https://www.opex360.com/2026/11/17/la-france-reaffirme-son-soutien-au-projet-europeen-hydis%c2%b2-dedie-a-la-defense-contre-les-missiles-hypersoniques/",
+      "content": "En 2022, la Commission européenne fit un choix qui en surprit plus d’un en confiant à l’espagnol SENER Aeroespacial la direction du programme EU HYDEF [European Hypersonic Defence Interceptor], alors que les travaux préliminaires menées dans le cadre du projet TWISTER [Timely Warning and Interception with Space-based TheatER surveillance] avaient été réalisés sous l’égide de... Cet article La France réaffirme son soutien au projet européen HYDIS², dédié à la défense contre les missiles hypersoni",
+      "detected_at": "2026-11-20T10:51:27.500016+01:00",
+      "matched_keywords": [
+        "defense",
+        "défense",
+        "missile",
+        "space"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "Opex360 (Zone Militaire)",
+      "title": "Un char Leopard 2 ukrainien a « survécu » à 45 impacts de drones FPV",
+      "url": "https://www.opex360.com/2026/11/17/un-char-leopard-2-ukrainien-a-survecu-a-45-impacts-de-drones-fpv/",
+      "content": "L’idée selon laquelle il ne suffirait que d’un seul drone FPV [First Person View, c’est-à-dire à pilotage immersif] pour détruire un char de combat s’est largement répandue avec la diffusion abondante de vidéos prises sur les champs de bataille en Ukraine. D’ailleurs, c’est ce qui motive la mise en œuvre de cages antidrones, de systèmes... Cet article Un char Leopard 2 ukrainien a « survécu » à 45 impacts de drones FPV est apparu en premier sur Zone Militaire .",
+      "detected_at": "2026-11-20T10:51:27.500176+01:00",
+      "matched_keywords": [
+        "militaire",
+        "drone",
+        "ukraine"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "FOB (Forces Operations Blog)",
+      "title": "Des radars GM200 MM/A pour la Suisse",
+      "url": "https://forcesoperations.com/des-radars-gm200-mm-a-pour-la-suisse/",
+      "content": "Après la Belgique la semaine dernière et la Roumanie le mois dernier, au tour de la Suisse de se tourner vers Thales pour muscler ses moyens de surveillance de l'espace aérien. The post Des radars GM200 MM/A pour la Suisse appeared first on FOB - Forces Operations Blog .",
+      "detected_at": "2026-11-20T10:51:27.848663+01:00",
+      "matched_keywords": [
+        "thales"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "FOB (Forces Operations Blog)",
+      "title": "L’Europe valide le rapprochement entre Thales et Kongsberg",
+      "url": "https://forcesoperations.com/leurope-valide-le-rapprochement-entre-thales-et-kongsberg/",
+      "content": "L'Europe a tranché, la voie est libre pour la future co-entreprise créée en Norvège par Thales et le groupe local Kongsberg. The post L’Europe valide le rapprochement entre Thales et Kongsberg appeared first on FOB - Forces Operations Blog .",
+      "detected_at": "2026-11-20T10:51:27.848875+01:00",
+      "matched_keywords": [
+        "thales"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "rss",
+      "channel": "FOB (Forces Operations Blog)",
+      "title": "Feu vert bulgare pour une commande de CAESAR",
+      "url": "https://forcesoperations.com/feu-vert-bulgare-pour-une-commande-de-caesar/",
+      "content": "Le gouvernement bulgare a donné hier son feu vert pour entamer les négociations en vue de l'acquisition d'une capacité centrée sur le CAESAR. Fruit d'un accord de gouvernement à gouvernement, l'investissement sera soutenu par l'Europe.  Le club CAESAR va encore s'agrandir. Après la Slovénie, la Croatie ou encore l'Arménie, la Bulgarie avance à son tour […] The post Feu vert bulgare pour une commande de CAESAR appeared first on FOB - Forces Operations Blog .",
+      "detected_at": "2026-11-20T10:51:27.849071+01:00",
+      "matched_keywords": [
+        "caesar"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "telegram",
+      "channel": "vxunderground",
+      "title": null,
+      "url": "https://t.me/vxunderground/9596",
+      "content": "NVIDIA got hit by Gentlemen ransomware group",
+      "detected_at": "2026-11-20T10:51:30.246216+01:00",
+      "matched_keywords": [
+        "ransomware"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "telegram",
+      "channel": "vxunderground",
+      "title": null,
+      "url": "https://t.me/vxunderground/9599",
+      "content": "On November 18th, 2026, Ukrainian authorities arrested four individuals believed to be tied to Conti ransomware group. Photos from the arrest paint a very clear picture: These ransomware guys arrested are the lamest fucking bunch of bozos on the planet bro. This dude had a fuckin Matrix themed background like it's 1999. Honestly bro you might as well just blow your shit smoove off atp you're not gonna make it, it's all over, the cringe is too powerful",
+      "detected_at": "2026-11-20T10:51:30.246707+01:00",
+      "matched_keywords": [
+        "ransomware"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "telegram",
+      "channel": "vxunderground",
+      "title": null,
+      "url": "https://t.me/vxunderground/9600",
+      "content": "On November 18th, 2026, Ukrainian authorities arrested four individuals believed to be tied to Conti ransomware group.  Photos from the arrest paint a very clear picture:   These ransomware guys arrested are the lamest fucking bunch of bozos on the planet…",
+      "detected_at": "2026-11-20T10:51:30.246985+01:00",
+      "matched_keywords": [
+        "ransomware"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "telegram",
+      "channel": "vxunderground",
+      "title": null,
+      "url": "https://t.me/vxunderground/9601",
+      "content": "On November 18th, 2026, Ukrainian authorities arrested four individuals believed to be tied to Conti ransomware group.  Photos from the arrest paint a very clear picture:   These ransomware guys arrested are the lamest fucking bunch of bozos on the planet…",
+      "detected_at": "2026-11-20T10:51:30.247181+01:00",
+      "matched_keywords": [
+        "ransomware"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "telegram",
+      "channel": "vxunderground",
+      "title": null,
+      "url": "https://t.me/vxunderground/9603",
+      "content": "Found a zero day exploit that will DESTROY the internet. It affects every machine. Call your CISO right now, it's all over. I'm calling it Time2Shell Once your computer has been powered on, with no downtime or system restarts, for 2^64 years, the machine is vulnerable to something. This affects 100% of the internet. *small caveat that the machine must have been powered on for 18.4 quintillion years, computer must transcend space and time, existing before the big bang, when quarks, atoms, and the",
+      "detected_at": "2026-11-20T10:51:30.247480+01:00",
+      "matched_keywords": [
+        "space"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    },
+    {
+      "source": "telegram",
+      "channel": "vxunderground",
+      "title": null,
+      "url": "https://t.me/vxunderground/9605",
+      "content": "> wake up > take a shit > get out of bed > check beep boop > over 9000 DMs > \"SCHMEELI, GTA VI LEAK\" > ??? > sends link > torrent > ok > look inside > actual assets > huh > squint eyes > look closer > not larp huh, how about that. the cyberleek guy released the full xbox gta 6 build, goop free. only missing launcher .exe for it to fully work, says will drop on 23rd. if it follows thru on his word then ppl can play gta vi on pc on Monday, mod it, etc.",
+      "detected_at": "2026-11-20T10:51:30.247830+01:00",
+      "matched_keywords": [
+        "leak"
+      ],
+      "matched_members": [],
+      "level": "WARNING"
+    }
+  ]
+}
