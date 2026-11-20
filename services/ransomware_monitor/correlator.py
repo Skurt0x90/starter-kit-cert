@@ -28,7 +28,7 @@ def parse_and_filter_date(date_str: str) -> Optional[str]:
 def get_victim_ransomfeed() -> List[Dict]:
     url = "https://api.ransomfeed.it/"
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=utils.REQUEST_TIMEOUT)
         response.raise_for_status()
         data = response.json()
         formatted_data = []
@@ -57,7 +57,7 @@ def get_victim_ransomfeed() -> List[Dict]:
 def get_victim_ransomlive() -> List[Dict]:
     url = "https://api.ransomware.live/v2/recentvictims"
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=utils.REQUEST_TIMEOUT)
         response.raise_for_status()
         data = response.json()
         formatted_data = []
@@ -86,7 +86,7 @@ def get_victim_ransomlive() -> List[Dict]:
 def get_victim_ransomlook() -> List[Dict]:
     url = "https://ransomlook.io/api/last/2"
     try:
-        response = requests.get(url)
+        response = requests.get(url, timeout=utils.REQUEST_TIMEOUT)
         response.raise_for_status()
         data = response.json()
         formatted_data = []

@@ -11,4 +11,4 @@ app.layout = create_layout()
 server = app.server
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=8050, debug=False)   # debug=True ouvrait la console Werkzeug (exécution de code)
+    app.run(host="127.0.0.1", port=8050, debug=False)
