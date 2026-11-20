@@ -2,9 +2,11 @@ import ast
 import os
 import requests
 from urllib.parse import urlparse
-from dash import Input, Output, callback, html, State, ctx, MATCH
+from dash import Input, Output, callback, html, State, ctx, MATCH, ALL, no_update
 import dash_leaflet as dl
 import logging
+from app import utils
+
 
 WATCHER_URL = os.getenv("WATCHER_URL", "http://localhost:5001/api/data")
 VULN_URL = os.getenv("VULN_URL", "http://localhost:5002/api/data")
@@ -18,17 +20,17 @@ SOCIAL_INTERVAL_H = int(os.getenv("SCHEDULE_INTERVAL_HOURS", os.getenv("VULN_SCA
 DASHBOARD_REFRESH_SEC = 60
 DEDUP_WINDOW_MIN = int(os.getenv("DEDUP_WINDOW_MINUTES", 30))
 
+# même borne que le vuln_scanner (CRITICAL à partir de ce CVSS)
+CVSS_CRITICAL = float(os.getenv("CVSS_CRITICAL", 9))
+
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s [%(levelname)s] %(name)s - %(message)s",
     handlers=[
         logging.StreamHandler(),             # console
-        logging.FileHandler("alert.log")  # fichier (écrit dans /tmp grâce au working_dir du compose)
+        logging.FileHandler("alert.log")  # fichier
     ]
 )
-
-
-# [HARDENING] ─── Sécurité des liens ──────────────────────────────────────────
 
 def safe_url(url):
     # refuse javascript:, data:, etc. : seuls http(s) passent
@@ -121,7 +123,6 @@ def build_social_panel(message):
             children=[
                 html.Span(m.get("channel", "?"), style={"color": "#ddd", "fontFamily": "monospace", "fontSize": "0.82em", "flex": "1"}),
                 html.Span(m.get("content", "?"), style={"color": "#a569bd", "fontFamily": "monospace", "fontSize": "0.75em", "marginLeft": "6px"}),
-                # [HARDENING] URL venant de RSS/Telegram : on filtre le schéma + rel="noopener noreferrer"
                 html.A(m.get('url', '?'), href=safe_url(m.get('url')), rel="noopener noreferrer", style={"color": "#a569bd", "fontFamily": "monospace", "fontSize": "0.75em", "marginLeft": "6px",}, target="_blank")
             ]
         ))
@@ -135,11 +136,9 @@ def build_social_panel(message):
 def cvss_color(cvss):
     if cvss is None:
         return "#555"
-    if cvss >= 9:
+    if cvss >= CVSS_CRITICAL:
         return "#c0392b"
-    if cvss > 7:
-        return "#e67e22"
-    return "#f1c40f"
+    return "#e67e22"
 
 
 def tag_style(color, bg):
@@ -162,7 +161,7 @@ def build_cve_panel(sites):
         if not cves:
             continue
         total += len(cves)
-        critical = sum(1 for c in cves if c.get("cvss") and c["cvss"] > 7)
+        critical = sum(1 for c in cves if c.get("cvss") and c["cvss"] >= CVSS_CRITICAL)
         warning = len(cves) - critical
         items.append(html.Div(
             style={"display": "flex", "justifyContent": "space-between", "alignItems": "center", "padding": "4px 8px", "marginBottom": "4px", "borderLeft": f"3px solid {'#c0392b' if critical else '#e67e22'}"},
@@ -219,21 +218,35 @@ def build_typosquat_panel(sites):
     return items, total
 
 
-# ─── Panel bas ────────────────────────────────────────────────────────────────
+# ─── Panel bas (aussi utilisé dans le popup agrandir) ─────────────────────────
 
-def build_cve_detail_panel(sites, filtre="all"):
+def cve_passes_filter(cve, filtre):
+    # critical / warning : selon CVSS_CRITICAL ; exact / range : précision de la version détectée
+    cvss = cve.get("cvss")
+    level = "critical" if cvss is not None and cvss >= CVSS_CRITICAL else "warning"
+    if filtre in ("critical", "warning") and level != filtre:
+        return False
+    if filtre == "exact" and cve.get("match") != "exact":
+        return False
+    if filtre == "range" and cve.get("match") not in ("range", "keyword"):
+        return False
+    return True
+
+
+def build_cve_detail_panel(sites, filtre="all", search=""):
     rows = []
     for site in sites:
         domain = site.get("domain", "?")
         checked_at = site.get("checked_at", "")[:19].replace("T", " ")
 
-        # CVE headers (existant)
+        # CVE headers / InternetDB / nmap
         cves = [c for c in site.get("headers", {}).get("cves", []) if c.get("id")]
         for cve in cves:
             cvss = cve.get("cvss")
-            level = "critical" if cvss and cvss > 7 else "warning"
-            if filtre == "critical" and level != "critical": continue
-            if filtre == "warning" and level != "warning": continue
+            if not cve_passes_filter(cve, filtre):
+                continue
+            if search and search not in domain.lower() and search not in cve["id"].lower():
+                continue
             color = cvss_color(cvss)
             rows.append(html.Div(
                 style={"display": "flex", "gap": "12px", "padding": "5px 0", "borderBottom": "1px solid #2a2d35", "alignItems": "flex-start", "backgroundColor": f"{color}11"},
@@ -247,14 +260,16 @@ def build_cve_detail_panel(sites, filtre="all"):
                 ]
             ))
 
-        # CVE ports nmap (nouveau)
+        # CVE ports nmap
         for port in site.get("ports", []):
             for cve in port.get("cves", []):
                 cvss = cve.get("cvss")
-                if not cvss: continue
-                level = "critical" if cvss > 7 else "warning"
-                if filtre == "critical" and level != "critical": continue
-                if filtre == "warning" and level != "warning": continue
+                if not cvss:
+                    continue
+                if not cve_passes_filter(cve, filtre):
+                    continue
+                if search and search not in domain.lower() and search not in (cve.get("id") or "").lower():
+                    continue
                 color = cvss_color(cvss)
                 rows.append(html.Div(
                     style={"display": "flex", "gap": "12px", "padding": "5px 0", "borderBottom": "1px solid #2a2d35", "alignItems": "flex-start", "backgroundColor": f"{color}11"},
@@ -272,12 +287,14 @@ def build_cve_detail_panel(sites, filtre="all"):
     return rows
 
 
-def build_dns_detail_panel(sites, filtre="all"):
+def build_dns_detail_panel(sites, filtre="all", search=""):
     rows = []
     for site in sites:
         domain = site.get("domain", "?")
         dns = site.get("dns", {})
         if not dns:
+            continue
+        if search and search not in domain.lower():
             continue
         spf = dns.get("spf")
         dmarc = dns.get("dmarc")
@@ -309,13 +326,18 @@ def build_dns_detail_panel(sites, filtre="all"):
     return rows
 
 
-def build_subdomain_detail_panel(sites, filtre="all"):
+def build_subdomain_detail_panel(sites, filtre="all", search=""):
     rows = []
     for site in sites:
         domain = site.get("domain", "?")
         subdomains = site.get("subdomains", [])
         typos = site.get("typosquatting", [])
         checked_at = site.get("checked_at", "")[:19].replace("T", " ")
+
+        # la recherche porte sur le domaine surveillé, ses sous-domaines et ses typosquats
+        if search:
+            subdomains = [s for s in subdomains if search in domain.lower() or search in s.lower()]
+            typos = [t for t in typos if search in domain.lower() or search in t.lower()]
 
         show_sub = bool(subdomains) and filtre in ("all", "subdomains")
         show_typo = bool(typos) and filtre in ("all", "typo")
@@ -353,6 +375,100 @@ def build_subdomain_detail_panel(sites, filtre="all"):
         return html.Span("Aucune donnée", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"})
     return rows
 
+# ─── Tableau CVE du popup (colonnes alignées + filtres par colonne) ──────────
+
+MATCH_LABELS = {"exact": "exacte", "range": "partielle", "keyword": "mot-clé"}
+
+
+def collect_cve_rows(sites):
+    # une ligne par CVE : headers / InternetDB / nmap (déjà fusionnés par cve_lookup) + CVE par port si présentes
+    rows = []
+    for site in sites:
+        domain = site.get("domain", "?")
+        scan = site.get("checked_at", "")[:10]
+        for cve in site.get("headers", {}).get("cves", []):
+            if not cve.get("id"):
+                continue
+            rows.append({
+                "domain": domain, "id": cve["id"], "cvss": cve.get("cvss"),
+                "match": cve.get("match"),
+                "where": cve.get("where") or cve.get("component") or "—",
+                "description": cve.get("description", ""), "scan": scan,
+            })
+        for port in site.get("ports", []):
+            for cve in port.get("cves", []):
+                if not cve.get("cvss"):
+                    continue
+                rows.append({
+                    "domain": domain, "id": cve.get("id") or "—", "cvss": cve["cvss"],
+                    "match": cve.get("match"),
+                    "where": f"{port.get('product') or port.get('service') or '?'} (port {port['port']})",
+                    "description": cve.get("description", ""), "scan": scan,
+                })
+    return rows
+
+
+def row_passes(row, f):
+    cvss = row["cvss"]
+    level = "critical" if cvss is not None and cvss >= CVSS_CRITICAL else "warning"
+    if f["domain"] and f["domain"] not in row["domain"].lower():
+        return False
+    if f["cve"] and f["cve"] not in row["id"].lower():
+        return False
+    if f["cvss_min"] != "all" and (cvss is None or cvss < float(f["cvss_min"])):
+        return False
+    if f["level"] != "all" and level != f["level"]:
+        return False
+    if f["match"] != "all" and (row["match"] or "none") != f["match"]:
+        return False
+    if f["where"] and f["where"] not in row["where"].lower():
+        return False
+    if f["desc"] and f["desc"] not in row["description"].lower():
+        return False
+    return True
+
+
+def cve_cell(text, color="#aaa", size="0.8em", mono=True):
+    # retour à la ligne autorisé : la description n'est plus écrasée
+    return html.Div(text, title=text, style={
+        "color": color, "fontSize": size, "fontFamily": "monospace" if mono else "inherit",
+        "wordBreak": "break-word", "lineHeight": "1.4",
+    })
+
+
+def build_cve_table(sites, f):
+    all_rows = collect_cve_rows(sites)
+    rows = [r for r in all_rows if row_passes(r, f)]
+    rows.sort(key=lambda r: (r["cvss"] is None, -(r["cvss"] or 0), r["domain"]))
+
+    out = [html.Div(f"{len(rows)} / {len(all_rows)} CVE", style={"color": "#555", "fontFamily": "monospace", "fontSize": "0.72em", "marginBottom": "6px"})]
+    if not rows:
+        out.append(html.Span("Aucune CVE ne correspond aux filtres", style={"color": "#555", "fontSize": "0.8em", "fontFamily": "monospace"}))
+        return out
+
+    table = []
+    for r in rows:
+        cvss = r["cvss"]
+        color = cvss_color(cvss)
+        critical = cvss is not None and cvss >= CVSS_CRITICAL
+        table.append(html.Div(
+            style={
+                "display": "grid", "gridTemplateColumns": utils.CVE_GRID, "gap": "10px", "alignItems": "start",
+                "padding": "6px 0", "borderBottom": "1px solid #2a2d35", "backgroundColor": f"{color}11",
+            },
+            children=[
+                cve_cell(r["domain"], "#888"),
+                cve_cell(r["id"], color),
+                cve_cell(f"{cvss}" if cvss is not None else "—", color),
+                cve_cell("Critical" if critical else "Warning", color),
+                cve_cell(MATCH_LABELS.get(r["match"], "non confirmée"), "#888", "0.75em"),
+                cve_cell(r["where"], "#5dade2", "0.75em"),
+                cve_cell(r["description"], "#aaa", "0.78em", mono=False),
+                cve_cell(r["scan"], "#555", "0.75em"),
+            ]
+        ))
+    out.append(html.Div(table, style={"minWidth": utils.CVE_GRID_MIN_WIDTH}))
+    return out
 
 # ─── Modal domaine ────────────────────────────────────────────────────────────
 
@@ -439,8 +555,8 @@ def build_global_counters(watcher_sites, vuln_sites):
     sites_ok = sum(1 for s in watcher_sites if s.get("site_up"))
     sites_down = len(watcher_sites) - sites_ok
     cve_critical = (
-        sum(1 for s in vuln_sites for c in s.get("headers", {}).get("cves", []) if c.get("cvss") and c["cvss"] > 7)
-        + sum(1 for s in vuln_sites for p in s.get("ports", []) for c in p.get("cves", []) if c.get("cvss") and c["cvss"] > 7)
+        sum(1 for s in vuln_sites for c in s.get("headers", {}).get("cves", []) if c.get("cvss") and c["cvss"] >= CVSS_CRITICAL)
+        + sum(1 for s in vuln_sites for p in s.get("ports", []) for c in p.get("cves", []) if c.get("cvss") and c["cvss"] >= CVSS_CRITICAL)
     )
     typosquat_total = sum(len(s.get("typosquatting", [])) for s in vuln_sites)
     dns_issues = sum(1 for s in vuln_sites if not s.get("dns", {}).get("spf") or not s.get("dns", {}).get("dmarc"))
@@ -485,6 +601,43 @@ def build_delays_content():
     ]
 
 
+# ─── Popup agrandir : vues et filtres ────────────────────────────────────────
+
+# vues du détail Vuln (clé -> libellé, constructeur)
+VULN_VIEWS = {
+    "cve": ("CVE", build_cve_detail_panel),
+    "dns": ("DNS / SPF / DMARC", build_dns_detail_panel),
+    "sub": ("Sous-domaines & Typosquatting", build_subdomain_detail_panel),
+}
+
+# filtres par vue (valeur -> libellé), mêmes valeurs que les filtres du panel du bas
+VULN_FILTERS = {
+    "cve": [],
+    "dns": [("all", "Tous"), ("spf", "SPF ✗"), ("dmarc", "DMARC ✗"), ("none", "p=none")],
+    "sub": [("all", "Tous"), ("subdomains", "Sous-domaines"), ("typo", "Typosquats")],
+}
+
+
+def expand_btn(label, btn_id, active=False, tab=False):
+    # tab=True : style onglet (comme le panel du bas), sinon style filtre
+    if tab:
+        return html.Button(label, id=btn_id, n_clicks=0, style={
+            "fontFamily": "monospace", "fontSize": "0.78em", "cursor": "pointer",
+            "padding": "4px 12px", "border": "none", "borderRadius": "4px",
+            "backgroundColor": "#2a2d35" if active else "transparent",
+            "color": "#00d4ff" if active else "#555",
+        })
+    return html.Button(label, id=btn_id, n_clicks=0, style={
+        "fontFamily": "monospace", "fontSize": "0.72em", "cursor": "pointer",
+        "padding": "2px 8px",
+        "border": f"1px solid {'#00d4ff' if active else '#2a2d35'}",
+        "borderRadius": "10px",
+        "backgroundColor": "#1a2a3a" if active else "transparent",
+        "color": "#00d4ff" if active else "#555",
+        "marginRight": "4px",
+    })
+
+
 # ─── Callbacks ────────────────────────────────────────────────────────────────
 
 @callback(
@@ -516,30 +669,159 @@ def toggle_help_modal(n_open, n_close, n_overlay):
 
 
 @callback(
-    Output("panel-bottom-body", "style"),
-    Output("panel-expand-btn", "children"),
+    Output("expand-state", "data"),
+    Output("expand-search", "value"),
     Input("panel-expand-btn", "n_clicks"),
-    State("panel-bottom-body", "style"),
+    Input("vuln-expand-btn", "n_clicks"),
+    Input({"type": "panel-expand-btn", "index": ALL}, "n_clicks"),
+    Input("expand-modal-close", "n_clicks"),
+    Input("expand-modal-overlay", "n_clicks"),
+    Input({"type": "expand-view", "index": ALL}, "n_clicks"),
+    Input({"type": "expand-filter", "index": ALL}, "n_clicks"),
+    State("expand-state", "data"),
+    State("tab-dns", "style"),
+    State("tab-subdomains", "style"),
+    State("active-filter-cve", "data"),
+    State("active-filter-dns", "data"),
+    State("active-filter-sub", "data"),
     prevent_initial_call=True,
 )
-def toggle_panel_expand(n_clicks, current_style):
-    expanded = current_style.get("maxHeight") == "500px"
-    return {**current_style, "maxHeight": "200px" if expanded else "500px"}, "⛶ Agrandir" if expanded else "⛶ Réduire"
+def update_expand_state(n_bottom, n_vuln, n_services, n_close, n_overlay, n_views, n_filters,
+                        state, style_dns, style_sub, filter_cve, filter_dns, filter_sub):
+    # ignore les déclenchements sans vrai clic (boutons recréés par le popup, valeur 0 / None)
+    if not ctx.triggered or not ctx.triggered[0]["value"]:
+        return no_update, no_update
+
+    state = state or {"open": False, "view": None, "filter": "all"}
+    trig = ctx.triggered_id
+
+    # fermeture
+    if trig in ("expand-modal-close", "expand-modal-overlay"):
+        return {**state, "open": False}, no_update
+
+    # panel du bas : on ouvre l'onglet actif avec son filtre
+    if trig == "panel-expand-btn":
+        if (style_dns or {}).get("display") == "block":
+            return {"open": True, "view": "dns", "filter": filter_dns or "all"}, ""
+        if (style_sub or {}).get("display") == "block":
+            return {"open": True, "view": "sub", "filter": filter_sub or "all"}, ""
+        return {"open": True, "view": "cve", "filter": filter_cve or "all"}, ""
+
+    # panel Vuln Scanner (droite) : détail CVE
+    if trig == "vuln-expand-btn":
+        return {"open": True, "view": "cve", "filter": "all"}, ""
+
+    # changement d'onglet dans le popup
+    if isinstance(trig, dict) and trig.get("type") == "expand-view":
+        return {"open": True, "view": trig["index"], "filter": "all"}, ""
+
+    # changement de filtre dans le popup
+    if isinstance(trig, dict) and trig.get("type") == "expand-filter":
+        return {**state, "filter": trig["index"]}, no_update
+
+    # panels Ransomware / Social
+    if isinstance(trig, dict) and trig.get("type") == "panel-expand-btn":
+        view = "ransomware" if trig.get("index") == "ransomware-panel" else "social"
+        return {"open": True, "view": view, "filter": "all"}, ""
+
+    return no_update, no_update
 
 
 @callback(
-    Output({"type": "panel-body", "index": MATCH}, "style"),
-    Output({"type": "panel-expand-btn", "index": MATCH}, "title"),
-    Input({"type": "panel-expand-btn", "index": MATCH}, "n_clicks"),
-    State({"type": "panel-body", "index": MATCH}, "style"),
+    Output("expand-modal", "style"),
+    Output("expand-modal-title", "children"),
+    Output("expand-modal-views", "children"),
+    Output("expand-modal-filters", "children"),
+    Output("expand-modal-toolbar", "style"),
+    Output("expand-search", "style"),
+    Output("expand-cve-filters", "style"),
+    Output("expand-modal-content", "children"),
+    Input("expand-state", "data"),
+    Input("expand-search", "value"),
+    Input("f-domain", "value"),
+    Input("f-cve", "value"),
+    Input("f-cvss", "value"),
+    Input("f-level", "value"),
+    Input("f-match", "value"),
+    Input("f-where", "value"),
+    Input("f-desc", "value"),
+    State("vuln-data-store", "data"),
+    State("ransomware-data-store", "data"),
+    State("social-data-store", "data"),
     prevent_initial_call=True,
 )
-def toggle_service_panel(n_clicks, current_style):
-    expanded = current_style.get("maxHeight") == "400px"
-    new_h = "150px" if expanded else "400px"
-    label = "Agrandir" if expanded else "Réduire"
-    return {**current_style, "maxHeight": new_h}, label
+def render_expand_modal(state, search, f_domain, f_cve, f_cvss, f_level, f_match, f_where, f_desc,
+                        vuln_data, ransomware_data, social_data):
+    hidden = {"display": "none"}
+    visible = {"display": "block"}
+    toolbar_on = {
+        "display": "flex", "flexWrap": "wrap", "alignItems": "center", "gap": "10px",
+        "padding": "8px 20px", "backgroundColor": "#141517", "borderBottom": "1px solid #2a2d35",
+    }
+    search_on = {
+        "marginLeft": "auto", "fontFamily": "monospace", "fontSize": "0.75em",
+        "padding": "3px 10px", "width": "220px",
+        "backgroundColor": "#1a1b1e", "color": "#ddd",
+        "border": "1px solid #2a2d35", "borderRadius": "4px", "outline": "none",
+    }
+    cve_filters_on = {
+        "display": "block", "position": "sticky", "top": "0", "zIndex": "5",
+        "backgroundColor": "#1a1b1e", "padding": "12px 0 8px 0", "borderBottom": "1px solid #2a2d35",
+        "minWidth": utils.CVE_GRID_MIN_WIDTH,
+    }
 
+    if not state or not state.get("open"):
+        return hidden, "", [], [], hidden, hidden, hidden, []
+
+    view = state.get("view")
+    filtre = state.get("filter") or "all"
+    search = (search or "").strip().lower()
+
+    # détail Vuln : onglets + filtres (+ recherche globale sauf vue CVE, qui a ses filtres de colonnes)
+    if view in VULN_VIEWS:
+        vuln_sites = (vuln_data or {}).get("sites", [])
+        label, builder = VULN_VIEWS[view]
+        views = [expand_btn(lbl, {"type": "expand-view", "index": key}, active=(key == view), tab=True) for key, (lbl, _) in VULN_VIEWS.items()]
+        filters = [expand_btn(lbl, {"type": "expand-filter", "index": val}, active=(val == filtre)) for val, lbl in VULN_FILTERS[view]]
+        title = f"🔍 Vuln Scanner — {label}"
+
+        if view == "cve":
+            f = {
+                "domain": (f_domain or "").strip().lower(),
+                "cve": (f_cve or "").strip().lower(),
+                "cvss_min": f_cvss or "all",
+                "level": f_level or "all",
+                "match": f_match or "all",
+                "where": (f_where or "").strip().lower(),
+                "desc": (f_desc or "").strip().lower(),
+            }
+            return visible, title, views, filters, toolbar_on, hidden, cve_filters_on, build_cve_table(vuln_sites, f)
+
+        return visible, title, views, filters, toolbar_on, search_on, hidden, builder(vuln_sites, filtre, search)
+
+    # panels Ransomware / Social : liste complète, pas de filtres
+    if view == "ransomware":
+        content, total = build_ransomware_panel(ransomware_data or [])
+        return visible, f"🦠 Ransomware Monitor — {total} match(s) membres", [], [], hidden, hidden, hidden, content
+    if view == "social":
+        content, total = build_social_panel(social_data or [])
+        return visible, f"📡 Social Monitor — {total} match(s) message", [], [], hidden, hidden, hidden, content
+
+    return hidden, "", [], [], hidden, hidden, hidden, []
+
+@callback(
+    Output("f-domain", "value"),
+    Output("f-cve", "value"),
+    Output("f-cvss", "value"),
+    Output("f-level", "value"),
+    Output("f-match", "value"),
+    Output("f-where", "value"),
+    Output("f-desc", "value"),
+    Input("f-reset", "n_clicks"),
+    prevent_initial_call=True,
+)
+def reset_cve_filters(n_clicks):
+    return "", "", "all", "all", "all", "", ""
 
 @callback(
     Output("tab-cve", "style"),
@@ -673,6 +955,8 @@ def close_modal(n_close, n_overlay):
     Output("global-counters", "children"),
     Output("service-indicators", "children"),
     Output("vuln-data-store", "data"),
+    Output("ransomware-data-store", "data"),
+    Output("social-data-store", "data"),
     Input("interval", "n_intervals"),
     State("active-filter-cve", "data"),
     State("active-filter-dns", "data"),
@@ -756,4 +1040,6 @@ def update_dashboard(n, filter_cve, filter_dns, filter_sub):
         build_global_counters(watcher_data.get("sites", []), vuln_sites),
         indicators,
         vuln_data,
+        ransomware_victims,
+        social_message,
     )
